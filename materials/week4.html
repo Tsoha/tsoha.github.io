@@ -1,0 +1,428 @@
+<div class="page-header">
+  <h1>Viikko 4</h1>
+</div>
+<h2>Sisällysluettelo</h2>
+<ul class="nav nav-pills nav-stacked">
+  <li><a href="#1-mallien-validointi">1. Mallien validointi</a></li>
+  <li><a href="#2-muokkaus-ja-poistotoiminnot">2. Muokkaus- ja poistotoiminnot</a></li>
+  <li><a href="#3-kirjautuminen">3. Kirjautuminen</a></li>
+  <li><a href="#4-palautuksen-vaatimukset">4. Palautuksen vaatimukset</a></li>
+</ul>
+
+<hr>
+<a name="1-mallien-validointi"></a>
+<h2>1. Mallien validointi</h2>
+Toteuttaessa viime viikolla tietokohteesi lisäystoiminnallisuutta saatoit ehkä miettiä, mitä tapahtuisi, jos käyttäjä
+syöttäisi lisäyslomakkeeseen vääränlaisia arvoja, kuten esimerkiksi tekstiä kokonaisluvun sijaan. Koska käyttäjän syötteet ovat arvaamattomia, on niiden validointi erittäin tärkeää.
+
+<h3>1.1 Omien malliemme validointi</h3>
+
+<p>
+  En halua, että käyttäjä pystyy lisäämään tietokantaani pelin tyhjällä nimellä, eikä nimi saisi olla kolmea kirjainta lyhyempi. Miten varmistun, ettei näin käy? Voisin tietenkin tehdä pelin lisäyksessä näin:
+</p>
+
+<div hljs language="php" no-escape>public static function store(){
+  // ...
+  if($params['name'] != '' && strlen($params['name']) >= 3){
+    $game->save();
+    // ...
+  }else{
+    render_view('game/new.html', array('error' => 'Nimessä oli virhe!'));
+  }
+}</div>
+
+<p>
+  Tämä ratkaisu toimii, mutta entä jos minun täytyy validoida myös kaikki muut attribuutit? Syntyisi aikoimoinen sotku, joten teen sen sijaan validoinnin järkevästi ja luon <code>Game</code>-malliini validointimetodin <code>validate_name</code>, joka validoi <code>name</code>-attribuutin arvon:
+</p>
+
+<div hljs language="php" no-escape>public function validate_name(){
+  $errors = array();
+
+  if($this->name == '' || $this->name == null){
+    $errors[] = 'Nimi ei saa olla tyhjä!';
+  }
+  if(strlen($this->name) < 3){
+    $errors[] = 'Nimen pituuden tulee olla vähintään kolme merkkiä!';
+  }
+
+  return $errors;
+}</div>
+
+<p>
+  Tämä metodi siis validoi <code>Game</code>-olioni palauttamalla attribuuttiin <code>name</code> liittyvät virheet. Käytännössä se toimisi näin:
+</p>
+
+<div hljs language="php" no-escape>// Ohhoh, liian lyhyt nimi!
+$doom = new Game(array(
+  'name' => 'd'
+));
+
+$errors = $doom->validate_name();
+
+if(count($errors) > 0){
+  echo 'Peli on virheellinen!';
+}</div>
+
+<p>
+  En kuitenkaan jaksa kutsua jokaista validointimetodia erikseen, joten haluaisin kutsua kaikkia validointimetoja automaattisesti, kun oliota validoidaan ja koota niiden palauttamat virheilmoitukset. Voisin lisätä <code>$validators</code>-attibuuttiin taulukon konstruktorissani, joka sisältää kaikkien validointimetodien nimet:
+</p>
+
+<div hljs language="php" no-escape>// ...
+public function __construct($attributes){
+  parent::construct($attributes);
+
+  $this->validators = array('validate_name', 'validate_published', 'validate_publisher', 'validate_description');
+}</div>
+
+<p>
+  Seuraavaksi minun täytyy toteuttaa metodi, joka kutsuu näitä kaikkia validointimetoja ja kokoaa niiden palauttamat virheilmoitukset yhdeksi taulukoksi. Haluan metodin käyttöön kaikille sovellukseni malleille, joten siirryn kansiossa <code>lib</code> sijaitsevaan <code>base_model.php</code>-tiedostoon, jossa <code>BaseModel</code>-luokka sijaitsee. Toteutan sinne metodin <code>errors</code>, joka käy läpi <code>validators</code>-taulukon ja kutsuu sen sisältämiä validointimetodeja niiden nimellä. Vinkki: PHP:ssa luokan metodia voi kutsua sen nimellä seuraavasti:
+</p>
+
+<div hljs language="php" no-escape>$metodin_nimi = 'testi_metodi';
+$this->{$metodin_nimi}();
+</div>
+
+<p>
+  Kun kokoat kaikkien validointimetodien palauttamat virheilmoitukset yhdeksi taulukoksi, voi <a href="http://php.net/manual/en/function.array-merge.php" target="_blank">array_merge</a>-funktiosta olla hyötyä.
+</p>
+
+<p>
+  <div class="alert alert-info">
+    PHP:lle löytyy monta tutustumisen arvoista validointikirjastoa, joista yksi käytetyimmistä on <a href="https://github.com/vlucas/valitron" target="_blank">Valitron</a>. Voit halutessasi käyttää myös sitä, tai mitä tahansa toista löytämääsi kirjastoa, malliesi validointiin.
+  </div>
+</p>
+
+<div hljs language="php" no-escape>// ...
+public static function store(){
+  $params = $_POST;
+
+  $attributes = array(
+    'name' => $params['name'],
+    'description' => $params['description'],
+    'publisher' => $params['publisher'],
+    'published' => $params['published']
+  );
+
+  $game = new Game($attributes);
+  $errors = $game->errors();
+
+  if(count($errors) == 0){
+    // Peli on validi, hyvä homma!
+    $game->save();
+
+    self::redirect_to('/game/' . $game->id, array('message' => 'Peli on lisätty kirjastoosi!'));
+  }else{
+    // Pelissä oli jotain vikaa :(
+    self::render_view('game/new.html', array('errors' => $errors, 'attributes' => $attributes));
+  }
+}</div>
+
+<p>
+  <code>errors</code>-metodin kutsuminen palauttaa siis taulukon kaikista mallin olioon liittyvistä virheistä. Jos virheitä löytyy, eli taulukko <code>$errors</code> ei ole tyhjä, ohjaan käyttäjän takaisin pelien lisäyslomakkeeseen virheilmoitusten kera. Huomaa, että välitän myös käyttäjän syöttämät arvot takaisin näkymään, jottei kenttiä tarvitsisi täyttää uudelleen. Muokkaan vielä pelin lisäyslomaketta muutosten mukaiseksi:
+</p>
+
+<div hljs language="xml">{% extends "base.html" %}
+
+{% block content %}
+  <h1>Lisää peli kirjastoosi</h1>
+
+  {% if errors %}
+    <div class="alert alert-danger">
+      <ul>
+        {% for error in errors %}
+          <li>{{error}}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <div class="alert alert-danger">
+  </div>
+
+  <form method="post" action="{{base_path}}/game">
+    <div class="form-group">
+      <label class="control-label">Nimi</label>
+      <input type="text" name="name" class="form-control" value="{{attributes.name}}">
+    </div>
+
+    <div class="form-group">
+      <label class="control-label">Julkaisija</label>
+      <input type="text" name="publisher" class="form-control" value="{{attributes.publisher}}">
+    </div>
+
+    <div class="form-group">
+      <label class="control-label">Julkaisupäivä</label>
+      <input type="text" name="published" class="form-control" value="{{attributes.published}}">
+    </div>
+
+    <div class="form-group">
+      <label class="control-label">Kuvaus</label>
+      <textarea name="description" class="form-control">{{attributes.description}}</textarea>
+    </div>
+
+    <div class="form-group">
+      <button type="submit">Lisää</button>
+    </div>
+  </form>
+{% endblock %}</div>
+
+<p>
+  Toteuta seuraavaksi viime viikolla toteuttamaasi malliin sen attribuuttien validointi ja käsittele kontrollerissa mahdolliset virheet. Muista myös lisätä virheilmoitukset lisäyslomakkeeseen ja täyttää virheelliset kentät käyttäjän antamilla syötteillä, niin niitä ei tarvitse täyttää uudelleen. Validointimetodeja toteuttaessa kannattaa tutustua näihin funktioihin:
+</p>
+
+<ul>
+  <li><a href="http://php.net/manual/en/function.strlen.php" target="_blank">strlen</a> - palauttaa merkkijonon pituuden.</li>
+  <li><a href="http://php.net/manual/en/function.is-numeric.php" target="_blank">is_numeric</a> - tarkistaa, onko arvo numeerinen.</li>
+  <li><a href="http://php.net/manual/en/function.preg-match.php" target="_blank">preg_match</a> - tarkistaa, vastaako merkkijono säännöllistä lauseketta.</li>
+</ul>
+
+Koska PHP on tyypitön, tapahtuu totuusarvojen kanssa joskus outoja tyyppimuunnoksia. Esimerkiksi <code>0 == false</code> ja <code>array() == false</code>, mutta <code>0 != array()</code>. Kannattaa siis tutustua PHP:n <a href="http://php.net/manual/en/language.types.boolean.php" target="_blank">boolean</a>-määritelmään.
+
+<h3>1.2 XSS-hyökkäys</h3>
+
+<p>
+  On melko harmitonta, jos käyttäjä syöttää tietokantaan tekstiä kokonaisluvun sijaan, koska pahinta mitä voi tapahtua on, että sovellus kaatuu. SQL-injektion lisäksi käyttäjän syötteiden kanssa pitää olla varovainen <a href="http://fi.wikipedia.org/wiki/Cross_site_scripting" target="_blank"><strong>XSS-hyökkäyksen</strong></a> (Cross site scripting) varalta.
+  XSS-hyökkäyksessä hyökkääjä pääsee syöttämään tietokantaan skriptin, joka renderöidään sellaisenaan muille käyttäjille. Kuvitellaan, että ilkeä hyökkääjä asettaa pelin nimeksi seuraavan skriptin:
+</p>
+
+<div hljs language="javascript" no-escape>&lt;script>
+  var body = document.getElementsByTagName('body')[0];
+  body.innerHTML = '';
+&lt;/script></div>
+
+<p>
+  Nyt, jos pelin nimi renderöidään pelien listaussivulla sellaisenaan, on sivu tyhjä. Tämä johtuu siitä, että kun yllä oleva skripti suoritetaan, poistaa se kaikki HTML-elementit <code>body</code>-tagin sisältä.
+  Tilanne voisi olla pahempikin, sillä hyökkääjä olisi voinut upottaa pelien listaussivulle skriptin, joka lähettää kaikki käyttäjän syöttämät tiedot sivulla itselleen.
+</p>
+
+<p>
+  Onneksesi Twig on niin kehittynyt sivupohjamoottori, että se hoitaa XSS-hyökkäyksen vaaran puolestasi. Upottamalla muuttujan <code>{{</code>- ja <code>}}</code>-merkkien sisään, muuttujan arvosta poistetaan HTML-tagit automattisesti. Ilman Twig:iä, HTML-tagien poistamiseen voi käyttää esimerkiksi <a href="http://php.net/htmlspecialchars" target="_blank">htmlspecialchars</a>-funktiota.
+</p>
+<hr>
+<a name="2-muokkaus-ja-poistotoiminnot"></a>
+<h2>2. Muokkaus- ja poistotoiminnot</h2>
+
+<p>
+  Seuraavaksi tarvitsen pelille muokkaus- ja poistoiminnon. Aloitan niiden toteuttamisen lisäämällä <code>GameController</code>-malliluokkaan tarvittavat metodit:
+</p>
+
+<div hljs language="php" no-escape>class GameController extends BaseController{
+  // ...
+  // Pelin muokkaaminen (lomakkeen esittäminen)
+  public static function edit($id){
+    $game = Game::find($id);
+
+    self::render_view('game/edit.html', array('attributes' => $game));
+  }
+
+  // Pelin muokkaaminen (lomakkeen käsittely)
+  public static function update($id){
+    $params = $_POST;
+
+    $attributes = array(
+      'id' => $id,
+      'name' => $params['name'],
+      'played' => $params['played']
+      'publisher' => $params['publisher'],
+      'published' => $params['published'],
+      'description' => $params['description']
+    );
+
+    $game = new Game($attributes);
+    $errors = $game->errors();
+
+    if(count($errors) > 0){
+      self::render_view('game/edit.html', array('errors' => $errors, 'attributes' => $attributes));
+    }else{
+      $game->update();
+
+      redirect_to('/game/' . $game->id, array('message' => 'Peliä on muokattu onnistuneesti!'));
+    }
+  }
+
+  // Pelin poistaminen
+  public static function destroy($id){
+    // Kutsutaan Game-malliluokan metodia destroy, joka poistaa pelin annetulla id:llä
+    Game::destroy($id);
+
+    // Ohjataan käyttäjä pelien listaussivulle ilmoituksen kera
+    self::redirect_to('/game', array('message' => 'Peli on poistettu onnistuneesti!'));
+  }
+}</div>
+
+<p>
+  Kuten aina, lisätään myös tarvittavat reitit <code>routes.php</code>-tiedostoon:
+</p>
+
+<div hljs language="php" no-escape>//...
+$app->get('game/:id/edit', function($id){
+  // Pelin muokkauslomakkeen esittäminen
+  GameController::edit($id);
+});
+
+$app->post('game/:id/edit', function($id){
+  // Pelin muokkaaminen
+  GameController::update($id);
+});
+
+$app->post('game/:id/destroy', function($id){
+  // Pelin poisto
+  GameController::destroy($id);
+});</div>
+
+<p>
+  Toteuta seuraavaksi omaan sovellukseesi muokkaus- ja poistotoiminto. Muista validoida muokkauslomakkeessa käyttäjän syöttämät kentät, kuten itsekkin tein omassa sovelluksessani. Käytettävyyden kannalta on helpointa, jos poistotoiminto toimii nappia painamalla. Käytin omassa sovelluksessani tätä pientä lomaketta:
+</p>
+
+<div hljs language="xml"><form method="post" action="{{base_path}}/game/{{game.id}}/destroy">
+  <button type="submit" class="btn btn-danger">Poista</button>
+</form></div>
+
+<p>
+  <div class="alert alert-info">
+    Saatoit huomata, että pelin muokkaus- ja lisäyslomake ovat käytännössä täysin samanlaiset. Twig tarjoaa uudelleenkäytettävien elementtien luomiseen <a href="http://twig.sensiolabs.org/doc/tags/macro.html" target="_blank">makrot</a>.
+  </div>
+</p>
+<hr>
+<a name="3-kirjautuminen"></a>
+<h2>3. Kirjautuminen</h2>
+<p>
+  Jotta pelikirjasto olisi käyttäjäkohtainen, tarvitsen sovellukseeni kirjautumisen. Viikolla 2 tein jo pohjan kirjautumislomakkeelle, mutta siihen pitää tehdä vielä hieman muutoksia:
+</p>
+
+<div hljs language="xml">{% extends "base.html" %}
+
+{% block content %}
+  <h1>Kirjaudu sisään</h1>
+
+  <form method="post" action="{{base_path}}/login">
+    <div class="form-group">
+      <label>Käyttäjätunnus</label>
+      <input type="text" class="form-control" name="username" value="{{username}}">
+    </div>
+
+    <div class="form-group">
+      <label>Salasana</label>
+      <input type="password" class="form-control" name="password">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Kirjaudu sisään</button>
+  </form>
+{% endblock %}</div>
+
+<p>
+  Lisäsin siis <code>form</code>-tagiin lomakkeen lähetysmetodiksi <code>post</code> ja kohteeksi <code>/login</code>. Lisään vielä tarvittavat reitit <code>routes.php</code>-tiedostoon:
+</p>
+
+<div hljs language="php" no-escape>// ...
+$app->get('/login', function(){
+  // Kirjautumislomakkeen esittäminen
+  UserController::login();
+});
+
+$app->post('/login', function(){
+  // Kirjautumisen käsittely
+  UserController::handle_login();
+});</div>
+
+<p>
+Koska POST-pyyntö ohjataan <code>UsersController</code> luokan <code>handle_login</code>-metodille minun täytyy lisätä <code>app/controllers</code> kansioon tiedosto <code>users_controllers.php</code>:
+</p>
+
+<div hljs language="php" no-escape>class UserController extends BaseController{
+  public static function login(){
+      self::render_view('users/login.html');
+  }
+
+  public static function handle_login(){
+    $params = $_POST;
+
+    $user = User::authenticate($params['username'], $params['password']);
+
+    if(!$user){
+      self::render_view('/login', array('error' => 'Väärä käyttäjätunnus tai salasana!', 'username' => $params['username']));
+    }else{
+      $_SESSION['user'] = $user->id;
+
+      self::redirect_to('/', array('message' => 'Tervetuloa takaisin' . $user->name . '!'));
+    }
+  }
+}</div>
+
+<p>
+  Kontrollerissa ei ole hirveästi mitään uutta. <code>login</code>-metodi renderöi kirjautumislomakkeen ja <code>handle_login</code> pyytää <code>User</code>-mallilta tietokannasta käyttäjän, joka vastaa käyttäjän antamaa käyttäjänimeä ja salasanaa, kutsumalla sen <code>authenticate</code>-metodia. Jos käyttäjää ei löydy, <code>authenticate</code>-metodi palauttaa <code>false</code>, jolloin
+  ohjaamme käyttäjän takaisin kirjautumislomakkeeseen ja ilmoitamme, että käyttäjätunnus tai salasana oli väärä.
+</p>
+
+<p>
+  Mutta, mitä rivillä <code>$_SESSION['user'] = $user->id</code> tapahtuu? Siitä puhumme seuraavaksi.
+</p>
+
+<h3>3.1 Sessiot</h3>
+
+<p>
+  Haluamme usein tallentaa käyttäjästämme tilapäistä tietoa, kuten esimerkissä kirjautuneen käyttäjän id:n, joka ei katoa, vaikka käyttäjä siirtyy sovelluksen sisällä sivulta toiselle. HTTP-protokolla on tilaton protokolla, joten kirjautuneen käyttäjän id:n tallentaminen tavalliseen muuttujaan on hyödytöntä, koska sen arvo ei säily käyttäjän seuraavaan pyyntöön asti. Ongelman ratkaisu on <strong>sessiot</strong>.
+</p>
+
+<p>
+  Sessiot pitävät sisällään käyttäjäkohtaista tietoa palvelimella, jota voimme käyttää sovelluksessamme. PHP:ssa käyttäjän sessio sijaitsee <code>$_SESSION</code>-nimisessä assosiaatiolistassa, jossa jokaisella tiedolla on avain, jonka avulla siihen pääsee käsiksi.
+  Lisäsin siis session kirjautuneesta käyttäjästä lisäämällä <code>user</code>-avaimen arvoksi käyttäjän id:n. Pääsen kirjautuneen käyttäjän id:seen käsiksi kutsumalla <code>$_SESSION['user']</code>.
+</p>
+
+<p>
+  Siirrytään seuraavaksi kansiossa <code>lib</code> sijaitsevaan tiedostoon <code>base_controller.php</code>, jossa sijaitsee kaikkien kontrollerien yläluokka <code>BaseController</code>. Luokasta löytyy pohja metodille <code>get_user_logged_in</code>. Toteutetaan metodi niin, että se palauttaa sovellukseemme kirjautuneen käyttäjän oliona. Olen toteuttanut sovellukseni käyttäjiä kuvaavan <code>User</code>-malliluokan, jolloin oma totetukseni metodista on seuraava:
+</p>
+
+<div hljs language="php" no-escape>class BaseController{
+
+  public static function get_user_logged_in(){
+    // Katsotaan onko user-avain sessiossa
+    if(isset($_SESSION['user'])){
+      $user_id = $_SESSION['user'];
+      // Pyydetään User-mallilta käyttäjä session mukaisella id:llä
+      $user = User::find($user_id);
+
+      return $user;
+    }
+
+    // Käyttäjä ei ole kirjautunut sisään
+    return null;
+  }
+  // ...
+}</div>
+
+<p>
+  Voin nyt kutsua tätä metodia missä tahansa kontrollerissa kutsumalla yläluokan <code>get_user_logged_in</code>-metodia. Lisäksi näkymissäni on nyt käytössä <code>user_logged_in</code>-muuttuja, joka sisältää toteuttamani metodin palautusarvon, eli kirjautuneen käyttäjän. Voin käyttää sitä esimerkiksi käyttäjän pelikirjaston listaavassa näkymässä:
+</p>
+
+<div hljs language="xml">{% extends "base.html" %}
+
+{% block content %}
+  {% if user_logged_in %}
+    <h1>Käyttäjän {{user_logged_in.name}} pelikirjasto</h1>
+  {% endif %}
+  <!-- ... -->
+{% endblock %}
+</div>
+
+<p>
+  Toteuta seuraavaksi omaan sovellukseesi käyttäjän kirjautuminen. Päivitä myös tarvittaessa mallejasi niin, että ne ottavat huomioon kirjautuneen käyttäjän. Minun täytyy itse muokata <code>Game</code>-malliluokan <code>all</code>-metodia niin, että se ottaa parametrikseen kirjautuneen käyttäjän id:n ja hakee tietokannasta vain käyttäjän omat pelit.
+</p>
+<hr>
+<a name="4-palautuksen-vaatimukset"></a>
+<h2>4. Palautuksen vaatimukset</h2>
+
+<ol>
+  <li>Lisää malliisi muokkaus (<code>update</code>)- ja poistotoiminnot (<code>destroy</code>). <strong>(1p)</strong></li>
+  <li>Lisää käyttäjälle mahdollisuus muokkaukseen ja poistoon lisäämällä kontrolleriin tarvittavat medotit ja toteuttamalla tarvittavat näkymät. <strong>(0,5p)</strong></li>
+  <li>Lisää malliisi tarvittavat validaattorit ja estä kontrollereissa virheellisten olioiden lisäys tietokantaan. Muista näyttää lomakkeissa virhetilanteissa virheilmoitukset ja täyttää kentät käyttäjän antamilla syötteillä. <strong>(0,5p)</strong></li>
+  <li>Toteuta malliluokka sovelluksen käyttäjälle ja toteuta käyttäjän kirjautuminen. Toteuta <code>get_user_logged_in</code>-metodi ja käytä tarvittaessa kirjautuneen käyttäjän tietoa hyväksi näkymissä ja malleissa. <strong>(0,5p)</strong></li>
+  <li>Kirjoita alustava <a href="http://advancedkittenry.github.io/dokumentaatio-ohje.html#k%C3%A4ynnistys--k%C3%A4ytt%C3%B6ohje" target="_blank">käynnistys- / käyttöohje</a> dokumentaatioosi. <strong>(0.5p)</strong></li>
+  <li>
+    <strong>Siirrä sovelluksesi tiedostot kehitysympäristöstä users-palvelimelle!</strong>
+  </li>
+  <li>
+    <strong>Pushaa kaikki tekämäsi muutokset repoosi!</strong>
+  </li>
+</ol>
+<a href="#viikko5" class="btn btn-default pull-right">Viikko 5 <span class="glyphicon glyphicon-chevron-right"></span></a>

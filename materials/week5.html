@@ -1,0 +1,516 @@
+<div class="page-header">
+  <h1>Viikko 5</h1>
+</div>
+<h2>Sisällysluettelo</h2>
+<ul class="nav nav-pills nav-stacked">
+  <li><a href="#1-kirjautumisen-tarkistus-ja-uloskirjautuminen">1. Kirjautumisen tarkistus ja uloskirjautuminen</a></li>
+  <li><a href="#2-oman-sovelluksen-laajentaminen">2. Oman sovelluksen laajentaminen</a></li>
+  <li><a href="#3-dokumentaation-viimeistely">3. Dokumentaation viimeistely</a></li>
+  <li><a href="#4-pienta-hienosaatoa">4. Pientä hienosäätöä</a></li>
+  <li><a href="#5-palautuksen-vaatimukset">5. Palautuksen vaatimukset</a></li>
+</ul>
+<hr>
+<a name="1-kirjautumisen-tarkistus-ja-uloskirjautuminen"></a>
+<h1>1. Kirjautumisen tarkistus ja uloskirjautuminen</h1>
+
+<h2>1.1 Kirjautumisen tarkistus</h1>
+<p>
+  En halua, että kirjautumaton käyttäjä pääsee katsomaan peleihin liittyviä sivuja. Lisään siis <code>lib/base_controller.php</code>-tiedostossa sijaitsevaan <code>BaseController</code>-luokkaan metodin, joka ohjaa käyttäjän kirjautumissivulle, jos hän ei ole kirjautunut sisään:
+</p>
+
+<div hljs language="php" no-escape>class BaseController{
+
+  public static function check_logged_in(){
+    if(!isset($_SESSION['user'])){
+      self::redirect_to('/login', array('message' => 'Kirjaudu ensin sisään!'));
+    }
+  }
+  //...
+}</div>
+
+<p>
+  Se on siinä! Otan seuraavaksi toteuttamani metodin käyttöön <code>GameController</code>-luokassani:
+</p>
+
+<div hljs language="php" no-escape>class GameController extends BaseController{
+
+  public static function index(){
+    self::check_logged_in();
+    //...
+  }
+
+  public static function show(){
+    self::check_logged_in();
+    //...
+  }
+
+  public static function edit(){
+    self::check_logged_in();
+    //...
+  }
+
+  public static function update(){
+    self::check_logged_in();
+    //...
+  }
+
+  public static function create(){
+    self::check_logged_in();
+    //...
+  }
+
+  public static function store(){
+    self::check_logged_in();
+    //...
+  }
+
+  public static function destroy(){
+    self::check_logged_in();
+    //...
+  }
+}</div>
+
+<p>
+  Toteuta myös omaan sovellukseesi tarkistukset kirjautuneen käyttäjän osalta. Omassa sovelluksessasi saattaa olla monimutkaisempia rajoituksia käyttäjäoikeuksille, mutta kaikki metodit käyttäjäoikeuksien tarkastamiseen kannattaa toteuttaa <code>BaseController</code>-luokkaan.
+</p>
+
+<h2>1.2 Uloskirjautuminen</h2>
+
+<p>
+  Seuraavaksi käyttäjä tarvitsee tietenkin mahdollisuuden kirjautua ulos. Lisään tätä varten <code>UserController</code>-luokkaan metodin <code>logout</code>:
+</p>
+
+<div hljs language="php" no-escape>class UserController extends BaseController{
+  //...
+  public static function logout(){
+    $_SESSION['user'] = null;
+
+    self::redirect_to('/login', array('message' => 'Olet kirjautunut ulos!'));
+  }
+}</div>
+
+<p>
+  Lisään vielä reitin joka ohjaa POST-pyynnön polkuun <code>/logout</code> toteuttamalleni metodille:
+</p>
+
+<div hljs language="php" no-escape>//...
+$app->post('/logout', function(){
+  UserController::logout();
+});</div>
+
+<p>
+  Lisään uloskirjautumista varten vielä painikkeen navigaatiopalkkiini. Tämä onnistuu muokkaamalla <code>app/views/base.html</code>-tiedostoa:
+</p>
+
+<div hljs language="xml"><!-- ... -->
+<nav class="navbar navbar-default" role="navigation">
+  <div class="container-fluid">
+
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navigation">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+
+      <a class="navbar-brand" href="{{base_path}}">Pelikirjasto</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="navigation">
+      <ul class="nav navbar-nav">
+        <!-- ... -->
+      </ul>
+
+      {% if !user_logged_in %}
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="{{base_path}}/login">Kirjaudu sisään</a></li>
+        </ul>
+      {% else %}
+        <form class="navbar-form navbar-right" method="post" action="{base_path}}/logout">
+          <button type="submit" class="btn btn-default">Kirjaudu ulos</button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+<!-- ... --></div>
+<hr>
+<a name="2-oman-sovelluksen-laajentaminen"></a>
+<h1>2. Oman sovelluksen laajentaminen</h1>
+
+Voit käyttää seuraavaksi aikaa oman sovelluksesi laajentamiseen. Muistathan, että arvosanan viisi saamiseksi sovelluksessasi tulee olla vähintään kahdessa tietokohteessa CRUD-nelikko. Koska kertaus on opintojen äiti, muistellaan seuraavaksi, mitä CRUD-nelikon toteuttamiseen liittyikään.
+
+<h2>2.1 CRUD-nelikon toteuttamisen muistilista</h2>
+
+<h3>1. Malliluokan toteuttaminen</h3>
+<p>
+  Aloita toteuttamalla malliluokka kansioon <code>app/models</code>. Muista periä luokassasi <code>BaseModel</code>-luokka. Lisää malliluokkaasi metodit tietokohteen listaamiselle (<code>all</code>), haulle (<code>find</code>), lisäämiselle (<code>save</code>), muokkaamiselle (<code>update</code>) ja poistamiselle (<code>destroy</code>). Muistathan, että tietokantayhteyden sai muodostettua kutsumalla <code>DB</code>-luokan <code>connection</code>-metodia:
+</p>
+
+<div hljs language="php" no-escape>$query = DB::connection()->prepare('SELECT * FROM Game WHERE id = :id');
+$query->execute();
+
+$rows = $query->fetchAll();</div>
+
+<p>
+  Lisää myös mallisii attribuuttien validaattorit. Se onnistui määrittämällä malliluokan konstruktorissa <code>$validators</code>-attribuutissa jokaisen attribuutin validointimetodi:
+</p>
+
+<div hljs language="php" no-escape>// ...
+public function __construct($attributes){
+  parent::construct($attributes);
+
+  $this->validators = array('validate_name', 'validate_publisher', 'validate_published', 'validate_description');
+}
+// ...
+</div>
+
+<p>
+  Muistathan, että validointimetodi saa parametrikseen validoitavan attribuutin arvon ja sen tulee palauttaa taulukko attribuuttiin kohdistuneista virheistä:
+</p>
+
+<div hljs language="php" no-escape>public function validate_name($name){
+  $errors = array();
+
+  if($this->name == ''){
+    $errors[] = 'Nimi ei saa olla tyhjä!';
+  }else if(count($this->name) < 3){
+    $errors[] = 'Nimen pituuden tulee olla vähintään kolme merkkiä!';
+  }
+
+  return $erros;
+}</div>
+
+<h3>2. Kontrolleriluokan toteuttaminen</h3>
+
+<p>
+  Toteuta seuraavaksi malliluokkaasi käyttämä kontrolleriluokka kansioon <code>app/controllers</code>. Muista periä luokassasi <code>BaseController</code>-luokka. Lisää kontrolleriluokkaasi metodit näkymien näyttämiselle ja käyttäjän pyyntöjen käsittelyyn:
+</p>
+
+<div hljs language="php" no-escape>class GameController extends BaseController{
+
+  public static function index(){
+    $games = Game::all();
+
+    self::render_view('games/index.html', array('games' => $games));
+  }
+
+  public static function show($id){
+    $game = Game::find($id);
+
+    self::render_view('games/show.html', array('game' => $game));
+  }
+
+  public static function create(){
+    self::render_view('game/create.html');
+  }
+
+  public static function store(){
+    $params = $_POST;
+
+    $attributes = array(
+      'name' => $params['name'],
+      'description' => $params['description'],
+      'publisher' => $params['publisher'],
+      'published' => $params['published']
+    );
+
+    $game = new Game($attributes);
+    $errors = $game->errors();
+
+    if(count($errors) == 0){
+      $game->save();
+
+      self::redirect_to('/game/' . $game->id, array('message' => 'Peli on lisätty kirjastoosi!'));
+    }else{
+      self::render_review('game/new.html', array('errors' => $errors, 'attributes' => $attributes));
+    }
+  }
+
+  public static function edit($id){
+    $game = Game::find($id);
+
+    self::render_view('game/edit.html', array('game' => $game));
+  }
+
+  public static function update($id){
+    $params = $_POST;
+
+    $attributes = array(
+      'id' => $id,
+      'name' => $params['name'],
+      'played' => $params['played']
+      'publisher' => $params['publisher'],
+      'published' => $params['published'],
+      'description' => $params['description']
+    );
+
+    $game = new Game($attributes);
+    $errors = $game->errors();
+
+    if(count($errors) == 0){
+      $game->update();
+
+      self::redirect_to('/game/' . $game->id, array('message' => 'Peliä on muokattu onnistuneesti!'));
+    }else{
+      self::render_view('/game/edit.html', array('errors' => $erros, 'attributes' => $attributes));
+    }
+  }
+
+}</div>
+
+<h3>3. Reittien lisääminen</h3>
+
+<p>
+  Lisää kontrollereillesi reitit <code>config</code>-kansiossa sijaitsevaan <code>routes.php</code>-tiedostoon:
+</p>
+
+<div hljs language="php" no-escape>//...
+$app->get('/game', function(){
+  GameController::index();
+});
+
+$app->get('/game/:id', function($id){
+  GameController::show($id);
+});
+
+$app->get('/game/create', function(){
+  GameController::create();
+});
+
+$app->post('/game', function(){
+  GameController::store();
+});
+
+$app->get('/game/:id/edit', function($id){
+  GameController::edit($id);
+});
+
+$app->post('/game/:id/edit', function($id){
+  GameController::update($id);
+});
+
+$app->post('/game/:id/destroy', function($id){
+  GameController::destroy($id);
+});</div>
+
+<h3>Näkymien toteuttaminen</h3>
+
+<p>
+  Toteuta lopuksi tarvitsemasi näkymät. Lisää näkymätiedostot <code>app/views</code>-kansioon oman tietokohteesi nimiseen kansioon, kuten minä sijoitin pelien näkymät kansioon <code>game</code>. Muista näkymiäsi toteuttaessa seuraavat asiat:
+  <ul>
+    <li>Käytä näkymien pohjana <code>base.html</code>-tiedostoa lisäämällä näkymien alkuun <code>{% extends "base.html" %}</code> ja sijoittamalla näkymän sisällön <code>{% block content %}</code>- ja <code>{% endblock %}</code>-rivien väliin.</li>
+    <li>Lisää näkymien sisällä määrittämiesi polkujen, kuten linkkien ja lomakkeiden polkujen eteen <code>{{base_path}}</code>, jotta polut eivät osoita <code>htdocs</code>-kansion vaan oman projektikansiosi juureen.</li>
+  </ul>
+</p>
+<hr>
+<a name="3-dokumentaation-viimeistely"></a>
+<h2>3. Dokumentaation viimeistely</h2>
+
+<p>
+  Palataan hetkeksi dokumentaatioimme pariin. Jos sovelluksesi laajentaminen vaatii muutoksia dokumentaatioon, tee ne seuraavaksi. Sen jälkeen lisää dokumentaatiosi <a href="http://advancedkittenry.github.io/dokumentaatio-ohje.html#j%C3%A4rjestelm%C3%A4n-yleisrakenne">järjestelmän yleisrakenne</a>-osio sekä <a href="http://advancedkittenry.github.io/dokumentaatio-ohje.html#kayttoliittymakomponentit">käyttöliittymän ja järjestelmän komponentteja</a> kuvaava kaavio.
+</p>
+<hr>
+<a name="4-pienta-hienosaatoa"></a>
+<h2>4. Pientä hienosäätöä</h2>
+
+<div class="alert alert-info">
+  Tämä osio sisältää muutaman vapaaehtoisen toiminnon sovellukseesi, joita voit toteuttaa mielesi mukaan. <strong>Mitään toimintoa ei siis tarvitse toteuttaa ellet halua, eikä se vaikuta arvosanaasi!</strong>
+</div>
+
+<h3>4.1 Poistamisen vahvistaminen</h3>
+<p>
+  Ei ole mukavaa, jos käyttäjä painaa vahingossa poistopainiketta ja kohde poistetaan tietokannasta. Kirjoitan pienen <a href="http://www.w3schools.com/js/">JavaScript</a> skriptin, joka pyytää käyttäjältä vahvistusta pelin poistamiselle. Käytän myös hyvin suosittua JavaScript-kirjastoa, <a href="http://jquery.com/">jQuery</a>:a. Lisään skriptini <code>assets/js</code>-kansiossa sijaitsevaan <code>site.js</code>-tiedostoon:
+</p>
+<div hljs language="javascript" no-escape>// Kun sivu on latautunut kutsutaan ready-funktion parametrina annettua funktiota
+$(document).ready(function(){
+  // Valitaan kaikki form-elementit, joihin liittyy destroy-form-luokka ja lisätään niihin kuuntelija, joka kutsuu parametrina annettua funktiota, kun lomake lähetetään
+  $('form.destroy-form').on('submit', function(submit){
+    // Otetaan kohdelomakkeesta data-confirm-attribuutin arvo
+    var confirm_message = $(this).attr('data-confirm');
+    // Pyydetään käyttäjältä vahvistusta
+    if(!confirm(confirm_message)){
+      // Jos käyttäjä ei anna vahvistusta, ei lähetetä lomaketta
+      submit.preventDefault();
+    }
+  });
+});
+</div>
+<p>
+  Lisään vielä luokan <code>destroy-form</code> ja <code>data-confirm</code> attribuutin pelin poistolomakkeeseen:
+</p>
+<div hljs language="xml"><form method="post" action="{{base_path}}/game/{{game.id}}/destroy" class="destroy-form" data-confirm="Oletko varma, että haluat poistaa pelin?">
+  <button type="submit" class="btn btn-danger">Poista</button>
+</form></div>
+<p>
+  Se on siinä! jQuery on asennettuna valmiiksi projektissasi, jos haluat toteuttaa saman toiminnon sovellukseesi.
+</p>
+<h3>4.2 Hakutoiminto</h3>
+
+<p>
+  Listaussivut tulevat nopeasti todella pitkiksi, kun tietokantaan kertyy rivejä. Omaan pelikirjastooni on kertynyt jo niin paljon pelejä, että tarvitsen siihen hakutoiminnon. Aloitan sen toteuttamisen tekemällä muutoksia <code>Game</code>-mallini <code>all</code>-metodiin:
+</p>
+
+<div hljs language="php" no-escape>class Game{
+  // ...
+  public static function all($options){
+    $query_string = 'SELECT * FROM Game WHERE user_id = :user_id';
+    $options = array('user_id' => $options['user_id']);
+
+    if(isset($options['search'])){
+      $query_string .= ' AND name LIKE :like';
+      $options['like'] = '%' . $options['search'] . '%';
+    }
+
+    $query = DB::connection()->prepare($query_string);
+    $query->execute($options);
+
+    $rows = $query->fetchAll();
+    $games = array();
+
+    foreach($rows as $row){
+      $games[] = new Game($row);
+    }
+
+    return $games;
+  }
+}</div>
+
+<p>
+  Lisäsin <code>all</code> metodille <code>$options</code>-parametrin, jossa määritän kirjautuneen käyttäjän id:n <code>user_id</code>- ja vapaaehtoisen hakusanan <code>search</code>-avaimen arvolla. Seuraavaksi minun täytyy tehdä pari pientä muutosta <code>GameController</code>-luokkaan:
+</p>
+
+<div hljs language="php" no-escape>class GameController{
+  public static function index(){
+    self::check_login();
+
+    $user_logged_in = self::get_user_logged_in();
+    $params = $_GET;
+    $options = array('user_id' => $user_logged_in->id);
+
+    if(isset($params['search'])){
+      $options['search'] = $params['search'];
+    }
+
+    $games = Game::all($options);
+
+    self::render_view('game/index.html', array('games' => $games));
+  }
+}</div>
+
+<p>
+  Kuten <code>$_POST</code>-muuttuja sisältää POST-pyynnön muuttujat, <code>$_GET</code>-muuttuja sisältää GET-pyynnön muuttujat. Käytin toteutuksessani GET-pyyntöä, koska GET-pyynnön muuttujat näkyvät kyselyn polussa, jolloin siihen voi luoda linkin. Jos haen peliä hakusanalla "Skyrim", on pyynnön polku <code>/game?search=Skyrim</code>. <code>search</code>-muuttujan arvo siis näkyy kyselyn polussa, toisin kuin POST-pyynnön kanssa. Lisään vielä hakulomakkeen pelien listaussivulle:
+</p>
+
+<div hljs language="xml">{% extends "base.html" %}
+
+{% block content %}
+  <h1>Käyttäjän Henri pelikirjasto</h1>
+
+  <p>
+    <a href="{{base_path}}/game/create" class="btn btn-success">Lisää peli</a>
+  </p>
+
+  <form method="get" action="" class="form-inline">
+    <div class="form group">
+      <input type="text" name="search" class="form-control" placeholder="Hakusana">
+    </div>
+
+    <button type="submit" class="btn btn-default">Hae</button>
+  </form>
+  <!-- ... -->
+{% endblock %}</div>
+
+<p>
+  Huomaat, että lomake eroaa tavanomaisesta lomakkeestamme sillä, että <code>method</code>-attribuutin arvo on <code>get</code> ja <code>action</code>-attribuutin arvo on tyhjä. Tällöin lomake lähetetään oletusarvoisesti nykyiseen polkuun.
+</p>
+
+<h3>4.3 Listaussivun sivuttaminen</h3>
+
+<p>
+  Kuten jo mainitsin pelikirjastoni tulvii peleistä, eikä pelkkä hakutoiminto auta hillitsemään pitkiä listaussivuja. Olet luultavasti nähdyt muilla sivuilla listojen sivuttamista, jossa listat jaetaan kiinteän kokoisiin sivuihin, joita käyttäjä voi seleta käyttäen esimerkiksi tämän kaltaista valikkoa:
+
+  <nav>
+    <ul class="pagination">
+      <li><a href="#"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a></li>
+      <li><a href="#">1</a></li>
+      <li><a href="#">2</a></li>
+      <li><a href="#">3</a></li>
+      <li><a href="#">4</a></li>
+      <li><a href="#">5</a></li>
+      <li><a href="#"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></a></li>
+    </ul>
+  </nav>
+</p>
+
+<p>
+  Haluan lisätä toiminnon pelien listaussivulle. Aloitan sen toteuttamisen <code>Game</code>-mallin <code>all</code>-metodista:
+</p>
+
+<div hljs language="php" no-escape>class Game{
+  // ...
+  public static function all($options){
+    $user_id = $options['user_id'];
+
+    if(isset($options['page'] && isset($options['page_size'])){
+      $page_size = $options['page_size'];
+      $page = $options['page'];
+    }else{
+      $page_size = 10;
+      $page = 1;
+    }
+
+    $query = DB::connection()->prepare('SELECT * FROM Game LIMIT :limit, OFFSET :offset');
+    $query->execute(array('limit' => $page_size, 'offset' => $page_size * ($page - 1)));
+
+    $rows = $query->fetchAll();
+    $games = array();
+
+    foreach($rows as $row){
+      $games[] = new Game($row);
+    }
+
+    return $games;
+  }
+}</div>
+
+<p>
+  Katson siis <code>$options</code>-parametrista, mikä on haluttu sivu (<code>page</code>-avaimen arvo) ja mikä on sen koko (<code>page_size</code>-avaimen arvo) ja valitsen oikeat rivit käyttämällä <code>LIMIT</code>- ja <code>OFFSET</code>-kometoja. Jotta tietäisin, kuinka monta peliä tietokannassa on, toteutan vielä <code>count</code>-metodin, joka palauttaa <code>Game</code>-taulun rivien lukumäärän. Kun tiedän tietokantaan talletettujen pelin lukumäärän saan sivujen lukumäärän seuraavasti:
+</p>
+
+<pre><code class="php">$games_count = Game::count();
+$page_size = 10;
+$pages = ceil($games_count/$page_size);</code></pre>
+
+<p>
+  Näkymässäni sivuvalikko näyttää tältä:
+</p>
+
+<div hljs language="xml"><!-- ... -->
+<nav>
+  <ul class="pagination">
+    <li class="{% if !prev_page %}disabled{% endif %}"><a href="{{base_path}}/game?page={{prev_page}}"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a></li>
+    {% for page in 1..pages %}
+      <li class="{% if curr_page == page %}active{% endif %}"><a href="{{base_path}}/game?page={{page}}">{{page}}</a></li>
+    {% endfor %}
+    <li class="{% if !next_page %}disabled{% endif %}"><a href="{{base_path}}/game?page={{next_page}}"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></a></li>
+  </ul>
+</nav></div>
+
+<hr>
+<a name="5-palautuksen-vaatimukset"></a>
+<h2>5. Palautuksen vaatimukset</h2>
+<ol>
+  <li>Toteuta käyttäjän uloskirjautuminen ja estä kirjautumattoman käyttäjän pääsy sivuille, jotka vaativat kirjautumisen. <strong>(0,5p)</strong></li>
+  <li>Edistä sovellustasi ja pidä koodi siistinä noudattamalla selkeää kansiorakennetta ja järkevää nimeämistä tiedostojen, luokkien ja metodien nimissä. Vaatimuksena on, että ainakin kahdelle tietokohteelle on toteutettu sivuja, kaikkia CRUD-nelikon osia ei kuitenkaan tarvitse molemmille toteuttaa. Lisäksi kaikkien toimintojen tulee toimia ja virhetilanteissa käyttäjälle täytyy antaa järkeviä virheilmoituksia. <strong>(1,5p)</strong></li>
+  <li>Lisää dokumentaatioosi <a href="http://advancedkittenry.github.io/dokumentaatio-ohje.html#j%C3%A4rjestelm%C3%A4n-yleisrakenne">järjestelmän-yleisrakenne</a>-osio ja <a href="http://advancedkittenry.github.io/dokumentaatio-ohje.html#kayttoliittymakomponentit">käyttöliittymän ja järjestelmän komponentteja kuvaa kaavio</a>. <strong>(1p)</strong></li>
+  <li>Kirjoita <a href="http://advancedkittenry.github.io/aikataulu/koodikatselmointi.html">koodikatselmointi</a> (vapaaehtoinen). <strong>(0-2p)</strong></li>
+  <li>
+    <strong>Siirrä sovelluksesi tiedostot kehitysympäristöstä users-palvelimelle!</strong>
+  </li>
+  <li>
+    <strong>Pushaa kaikki tekämäsi muutokset repoosi!</strong>
+  </li>
+</ol>
+<a href="#lopullinen-palautus" class="btn btn-default pull-right">Lopullinen palautus <span class="glyphicon glyphicon-chevron-right"></span></a>

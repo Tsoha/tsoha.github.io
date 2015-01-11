@@ -1,0 +1,770 @@
+<div class="page-header">
+  <h1>Viikko 2</h1>
+</div>
+<h2>Sisällysluettelo</h2>
+<ul class="nav nav-pills nav-stacked">
+  <li><a href="#1-tyokalut" target="_self">1. Työkalut</a></li>
+  <li><a href="#2-kontrollerit-ja-reitit" target="_self">2. Kontrollerit ja reitit</a></li>
+  <li><a href="#3-nakymat" target="_self">3. Näkymät</a></li>
+  <li><a href="#4-tietokantayhteyden-muodostaminen-ja-tietokantataulut" target="_self">4. Tietokantayhteyden muodostaminen ja tietokantataulut</a></li>
+  <li><a href="#5-kehitysymparistosta-users-palvelimelle" target="_self">5. Kehitysympäristöstä users-palvelimelle</a></li>
+  <li><a href="#6-palautuksen-vaatimukset" target="_self">6. Palautuksen vaatimukset</a></li>
+</ul>
+
+<hr>
+<a name="1-tyokalut"></a>
+<h2>1. Työkalut</h2>
+<h3>1.1 Sovelluksen kehitys XAMPP-kehitysympäristössä</h3>
+<p>
+  Tiedostojen jatkuva siirtäminen palvelimelle on työlästä ja hidasta. Siksi asensimmekin viime viikoalla XAMPP:n. Katsotaan seuraavaksi, miten XAMPP:n kanssa työskennellään.
+</p>
+
+<p>
+  Käynnistä XAMPP sekä avautuneesta ikkunasta Apache- ja MySQL-palvelimet. Siirretään seuraavaksi viime viikolla lataamamme Tsoha Bootstrapin kansio XAMPP:n juurihakemistossa sijaitsevaan <code>htdocs</code>-kansioon, jonka jälkeen siirrytään selaimessa osoitteeseen <a>http://localhost/PROJEKTIN_KANSIO</a>, jossa <code>PROJEKTIN_KANSIO</code> on siirretyn Tsoha Bootstrapin kansion nimi (jos et ole muuttanut kansion nimeä, se on Tsoha-Bootstrap-master). Selaimessa pitäisi nyt aueta sovelluksemme etusivu.
+</p>
+
+<p>
+  Voimme nyt kehittää sovellustamme nopeasti ja vaivattomasti omalta koneltaamme.
+</p>
+
+<h3>1.2 Hyviä editoreja</h3>
+
+<ul>
+  <li><a href="https://www.jetbrains.com/phpstorm/">PhpStorm</a>. Luultavasti paras PHP-IDE, joka on saatavilla <a href="https://www.jetbrains.com/student/">opiskelijalisenssillä</a> ja 30 päivän kokeilulla</li>
+  <li><a href="https://atom.io/">Atom</a></li>
+  <li><a href="http://www.sublimetext.com/">Sublime Text</a></li>
+  <li><a href="https://netbeans.org/">NetBeans</a></li>
+</ul>
+<hr>
+<a name="2-kontrollerit-ja-reitit"></a>
+<h2>2. Kontrollerit ja reitit</h2>
+
+<p>
+  Palautetaan mieliimme, mitä MVC-mallia noudattavassa sovelluksessa tapahtuu, kun selain tekee pyynnön palvelimelle. Palataan viime viikon esimerkkiin, jossa opiskelija menee selaimessa sivulle www.cs.helsinki.fi/courses:
+</p>
+
+<blockquote>
+  <ol>
+    <li>Opiskelijan kirjoitettua URL:n selaimen osoiteriville, selain tekee GET-pyynnön palvelimelle www.cs.helsinki.fi</li>
+    <li>Palvelimella pyörivä web-palvelinohjelmisto ohjaa pyynnön itse sovellukseen, jonka reiteistä katsotaan, mille kontrollerille ja mille metodille resurssiin courses kohdistuvat GET-pyynnöt ohjataan</li>
+    <li>Kun kontrolleri ja metodi löytyy, sitä kutsutaan ...</li>
+  </ol>
+</blockquote>
+
+<h3>2.1 Kontrollerit</h3>
+
+<p>
+  Katsotaan, mitä sovelluksessamme tapahtuu, kun menet selaimella oman sovelluksesi etusivulle, joka on muotoa <a>http://localhost/PROJEKTIN_KANSIO</a>. Aukeaa sivu, jossa on otsikko "Tervetuloa Tsoha Bootstrappiin!". Katsotaan, mitä kulissien takana tapahtuu.
+</p>
+
+<p>
+  Käynnistä asentamasi Sublime Text ja avaa siinä projektisi, kätevintä on avata suoraan koko projektikansio editoriin. Siirrytään sitten kansioon <code>app</code>, jossa näet MVC-mallin mukaisen kansiorakenteen. Avataan kansiosta <code>controllers</code> tiedosto <code>hello_world_controller.php</code>, joka toimii esimerkkinä kontrollerista. Se näyttää seuraavalta:
+</p>
+
+<div hljs language="php" no-escape>class HelloWorldController extends BaseController{
+
+  public static function index(){
+    self::render_view('home.html');
+  }
+
+  public static function sandbox(){
+    // Testaa koodiasi täällä
+    echo 'Hello World!';
+  }
+}</div>
+
+<p>
+  Näemme tiedostossa luokan <code>BaseController</code> perivän luokan <code>HelloWorldController</code>, jolla on staattiset metodit <code>index</code> ja <code>sandbox</code>. Korvataan rivi <code>self::render_view('home.html');</code>, rivillä <code>echo 'Tämä on etusivu!';</code>. Tallennetaan ja siirrytään sovelluksemme etusivulle selaimella. Huomaamme, että näytölle tulee teksti "Tämä on etusivu!".
+</p>
+
+<h3>2.2 Reitit</h3>
+
+<p>
+  Mutta miten sovelluksemme tietää, että etusivulla pitäisi kutsua luokan <code>HelloWorldController</code> metodia <code>index</code>? Kurkataanpa kansiossa <code>config</code> olevaa tiedostoa <code>routes.php</code>. Se näyttää seuraavalta:
+</p>
+
+<div hljs language="php" no-escape>$app->get('/', function() {
+  HelloWorldController::index();
+});
+
+$app->get('/hiekkalaatikko', function() {
+  HelloWorldController::sandbox();
+});</div>
+
+<p>
+  Alatko jo keksiä, mistä on kyse? Siis kun tehdään GET-pyyntö polkuun <code>/</code>, kutsutaan <code>get</code>-metodin parametrina annettua nk. <a href="http://php.net/manual/en/functions.anonymous.php">anonyymia-funktioita</a>, jossa kutsumme luokan <code>HelloWorldController</code> metodia <code>index</code>. Huomaa, että PHP:ssa luokan staattista metodia kutsutaan <code>::</code>-syntaksilla. Kokeileppa vielä, mitä tapahtuu, kun menet selaimellasi sovelluksesi polkuun <code>/hiekkalaatikko</code>.
+</p>
+
+<p>
+  Vanhaan hyvään aikaan jokainen kontrolleri oli oma <code>php</code>-tiedostonsa, jolloin kyselyt kohdistuivat polun sijaan suoraan tiedostoon. Tämä tapa tulee kuitenkin erittäin sekavaksi sovelluksen kasvaessa. Olemme siis ajan hermolla ja käytämme sovelluksessamme reitityskirjastoa, jonka avulla voimme kätevästi ohjata pyynnön tiettyyn polkuun tietyn kontrollerin hoidettavaksi. Yksi tälläinen kirjasto on pieni, mutta kätevää <strong><a href="http://www.slimframework.com/">Slim</a></strong>-kirjasto, joka on alustettu projektiisi tiedostossa <code>index.php</code>. Slim:n käyttäminen sovelluksessa on melko yksinkertaista, tässä esimerkki sen kotisivuilta:
+</p>
+
+<div hljs language="php" no-escape>require "path/to/Slim.php";
+$app = new \Slim\Slim();
+$app->get('/hello/:name', function ($name) {
+  echo "Hello, $name";
+});
+$app->run();
+</div>
+
+Reititys perustuu siihen, että web-palvelinohjelmisto ohjaa kaikki sovellukseemme kohdistuneet HTTP-pyynnöt <code>index.php</code>-tiedostoon, jossa Slim käsittelee pyynnöt ja ohjaa ne haluamillesi kontrollereille. Tämä määritetään projektimme juuressa sijaitsevassa <code>.htaccess</code>-tiedostossa.
+<p>
+  <div class="alert alert-info">
+    Kaatuiko sovelluksesi? Ei hätää! Pääset katsomaan PHP:n logeja, jotka sisältävät virheilmoitukset valitsemalla XAMPP:n Control Panelista Apache > Logs (tämä vaihtelee hieman käyttöjärjestelmästä riippuen). Jos haluat katsoa logeja users-palvelimell suorita projektisi juuressa <code>bash php_logs.sh</code>. Voit myös katsoa PHP:n logeja users-palvelimen puolella suorittamalla komennon <code>tail -f /home/userlogs/$USER.error</code>.
+  </div>
+</p>
+<hr>
+<a name="3-nakymat"></a>
+<h2>3. Näkymät</h2>
+
+<h3>3.1 HTML</h3>
+
+<p>
+  On hieman tylsää esittää käyttäjälle pelkästään sivuja, joilla tulostamme tekstiä. Siksi sivujen rakentamiseen käytetäänkin <strong><a href="http://fi.wikipedia.org/wiki/HTML">HTML</a></strong>-kuvauskieltä. Sivujen rakennepalikat ovat HTML:ssä <strong>tageja</strong>, jotka ovat esimerkiksi otsikoita, linkkejä, kuvia tai painikkeita. Tageihin liittyy usein myös <strong>attribuutteja</strong>, jotka tarkentavat tagin ominaisuuksia. Tässä muutama käytännön esimerkki:
+</p>
+<h1>Otsikko</h1>
+<div hljs language="xml"><h1>Otsikko</h1></div>
+<p>
+  <a href="http://www.cs.helsinki.fi">Tässä on linkki Tietojenkäsittelytieteen laitoksen sivuille</a> (huomaa <code>href</code> attribuutti, joka kertoo, minne linkki vie)
+</p>
+<div hljs language="xml"><a href="www.cs.helsinki.fi">Tässä on linkki Tietojenkäsittelytieteen laitoksen sivuille</a></div>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Nimi</th>
+      <th>Pituus</th>
+      <th>Ikä</th>
+    </tr>
+  <thead>
+  <tbody>
+    <tr>
+      <td>Kalle</td>
+      <td>186</td>
+      <td>22</td>
+    </tr>
+    <tr>
+      <td>Elina</td>
+      <td>168</td>
+      <td>24</td>
+    </tr>
+  </tbody>
+</table>
+<div hljs language="xml"><table>
+  <thead>
+    <tr>
+      <th>Nimi</th>
+      <th>Pituus</th>
+      <th>Ikä</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Kalle</td>
+      <td>186</td>
+      <td>22</td>
+    </tr>
+    <tr>
+      <td>Elina</td>
+      <td>168</td>
+      <td>24</td>
+    </tr>
+  </tbody>
+</table></div>
+<p>
+  Lue HTML:stä vielä hieman lisää <a href="http://www.w3schools.com/html/">W3Schools</a>:ssa.
+</p>
+<h3>3.2 Kontrollerit ja näkymät</h3>
+<p>
+  Kun HTML on tullut hieman tutummaksi, luodaan <code>app/views</code>-kansioon tiedosto <code>helloworld.html</code> ja lisätään sinne h1-tagi, jonka sisällä lukee "Hello World!". Siirrytään sitten jo tarkastelemaamme <code>app/controllers/hello_world_controller.php</code>-tiedostoon ja muokataan metodi <code>sandbox</code> seuraavanlaiseksi:
+</p>
+<div hljs language="php" no-escape>public static function sandbox(){
+    self::render_view('helloworld.html');
+  }
+}</div>
+<p>
+  Buildataan ja siirrytään sovelluksessamme polkuun <code>/hiekkalaatikko</code>. Kontrollerimme renderöi nyt juuri luomamme HTML-tiedoston, joka tosin näyttää vielä hieman rujolta.
+</p>
+<p>
+  <div class="alert alert-info">Metodi <code>render_view</code> on luokan <code>BaseController</code> staattinen metodi, joka renderöi parametrina annetun, kansiossa <code>app/views</code> sijaitsevan HTML-tiedoston.</div>
+</p>
+<h3>3.3 Bootstrap ja kauniimmat näkymät</h3>
+<p>
+  <strong><a href="http://getbootstrap.com">Bootstrap</a></strong> on tällä hetkellä yksi suosituimmista web-sivujen rakentamiseen käytettyistä frameworkeista. Käytännössä tämä tarkoittaa sitä, että pystymme sen avulla toteuttamaan nättejä käyttöliittymiä nopeasti. Bootstrap löytyy jo valmiiksi asennettuna sovelluksestasi, joten pääset heti käyttämään sitä. Lisää seuraava esimerkki luomaasi <code>helloworld.html</code>-tiedostoon:
+</p>
+<div hljs language="xml">{% extends "base.html" %}
+
+{% block content %}
+  <h1>Painikkeet</h1>
+  <button>Tavallinen painike</button>
+  <button class="btn btn-default">Bootstrap painike</button>
+  <button class="btn btn-primary">Bootstrap painike</button>
+  <button class="btn btn-success">Bootstrap painike</button>
+  <button class="btn btn-danger">Bootstrap painike</button>
+
+  <h1>Tekstikentät</h1>
+  <input type="text" placeholder="Tavallinen tekstikenttä">
+  <input type="text" class="form-control" placeholder="Bootstrap tekstikenttä">
+
+  <h1>Taulukot</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Tavallinen</th>
+        <th>Taulukko</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Tekstiä</td>
+        <td>Tekstiä</td>
+      </tr>
+      <tr>
+        <td>Tekstiä</td>
+        <td>Tekstiä</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Bootstrap</th>
+        <th>Taulukko</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Tekstiä</td>
+        <td>Tekstiä</td>
+      </tr>
+      <tr>
+        <td>Tekstiä</td>
+        <td>Tekstiä</td>
+      </tr>
+    </tbody>
+  </table>
+{% endblock %}</div>
+<p>
+  Buildataan ja siirrytään taas polkuun <code>/hiekkalaatikko</code>, niin näemme Bootstrapin aikaansaaman eron.
+</p>
+<p>
+  Saamme siis pienillä muutoksilla paljon aikaan. Yleensä HTML-elementin tyylittely tapahtuu lisäämälle se yhteen tai useampaan luokkaan <code>class</code>-attribuutin avulla. Luokkiin on taas määritelty tyylejä, kuten taustaväri tai fontin koko, käyttämällä <a href="http://fi.wikipedia.org/wiki/Cascading_Style_Sheets" target="_blank">CSS</a>-tyyliohjeita.
+</p>
+
+<p>
+  <div class="alert alert-info">
+    Jos kauniiden käyttöliittymien toteuttaminen kiinnostaa, kannattaa tutustustua <a href="http://www.w3schools.com/css/" target="_blank">W3Schools</a>:in CSS-tutoriaaliin. Kansiossa <code>assets/css</code> on tiedosto <code>site.css</code>, johon voit toteuttaa tyylejäsi.
+  </div>
+</p>
+<h3>3.4 Twig - joustava ja tehokas sivupohjamoottori</h3>
+
+<p>
+  Ihmettelit luultavasti, mitä edellisessä esimerkissä olevat rivit <code>{% extends "base.html" %}</code> ja <code>{% block content %}</code> tarkoittavat. Kyseessä on <strong><a href="http://twig.sensiolabs.org/" target="_blank">Twig</a></strong> nimisen sivupohjamoottorin syntaksi. Mitä Twig, kuten monet muutkin sivupohjamoottorit tekevät, on että ne tekevät sivupohjista selkeitä, helposti hallittavia ja uudelleen käytettäviä.
+</p>
+
+<p>
+  Tutustutaan hieman edellä mainittuihin riveihin. Aloitetaan rivistä <code>{% extends "base.html" %}</code>. Jos katsomme kansiossa <code>app/views</code> sijaitsevaa tiedostoa <code>base.html</code>, huomaamme, että se esittää kokonaista HTML-sivua. Tiedosto onkin pohja kaikille muille sovelluksemme sivuille, joten kaikki, kuten edellisen edellisen esimerkin sivukin pohjautuu siihen. Ilman sivupohjaa, joutuisimme kopioimaan sisältöä tiedosta toiseen, mistä tulisi sovelluksen kasvaessa mahdotonta hallita.
+</p>
+
+<p>
+  Mutta miten muut sivut sitten sijoittuvat sivupohjaamme? Tarkastellaan <code>base.html</code>-tiedostosta seuraavaa kohtaa:
+</p>
+
+<div hljs language="xml"><! ... -->
+<div id="main-container">
+  <!-- Dynaaminen sisältö tulee tähän -->
+  {% block content %}{% endblock %}
+</div>
+<!-- ... --></div>
+
+<p>
+  Nyt alat ehkä arvata, mitä tapahtuu. <code>helloworld.html</code>-tiedoston <code>{% block content %}</code> ja <code>{% endblock %}</code> väliin lisätty sisältö lisätään siis kyseiseen kohtaan <code>base.html</code>-tiedostoa ja niin muodostuu haluamamme näköinen sivu.
+</p>
+
+<p>
+  Tämä on vasta alkua, tulemme näkemään, kuinka hienoja asioita Twig:llä voi saada aikaan. Palaamme sen pariin taas ensi viikolla.
+</p>
+<h3>3.5 Oman sovelluksemme näkymät</h3>
+<p>
+  Muistelen hieman oman sovellukseni vaatimuksia:
+</p>
+
+<blockquote>
+  Ystävälleni Henrille on kertynyt todella paljon pelejä, eikä hän koskaan muista, mitkä niistä hän on jo läpäissyt ja mitkä on vielä kesken.
+  Henri haluaa siis mahdollisuuden lisätä pelejä kirjastoonsa ja muokata niiden tietoja. Lisäksi Henrin mielestä olisi hyvä idea, jos muutkin pystyisivät rekisteröitymään sovellukseen ja kirjautunut käyttäjä pystyisi lisäämään pelejä omaan kirjastoonsa.
+</blockquote>
+
+<p>
+  Tarvitsen siis ainakin seuraavat näkymät sovellukseeni:
+</p>
+
+<ul>
+  <li>Käyttäjän pelien listaussivu, jossa olisi kunkin pelin nimi ja lisäksi muita tärkeimpiä tietoja</li>
+  <li>Pelin esittelysivu, joka esittelee pelin tiedot tarkemmin</li>
+  <li>Pelin muokkaussivu, joka olisi lomake, jonka kautta pelin tietoja voi muokata</li>
+  <li>Rekisteröitymissivu, joka olisi lomake, jonka kautta käyttäjä voi rekisteröityä sovellukseen</li>
+  <li>Kirjautumissivu, joka olisi lomake, jonka kautta käyttäjä voi kirjautua sisään sovellukseen</li>
+</ul>
+
+<p>
+  Aloitetaan käyttäjän pelien <strong>listaussivusta</strong> (game_list.html). Tässä on visioni siitä:
+</p>
+<div hljs language="xml">{% extends "base.html" %}
+
+{% block content %}
+  <h1>Käyttäjän Henri pelikirjasto</h1>
+
+  <p>
+    <a href="#" class="btn btn-success">Lisää peli</a>
+  </p>
+
+  <table class="table table-striped table-bordered">
+    <thead>
+      <tr>
+        <th>Nimi</th>
+        <th>Julkaisupäivä</th>
+        <th>Julkaisija</th>
+        <th>Status</th>
+        <th>Lisäyspäivä</th>
+        <th></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <!-- Listataan pelit tähän -->
+      <tr>
+        <td><a href="#">The Elder Scrolls V: Skyrim</a></td>
+        <td>11.11.2011</td>
+        <td>Bethesda Softworks</td>
+        <td><label class="label label-danger">kesken</label></td>
+        <td>9.12.2014</td>
+        <th><a class="btn btn-default btn-sm" href="#">Muokkaa</a></th>
+      </tr>
+    </tbody>
+  </table>
+{% endblock %}</div>
+<h1>Käyttäjän Henri pelikirjasto</h1>
+
+<p>
+  <a href="#" class="btn btn-success">Lisää peli</a>
+</p>
+
+<table class="table table-striped table-bordered">
+  <thead>
+    <tr>
+      <th>Nimi</th>
+      <th>Julkaisupäivä</th>
+      <th>Julkaisija</th>
+      <th>Status</th>
+      <th>Lisäyspäivä</th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td><a href="#">The Elder Scrolls V: Skyrim</a></td>
+      <td>11.11.2011</td>
+      <td>Bethesda Softworks</td>
+      <td><label class="label label-danger">kesken</label></td>
+      <td>9.12.2014</td>
+      <th><a class="btn btn-default btn-sm" href="#">Muokkaa</a></th>
+    </tr>
+  </tbody>
+</table>
+  <p>Jokaisella pelillä on <strong>esittelysivu</strong> (game_show.html), joka voisi näyttää tältä:
+    <div class="row">
+      <div class="col-md-6">
+        <div hljs language="xml">{% extends "base.html" %}
+
+{% block content %}
+  <h1>The Elder Scrolls V: Skyrim</h1>
+  <!-- Painikkeet tähän -->
+  <p>
+    <button class="btn btn-danger">Poista</button> <a href="#" class="btn btn-default">Muokkaa</a>
+  </p>
+  <!-- Tiedot tulee listana tähän -->
+  <ul>
+    <li><strong>Julkaisupäivä:</strong> 11.11.2011</li>
+    <li><strong>Julkaisija:</strong> Bethesda Softworks</li>
+    <li><strong>Status:</strong> <label class="label label-danger">kesken</label></li>
+    <li><strong>Lisäyspäivä:</strong> 9.12.2014</li>
+  </ul>
+  <!-- Kuvaus tulee tähän -->
+  <p>
+    The Elder Scrolls V: Skyrim on Bethesda Softworksin kehittämä ja vuonna 2011 Xbox 360:lle, PlayStation 3:lle ja Microsoft Windowsille julkaisema The Elder Scrolls -tietokoneroolipelisarjan videopeli. Skyrim on The Elder Scrolls -sarjan viides osa.
+  </p>
+{% endblock %}</div>
+        </div>
+        <div class="col-md-6">
+          <h1>The Elder Scrolls V: Skyrim</h1>
+          <p>
+            <button class="btn btn-danger">Poista</button> <a href="#" class="btn btn-default">Muokkaa</a>
+          </p>
+
+          <ul>
+            <li><strong>Julkaisupäivä:</strong> 11.11.2011</li>
+            <li><strong>Julkaisija:</strong> Bethesda Softworks</li>
+            <li><strong>Status:</strong> <label class="label label-danger">kesken</label></li>
+            <li><strong>Lisäyspäivä:</strong> 9.12.2014</li>
+          </ul>
+
+          <p>
+            The Elder Scrolls V: Skyrim on Bethesda Softworksin kehittämä ja vuonna 2011 Xbox 360:lle, PlayStation 3:lle ja Microsoft Windowsille julkaisema The Elder Scrolls -tietokoneroolipelisarjan videopeli. Skyrim on The Elder Scrolls -sarjan viides osa.
+          </p>
+        </div>
+      </div>
+
+      <p>Pelin <strong>muokkaussivu</strong> näyttäisi tältä:</p>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div hljs language="xml">{{ '{' }}% extends "base.html" %{{ '}' }}
+
+{% block content %}
+  <h1>Muokkaa peliä The Elders Scrolls V: Skyrim</h1>
+
+  <form>
+    <div class="checkbox">
+      <label>
+        <input type="checkbox">
+        Pelattu
+      </label>
+    </div>
+    <div class="form-group">
+      <label>Nimi</label>
+      <input type="text" class="form-control" value="The Elder Scrolls V: Skyrim">
+    </div>
+    <div class="form-group">
+      <label>Julkaisupäivä</label>
+      <input type="text" class="form-control" value="11.11.2011">
+    </div>
+    <div class="form-group">
+      <label>Julkaisija</label>
+      <input type="text" class="form-control" value="Bethesda Softworks">
+    </div>
+    <div class="form-group">
+      <label>Kuvaus</label>
+      <textarea class="form-control">
+        The Elder Scrolls V: Skyrim on Bethesda Softworksin kehittämä ja vuonna 2011 Xbox 360:lle, PlayStation 3:lle ja Microsoft Windowsille julkaisema The Elder Scrolls -tietokoneroolipelisarjan videopeli. Skyrim on The Elder Scrolls -sarjan viides osa.
+      </textarea>
+    </div>
+    <div class="form-group">
+      <button type="submit" class="btn btn-primary">Tallenna</button>
+    </div>
+  </form>
+{% endblock %}</div>
+        </div>
+        <div class="col-md-6">
+          <h1>Muokkaa peliä The Elders Scrolls V: Skyrim</h1>
+
+          <form>
+            <div class="checkbox">
+              <label>
+                <input type="checkbox">
+                Pelattu
+              </label>
+            </div>
+            <div class="form-group">
+              <label>Nimi</label>
+              <input type="text" class="form-control" value="The Elder Scrolls V: Skyrim">
+            </div>
+            <div class="form-group">
+              <label>Julkaisupäivä</label>
+              <input type="text" class="form-control" value="11.11.2011">
+            </div>
+            <div class="form-group">
+              <label>Julkaisija</label>
+              <input type="text" class="form-control" value="Bethesda Softworks">
+            </div>
+            <div class="form-group">
+              <label>Kuvaus</label>
+              <textarea class="form-control">The Elder Scrolls V: Skyrim on Bethesda Softworksin kehittämä ja vuonna 2011 Xbox 360:lle, PlayStation 3:lle ja Microsoft Windowsille julkaisema The Elder Scrolls -tietokoneroolipelisarjan videopeli. Skyrim on The Elder Scrolls -sarjan viides osa.</textarea>
+            </div>
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary">Tallenna</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <p>
+        Sovellukseni <strong>kirjautumissivu</strong> (login.html) olisi kutakuinkin tämän kaltainen:
+      </p>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div hljs language="xml">{% extends "base.html" %}
+
+{% block content %}
+  <h1>Kirjaudu sisään</h1>
+
+  <!-- Kaikki lomakkeen elementit form-tagin sisään -->
+  <form>
+    <!-- Tekstikenttä käyttäjätunnukselle -->
+    <div class="form-group">
+      <label>Käyttäjätunnus</label>
+      <input type="text" class="form-control">
+    </div>
+
+    <!-- Salasanakenttä salasanalle -->
+    <div class="form-group">
+      <label>Salasana</label>
+      <input type="password" class="form-control">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Kirjaudu sisään</button>
+  </form>
+{% endblock %}</div>
+          </div>
+          <div class="col-md-6">
+            <h1>Kirjaudu sisään</h1>
+
+            <form>
+              <div class="form-group">
+                <label>Käyttäjätunnus</label>
+                <input type="text" class="form-control">
+              </div>
+
+              <div class="form-group">
+                <label>Salasana</label>
+                <input type="password" class="form-control">
+              </div>
+
+              <button type="submit" class="btn btn-primary">Kirjaudu sisään</button>
+            </form>
+          </div>
+        </div>
+  <p>
+    Lisään vielä navigaatiopalkkiin linkin pelikirjastoon ja kirjautumis-sivulle sekä muutan sovellukseni nimeä. Tämä onnistuu <code>base.html</code>-tiedostossa:
+  </p>
+
+<div hljs language="xml"><!-- ... -->
+<nav class="navbar navbar-default" role="navigation">
+  <div class="container-fluid">
+
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navigation">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <!-- Sovelluksen nimi -->
+      <a class="navbar-brand" href="#">Pelikirjasto</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="navigation">
+      <ul class="nav navbar-nav">
+        <!-- Navigaation linkit -->
+        <li><a href="#">Pelit</a></li>
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Kirjaudu sisään</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<!-- ... --></div>
+
+<nav class="navbar navbar-default" role="navigation">
+  <div class="container-fluid">
+
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navigation">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <!-- Sovelluksen nimi -->
+      <a class="navbar-brand" href="#">Pelikirjasto</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="navigation">
+      <ul class="nav navbar-nav">
+        <!-- Navigaation linkit -->
+        <li><a href="#">Pelit</a></li>
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Kirjaudu sisään</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+        <p>
+          Mitä näkymiä omaan sovellukseesi tulee? Aloita vaikka ideoimalla näkymiä paperille ja tee sitten <code>app/views</code>-kansioon kansio <code>suunnitelmat</code> ja tee sinne muutama HTML-sivu sovelluksesi näkymistä. Kaikkia näkymiä ei tarvitse vielä tässä vaiheessa tehdä, tässä vaiheessa etusivun, listaussivujen ja muokkaus- sekä esittelysivujen suunnitelmat riittävät. Tee sen jälkeen <code>HelloWorldController</code>-luokkaan metodit, jotka renderöivät näkymäsi, vaikkapa tähän tapaan:
+        </p>
+        <div hljs language="php" no-escape>class HelloWorldController extends BaseController{
+  // ...
+
+  public static function game_list(){
+    self::render_view('suunnitelmat/game_list.html');
+  }
+
+  public static function game_show(){
+    self::render_view('suunnitelmat/game_show.html');
+  }
+
+  public static function login(){
+    self::render_view('suunnitelmat/login.html');
+  }
+}</div>
+        <p>
+          Lisätään vielä uusille metodeille reitit <code>config</code> kansiossa sijaitseen <code>routes.php</code>-tiedostoon:
+        </p>
+        <div hljs language="php" no-escape>// ...
+$app->get('/game', function() {
+  HelloWorldController::game_list();
+});
+
+$app->get('/game/1', function() {
+  HelloWorldController::game_show();
+});
+
+$app->get('/login', function() {
+  HelloWorldController::login();
+});
+        </div>
+
+<p>
+  Käyttöliittymää toteuttaessa kannattaa tutustua ainakin seuraaviin kohtiin Bootstrap:n dokumentaatiosta:
+  <ul>
+    <li><a href="http://getbootstrap.com/css/#type" target="_blank">typography</a> - tekstin asettelu ja tyylittely</li>
+    <li><a href="http://getbootstrap.com/css/#tables" target="_blank">tables</a> - taulukot</a></li>
+    <li><a href="http://getbootstrap.com/css/#forms" target="_blank">forms</a> - lomakkeet</a></li>
+    <li><a href="http://getbootstrap.com/css/#buttons" target="_blank">buttons</a> - painikkeet</a></li>
+  </ul>
+</p>
+
+<p>
+  Lisää reposi <code>README.md</code>tiedostoon linkit näihin sivuihin.
+</p>
+<hr>
+<a name="4-tietokantayhteyden-muodostaminen-ja-tietokantataulut"></a>
+<h2>4. Tietokantayhteyden muodostaminen ja tietokantataulut</h2>
+<h3>4.1 Tietokantayhteyden muodostaminen</h3>
+<p>
+  Avataan seuraavaksi <code>config</code>-kansiossa sijaitseva <code>database.php</code>-tiedosto. Tiedostosta löytyy luokka <code>DatabaseConfig</code>, joka pitää sisällään tietokantamme konfiguraation. Luokasta löytyy kaksi tärkeää muuttujaa:
+</p>
+<ul>
+  <li><code>environment</code>, joka kertoo kumpaa tietokantakonfiguraatio tulee käyttää. Jos pyörität sovellustasi lokaalisti XAMPP:ssa, muuttujan arvo tulee olla <code>xampp</code>, kun siirrät sovelluksesi tiedostot users-palvelimelle, tulee muuttujan arvo olla <code>users</code>.</li>
+  <li><code>connection_config</code>, joka sisältää kaksi tietokantakonfiguraatiota, XAMPP:n konfiguraation ja users-palvelimen konfiguraation.</li>
+</ul>
+<p>
+  XAMPP:n tietokantakonfiguraatio ei tarvitse muuttaa. Mutta vaihda users-palvelimen konfiguraatiosta korostetut kohdat <code>KAYTTAJATUNNUS</code>, joka on oma käyttäjätunnuksesi ja <code>SALASANA</code>, joka ensimmäisellä viikolla asettamasi tietokannan pääkäyttäjän salasana. Siinä kaikki, siirry vielä sovelluksessasi polkuun <code>/tietokantayhteys</code> ja varmista, että tietokanteyhteyden muodostaminen onnistuu.
+</p>
+<p>
+  <div class="alert alert-info">Tiedostossa <code>database.php</code> voi olla arkaluontoista tietoa, joten sitä ei lisätä versionhallintaan. Näin on määritetty projektisi juuressa sijaitsevassa <code>.gitignore</code>-tiedostossa.</div>
+</p>
+<h3>4.2 Tietokannan dokumentointi</h3>
+<p>
+  Täydennetään ensin dokumentaatiotamme <strong><a href="http://advancedkittenry.github.io/dokumentaatio-ohje.html#j%C3%A4rjestelm%C3%A4n-tietosis%C3%A4lt%C3%B6" target="_blank">järjestelmän tietosisältö</a></strong> osiolla ja <strong><a href="http://advancedkittenry.github.io/dokumentaatio-ohje.html#relaatiotietokantakaavio" target="_blank">relaatiotietokantakaaviolla</a></strong>, jotta tiedämme, mitkä taulut tietokantaamme tarvitsemme. Muistathan, että arvosanaan 5 vaaditaan vähintään yksi <a href="http://en.wikipedia.org/wiki/Many-to-many_%28data_model%29">monesta-moneen-suhde</a> tietokantaulujen välillä.
+</p>
+<h3>4.3 Tietokantaulujen pystyttäminen</h3>
+<p>
+  Tietokantojen parissa työskennellessä kannattaa tarvittaessa katsoa ohjeita esimerkiksi näiltä sivuilta:
+</p>
+<ul>
+  <li><a href="http://www.w3schools.com/sql/default.asp" target="_blank">W3Schoolsin SQL-opas</a></li>
+  <li><a href="http://www.tutorialspoint.com/mysql/" target="_blank">Tutorialspointin MySQL-opas</a></li>
+</ul>
+<p>
+  Kansiossa <code>sql</code> sijaitsevat tiedostot <code>create_tables.sql</code>, <code>drop_tables.sql</code> ja <code>add_test_data.sql</code>. Aloitetaan lisäämällä tietokantaulujemme luontilauseet <code>create_table.sql</code>-tiedostoon. Käytössäni on MySQL-tietokanta, jolloin oman sovellukseni osalta ne ovat seuraavat:
+</p>
+<div hljs language="sql" no-escape>CREATE TABLE Player(
+  id INT PRIMARY KEY AUTO_INCREMENT, -- AUTO_INCREMET-kenttä kasvattaa kentän arvoa jokaisen rivin lisäyksen yhteydessä, jolloin arvo on aina uniikki
+  name varchar(50) NOT NULL
+  password varchar(50) NOT NULL
+);
+
+CREATE TABLE Game(
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  user_id INT REFERENCES Player(id), -- Viiteavain Player-tauluun
+  name varchar(50) NOT NULL
+  played boolean DEFAULT FALSE,
+  description varchar(400),
+  published DATE,
+  publisher varchar(50),
+  added DATE
+);
+</div>
+<p>
+  <code>AUTO_INCREMENT</code>-kenttä on kätevä pääavaimien arvojen kanssa, koska niiden arvoja ei tarvitse koskaan erikseen asettaa rivin lisäämisen yhteydessä, vaan kentän arvona toimii jokaisen lisäyksen yhteydessä kasvava luku. Jos <code>CREATE TABLE</code>-syntaksi on päässyt unohtumaan, kannattaa tutustua <a href="http://www.tutorialspoint.com/mysql/mysql-create-tables.htm" target="_blank">tähän</a> oppaaseen. Kannattaa myös tutustua MySQL-tietokannan <a href="http://www.tutorialspoint.com/mysql/mysql-data-types.htm" target="_blank">tietotyyppeihin</a>.
+</p>
+<p>
+  <div class="alert alert-warning">
+    Muistaa luoda taulu ennen kuin viittaat siihen toisessa taulussa viiteavaimella, kuten omassa sovelluksessani loin <code>Player</code>-taulun ennen <code>Game</code>-taulua.
+  </div>
+</p>
+<p>
+  Lisätään tauluillemme myös poistolauseet, jolloin voimme poistaa ne tarvittaessa. Lisätään poistolauseet <code>drop_tables.sql</code>-tiedostoon:
+</p>
+<div hljs language="sql" no-escape>DROP TABLE IF EXISTS Game;
+DROP TABLE IF EXISTS Player;</div>
+<p>
+  Tallennetaan molemmat tiedostot, käynnistetään XAMPP ja Apache ja MySQL-palvelimet, ja siirrytään osoitteeseen <a href="http://localhost/phpmyadmin/" target="_blank">http://localhost/phpmyadmin/</a>, josta löytyy kätevä tietokantojenhallintatyökalu. Klikataan vasemmalta tietokantojen listasta tietokantaa nimeltä <code>test</code> ja valitaan avautuneesta vaakavalikosta <code>SQL</code>. Aukeaa lomake, jonka kautta voimme suorittaa SQL-komentoja. Pystytetään tietokantataulumme liittämällä ensin poistolauseet tekstikenttään ja sen alapuolelle luontilauseet. Kun molemmat on lisätty, klikataan painiketta lomakkeen oikeassa alareunassa, jolloin komennot suoritetaan tietokannassamme. Jos virheilmoituksia ei tule, ilmestyy vasemmalle tietokantojen listaan <code>test</code>-tietokannan alle luomasi taulut.
+</p>
+<p>
+  Kun saat tietokantataulusi ajattetua tietokantaan onnistuneesti, lisää niihin hieman testidataa. Tämä onnistuu lisäämällä tarvittavat <code>INSERT INTO</code>-lauseet <code>add_test_data.sql</code> tiedostoon. Oma testidatani näyttää tältä:
+</p>
+<div hljs language="sql" no-escape>-- Player-taulun testidata
+INSERT INTO Player (name, password) VALUES ('Kalle', 'Kalle123');
+INSERT INTO Player (name, password) VALUES ('Henri', 'Henri123');
+
+-- Game taulun testidata
+INSERT INTO Game (name, description, published, publisher, added) VALUES ('The Elder Scrolls V: Skyrim', 'Arrow to the knee', '2011-11-11', 'Bethesda Softworks', NOW());</div>
+
+<p>
+  Ajatetaan testidata tietokantaan samaan tapaan kuin tietokantataulujen pystyttämisen kanssa. Voit katsella tietokantataulujen sisältä vasemmasta tietokantojen listasta klikkaamalla <code>test</code>-tietokannan alta haluaamasi taulun nimeä.
+</p>
+
+<p>
+  Voimme tarkastella tietokantamme tauluja ja niiden sisältöä menemällä sovelluksessamme polkuun <code>/tietokantayhteys</code>.
+</p>
+
+<p>
+  Ajetaan vielä tietokantaulut ja testidata users-palvelimen tietokantaamme. Tämä onnistuu suorittamalla terminaalissa projektin juuressa ensin <code>bash create_tables.sh</code> ja sen jälkeen <code>bash add_test_data.sh</code>. Jos käytät Windowsia, ota ensin SSH-yhteys users-palvelimeen ja siirry terminaalissa <code>sql</code>-kansioon, jonka jälkeen voit ajaa <code>sql</code>-tiedoston tietokantaan komennolla <code>psql < tiedoston_nimi.sql</code>.
+</p>
+
+<hr>
+<a name="5-kehitysymparistosta-users-palvelimelle"></a>
+<h2>5. Kehitysympäristöstä users-palvelimelle</h2>
+<p>
+  Sovelluksemme alkaa olla tämän viikon osalta pulkassa. Siirretään sovelluksemme tiedostot users-palvelimelle, jotta muutkin voivat nähdä hienon sovelluksesi. Siirrytään kansiossa <code>config</code> sijaitsevaan tiedostoon <code>database.php</code> ja vaihdentaan <code>environment</code>-muuttujan arvoksi <code>users</code>. Suoritetaan seuraavaksi terminaalissa projektimme juuressa komento <code>bash deploy.sh</code>, jolloin sovelluksesi tiedostot siirretään users-palvelimelle. Jos käytät Windowsia, siirrä muutettu <code>database.php</code>-tiedosto palvelimelle käyttämällä PuTTY:a.
+</p>
+<p>
+  Siirrytään selaimessa users-palvelimella pyörivään sovellukseemme, joka sijaitsee viime viikolla valitsemiesi ympäristömuuttujista riippuen osoitteessa <a>USERNAME.users.cs.helsinki.fi/PROJECT_FOLDER</a>. Voit tarkastaa näiden muuttujien arvot tiedostosta <code>config/environment.sh</code>. Katsotaan, että tietokantayhteys on kunnossa siirtymällä sovelluksessamme polkuun <code>/tietokanteyhteys</code>. Jos jotain on vialla, tarkista, että teit kaikki tarvittavat muutokset <code>config/database.php</code>-tiedossa. Jos kaikki on kunnossa, voit vaihtaa <code>config/database.php</code>-tiedostossa muuttujan <code>environment</code> arvoksi taas <code>xampp</code> ja jatkaa sovelluksesi toteuttamista kehitysympäristössä.
+</p>
+<hr>
+<a name="6-palautuksen-vaatimukset"></a>
+<h2>6. Palautuksen vaatimukset</h2>
+<ol>
+  <li>
+    Suunnittele käyttöliittymäsi ja toteuta niistä staattiset HTML-sivut. Muista lisätä linkit toteuttamiisi sivuihin reposi <code>README.md</code>-tiedostoon. <strong>(1,5p)</strong>
+    <ul>
+      <li>Suunnittele etusivu</li>
+      <li>Suunnittele listaussivut</li>
+      <li>Suunnittele muokkaus- ja esittelysivut</li>
+    </ul>
+  </li>
+  <li>
+    Ota tietokanta käyttöön ja dokumentoi se. <strong>(1,5p)</strong>
+    <ul>
+      <li>Lisää dokumentaatioon <a href="http://advancedkittenry.github.io/dokumentaatio-ohje.html#j%C3%A4rjestelm%C3%A4n-tietosis%C3%A4lt%C3%B6">järjestelmän tietosisältö</a> osio ja <a href="http://advancedkittenry.github.io/dokumentaatio-ohje.html#relaatiotietokantakaavio">relaatiotietokantakaavio</a></li>
+      <li>Lisää tietokantataulujen pystytyslauseet <code>create_tables.sql</code>-tiedostoon</li>
+      <li>Lisää tietokantataulujen poistolauseet <code>drop_tables.sql</code>-tiedostoon</li>
+      <li>Lisää testidatan lisäyslauseet <code>add_test_data.sql</code>-tiedostoon</li>
+    </ul>
+  </li>
+  <li>
+    <strong>Siirrä sovelluksesi tiedostot kehitysympäristöstä users-palvelimelle!</strong>
+  </li>
+  <li>
+    <strong>Pushaa kaikki tekämäsi muutokset repoosi!</strong>
+  </li>
+</ol>
+<a href="#viikko3" class="btn btn-default pull-right">Viikko 3 <span class="glyphicon glyphicon-chevron-right"></span></a>
