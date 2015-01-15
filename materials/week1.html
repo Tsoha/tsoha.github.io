@@ -3,16 +3,16 @@
 </div>
 <h2>Sisällysluettelo</h2>
 <ul class="nav nav-pills nav-stacked">
-  <li><a href="#1-web-sovellusten-toimintaperiaatteet" target="_self">1. Web-sovellusten toimintaperiaatteet</a></li>
-  <li><a href="#2-mvc-malli" target="_self">2. MVC-malli</a></li>
-  <li><a href="#3-tyoympariston-pystyttaminen" target="_self">3. Työympäristön pystyttäminen</a></li>
-  <li><a href="#4-perusasioiden-dokumentointi" target="_self">4. Perusasioiden dokumentointi</a></li>
-  <li><a href="#5-palautuksen-vaatimukset">5. Palautuksen vaatimukset</a></li>
+  <li><a href="" ng-click="goto_anchor('1-web-sovellusten-toimintaperiaatteet')">1. Web-sovellusten toimintaperiaatteet</a></li>
+  <li><a href="" ng-click="goto_anchor('2-mvc-malli')">2. MVC-malli</a></li>
+  <li><a href="" ng-click="goto_anchor('3-tyoympariston-pystyttaminen')">3. Työympäristön pystyttäminen</a></li>
+  <li><a href="" ng-click="goto_anchor('4-perusasioiden-dokumentointi')">4. Perusasioiden dokumentointi</a></li>
+  <li><a href="" ng-click="goto_anchor('5-palautuksen-vaatimukset')">5. Palautuksen vaatimukset</a></li>
 </ul>
 
 <hr>
 
-<a name="1-web-sovellusten-toimintaperiaatteet"></a>
+<a id="1-web-sovellusten-toimintaperiaatteet"></a>
 <h2>1. Web-sovellusten toimintaperiaatteet</h2>
 
 <p>
@@ -44,11 +44,12 @@
 <p>
   Kuten näet, suurin osa pyynnöistä on GET-pyyntöjä, jotka kohdistuvat staattisiin tiedoistoihin, kuten kuviin tai tyylitiedostoihin. Pyynnöistä ylimmäinen palauttaa <strong>html</strong>-tiedoston, joka esittää selaimessa näkemäämme sivua.
 </p>
+
 <p>
  Haluamme kuitenkin myös usein lähettää tietoa palvelimelle, kuten jonkin käyttäjän täyttämän lomakkeen. Tämä onnistuu <strong>POST-pyynnöllä</strong>, jonka mukana pystyy välittämään GET-pyynnön tapaan parametreja, jotka eivät tosin vain näy kyselyn osoitteessa. Tulemme tässä materiaalissa käymään läpi, miten käytännössä käsittelemme ja vastaamme näihin selaimen lähettämiiin pyyntöihin sovelluksessamme.
 </p>
 <hr>
-<a name="2-mvc-malli"></a>
+<a id="2-mvc-malli"></a>
 <h2>2. MVC-malli</h2>
 <p>
   <strong>MVC-malli</strong> (model-view-controller) on nykyään hyvin yleinen web-sovellusten toteutusmalli, jonka tarkoituksena on erottaa näkymä sovelluslogiikasta. Siinä sovellus jaetaan kolmeen osaan:
@@ -81,10 +82,15 @@
   </div>
 </div>
 <hr>
-<a name="3-tyoympariston-pystyttaminen"></a>
+<a id="3-tyoympariston-pystyttaminen"></a>
 <h2>3. Työympäristön pystyttäminen</h2>
+<p>
+  <div class="alert alert-warning">
+    Tässä vaiheessa tarvitse CS-tunnukset. Jos olet sivuaineopiskelija, lue <a href="http://www.cs.helsinki.fi/tietotekniikka/k-ytt-luvat" target="_blank">täältä</a> kohta "Sivuaineopiskelijat", jossa neuvotaan, miten saat ne.
+  </div>
+</p>
 Löpinät sikseen ja ryhdytä hommiin! Tulemme pystyttämään sovelluksemme laitoksen <strong>users-palvelimelle</strong>, jossa pystymme pyörittämään <strong>PHP</strong>:lla tai <strong>Javalla</strong> toteutettua sovellusta käyttäen joko <strong>PostgreSQL</strong>- tai <strong>MySQL</strong>-tietokantapalvelinta.
-Tässä materiaalissa toteutamme sovelluksemme PHP:lla käyttäen PostgreSQL tietokantapalvelinta. Myös muut toteutusvaihtoehdot ovat toki mahdollisia, kunhan sovit asiasta erikseen ohjaajan kanssa.
+Tässä materiaalissa toteutamme sovelluksemme PHP:lla käyttäen PostgreSQL-tietokantapalvelinta. Myös muut toteutusvaihtoehdot ovat toki mahdollisia, kunhan sovit asiasta erikseen ohjaajan kanssa.
 <h3>3.1 Lyhyesti PHP:sta</h3>
 <p>
   <strong>PHP</strong> on erittäin yleinen web-palvelinympäristössä käytetty kieli, joka sopii hyvin sovelluksemme toteuttamiseen. Javaan tottuneella ohjelmoijalla saattaa kuitenkin olla PHP:n kanssa aluksi hieman sulattelemista. Ensimmäinen oleellinen ero kielten välillä on, ettei PHP:ssa muuttujilla ole tyyppejä:
@@ -146,21 +152,19 @@ echo $misse->nimi();
 
 <h3>3.2 PHP-tuen käyttöönotto</h3>
 <p>
-  Otetaan seuraavaksi PHP-tuki käyttöön users-palvelimella. Aloitetaan ottamalla <strong>SSH-yhteys</strong> users-palvelimeen, joka onnistuu avaamalla terminaali ja suorittamalla siinä seuraava komento:
+  Otetaan seuraavaksi PHP-tuki käyttöön users-palvelimella. Aloitetaan ottamalla <strong>SSH-yhteys</strong> users-palvelimeen, joka onnistuu avaamalla terminaali ja suorittamalla siinä seuraava komento (käytä CS-käyttäjätunnustasi kohdassa <code>kayttajatunnus</code>):
 </p>
-<div hljs language="shell" no-escape>ssh kayttajatunnus@users.helsinki.fi</div>
+<div hljs no-escape>ssh kayttajatunnus@users.cs.helsinki.fi</div>
 
 <p>
-  <div class="alert alert-info">
-    Jos käytät Windowsia, SSH-yhteyden muodostaminen onnistuu käyttämällä <a href="http://www.putty.org/">PuTTY</a>:a.
-  </div>
+  <strong>Tämän komennon suorittaminen kysyy sinulta CS-käyttäjäsi salasanaa.</strong>
 </p>
 
 <p>
   PHP-tiedostot sijoitetaan kotihakemistossasi sijaitsevaan <code>htdocs</code>-kansioon. Luodaan se suorittamalla seuraava komento:
 </p>
 
-<div hljs language="shell" no-escape>wanna-htdocs</div>
+<div hljs no-escape>wanna-htdocs</div>
 
 <p>
   Se on siinä! <code>htdocs</code> kansio on nyt luotu, katso vaikka itse suorittamalla terminaalissa <code>ls -l</code>.
@@ -168,48 +172,38 @@ echo $misse->nimi();
 
 <h3>3.3 Tietokannan käyttöönotto</h3>
 <p>
-  Seuraavaksi tarvitsemme käyttöömme tietokannan. Kuten jo mainittiin users-palvelimella voimme valita PostgreSQL- ja MySQL-tietokantapalvelimien väliltä. Tulemme tässä materiaalissa kuitenkin käyttämään MySQL-tietokantapalvelinta, koska se on yhteensopivin käyttämiemme työkalujen kanssa. Saat MySQL-tietokannan käyttöösi suorittamalla users-palvelimen puolella seuraavan komennon:
+  Seuraavaksi tarvitsemme käyttöömme tietokannan. Kuten jo mainittiin users-palvelimella voimme valita PostgreSQL- ja MySQL-tietokantapalvelimien väliltä. Koska PostgreSQL-tietokannan käyttö on paljon
+  vaivattomampaa, käytämme tässä materiaalissa sitä. Saat sen käyttöösi suorittamalla palvelimen puolella seuraavan komennon:
 </p>
 
-<div hljs language="shell" no-escape>wanna-mysql</div>
+<div hljs no-escape>wanna-postgres</div>
 
 <p>
-  Komennon suorittamisen jälkeen sinulta kysytään tietokannan pääkäyttäjän salasanaa, jonka voit päättää itse. <strong>Pistä valitsemasi salasana johonkin ylös</strong>, sillä sitä ei talleneta mihinkään siltä varalta, että unohdat sen. MySQL-tietokannan käynnistäminen ja sammuttaminen täytyy hoitaa manuaalisesti. Voit käynnistää tietokannan komennolla <code>start-mysql</code> ja sammuttaa sen komennolla <code>stop-mysql</code>. Käynnistä seuraavaksi tietokantasi <code>start-mysql</code>-komennolla, jonka jälkeen voit nyt käyttää mysql-komentotulkkia seuraavasti:
+Voimme nyt tehdä kyselyitä tietokantaamme käyttämällä komentotulkkia, joka käynnistyy komennolla <code>psql</code>.
 </p>
 
-<div hljs language="shell" no-escape>kalleilv@users:~$ mysql -u root -p
-Enter password:
-Welcome to the MySQL monitor.  Commands end with ; or \g.
-Your MySQL connection id is 1
-Server version: 5.1.73-0ubuntu0.10.04.1 (Ubuntu)
+<div hljs no-escape>kalleilv@users:~$ psql
+psql (8.4.22)
+Type "help" for help.
 
-Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
+kalleilv=> SELECT 1+1 AS numero;
+numero
+--------
+2
+(1 row)
 
-Oracle is a registered trademark of Oracle Corporation and/or its
-affiliates. Other names may be trademarks of their respective
-owners.
-
-Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
-
-mysql> SELECT 1+1 AS summa;
-+-------+
-| summa |
-+-------+
-|     2 |
-+-------+
-1 row in set (0.00 sec)
-
-mysql> \q
-Bye</div>
+kalleilv=> \q
+</div>
 
 <p>
-  Käynnistin siis komentotulkin komennolla <code>mysql -u root -p</code>, joka pyytää tietokantani pääkäyttäjän salasanaa, ja suoritin siinä kyselyn <code>SELECT 1+1 AS summa;</code> (muista ";" kyselyn loppuun!), jonka jälkeen suljin sen syöttämällä <code>\q</code>.
+  Suoritin siis komentotulkissa kyselyn <code>SELECT 1+1 AS numero</code> (muista ";" kyselyn loppuun!) ja suljin sen syöttämällä <code>\q</code>.
 </p>
+
 <h3>3.4 SSH-avain</h3>
 <p>
-  Luodaan seuraavaksi <strong>SSH-avain</strong>, jotta meidän ei aina tarvitsi kirjoittaa salasanaa SSH-yhteyden avaamisen yhteydessä. Poistutaan hetkeksi users-palvelimelta esimerkiksi avaamalla uusi terminaali, jonka jälkeen suoritetaan siinä komento <code>ssh-keygen</code>. Meiltä kysytään tiedoston nimeä ja salasanaa, jätetään nämä kentät tyhjiksi. Avainparimme on nyt luotu.
+  Luodaan seuraavaksi <strong>SSH-avain</strong>, jotta meidän ei aina tarvitsi kirjoittaa salasanaa SSH-yhteyden avaamisen yhteydessä. Poistutaan hetkeksi users-palvelimelta esimerkiksi avaamalla uusi terminaali, jonka jälkeen suoritetaan siinä komento <code>ssh-keygen</code>. Meiltä kysytään tiedoston nimeä ja salasanaa. Voit jättää sekä tiedoston nimen, että salasanan halutessasi tyhjäksi, korvaa vain tarvittaessa jo ennestään luotu <code>id_rsa.pub</code>-tiedosto. Jos päädyt asettamaan avaimellesi salasanan, täytyy sinun suorittaa terminaalissa jokaisen sisäänkirjautumisen jälkeen komento <code>ssh-add</code> ja syöttää avaimellesi valitsemasi salasana. Siis salasanan jättämien asettamatta on melko paljon vaivattomampaa. Avainparimme on nyt luotu.
 </p>
-<div hljs language="shell" no-escape>Your identification has been saved in /Users/kalle/.ssh/id_rsa.
+<div hljs no-escape>Your identification has been saved in /Users/kalle/.ssh/id_rsa.
 Your public key has been saved in /Users/kalle/.ssh/id_rsa.pub.
 The key fingerprint is:
 62:7d:a6:41:56:4d:5c:40:f4:c5:71:e7:2f:2d:1c:03 kalle@mac-macbook-air.elisa
@@ -225,18 +219,18 @@ The keys randomart image is:
 |                 |
 |                 |
 +-----------------+</div>
-  <p>
-    Katsotaan tulosteesta, mihin <code>id_rsa.pub</code>-tiedosto luotiin, minulta se löytyy kansiosta <code>/Users/kalle/.ssh</code> ja laitoksen koneilla <code>/home/kayttajatunnus/.ssh</code>. Siirrytään oikeaan kansioon suorittamalla terminaalissa <code>cd OMA_POLKUNI</code>. Avataan tiedosto <code>id_rsa.pub</code> suorittamalla <code>cat id_rsa.pub</code> ja kopioidaan terminaalista tiedoston sisältö. Laitetaan sisältö hetkeksi talteen vaikkapa tekstitiedostoon vanhalla kunnon ctrl+V-näppäinyhdistelmällä.
-  </p>
+<p>
+  Katsotaan tulosteesta, mihin <code>id_rsa.pub</code>-tiedosto (tai itse nimeämäsi <code>pub</code>-tiedosto) luotiin, minulta se löytyy kansiosta <code>/Users/kalle/.ssh</code> ja laitoksen koneilla <code>/home/kayttajatunnus/.ssh</code>. Siirrytään oikeaan kansioon suorittamalla terminaalissa <code>cd OMA_POLKUNI</code>. Avataan tiedosto <code>id_rsa.pub</code> suorittamalla <code>cat id_rsa.pub</code> ja kopioidaan terminaalista tiedoston sisältö. Laitetaan sisältö hetkeksi talteen vaikkapa tekstitiedostoon vanhalla kunnon ctrl+V-näppäinyhdistelmällä.
+</p>
 
-  <p>
-    Otetaan seuraavaksi SSH-yhteys users-palvelimeen:
-  </p>
-  <div hljs language="shell" no-escape>ssh kayttajatunnus@users.helsinki.fi</div>
-  <p>
-    Kun yhteys on muodostettu, luodaan kotihakemistoosi kansio <code>.ssh</code>, jos ei jo ole siellä. Tämä onnistuu suorittamalla <code>mkdir .ssh</code>. Siirrytään luomaamme kansioon suorittamalla <code>cd .ssh</code> ja luodaan tiedosto <code>authorized_keys</code> suorittamalla <code>touch authorized_keys</code>. Avataan luomma tiedosto vim-editorissa suorittamalla <code>vim authorized_keys</code> ja painetaan a-näppäintä, jolloin pääsemme muokkaamaan tiedostoa. Copy-Pastetaan tallettamamme <code>id_rsa.pub</code>-tiedoston sisältö editoriin (Huom! Jos tiedossa oli jo ennestään avain, pasteta sisältö uudelle riville), painetaan esc-näppäintä ja suoritetaan <code>:wq</code>, jolloin tallennamme tiedoston ja lopetamme. Lisätään vielä tarvittavat oikeudet:
-  </p>
-  <div hljs language="shell" no-escape># Siirrytään takaisin kotihakemistoon
+<p>
+  Otetaan seuraavaksi SSH-yhteys users-palvelimeen:
+</p>
+<div hljs no-escape>ssh kayttajatunnus@users.cs.helsinki.fi</div>
+<p>
+  Kun yhteys on muodostettu, luodaan kotihakemistoosi kansio <code>.ssh</code>, jos ei jo ole siellä. Tämä onnistuu suorittamalla <code>mkdir .ssh</code>. Siirrytään luomaamme kansioon suorittamalla <code>cd .ssh</code> ja luodaan tiedosto <code>authorized_keys</code> suorittamalla <code>touch authorized_keys</code>. Avataan luomma tiedosto vim-editorissa suorittamalla <code>vim authorized_keys</code> ja painetaan a-näppäintä, jolloin pääsemme muokkaamaan tiedostoa. Copy-Pastetaan tallettamamme <code>id_rsa.pub</code>-tiedoston sisältö editoriin (Huom! Jos tiedossa oli jo ennestään avain, pasteta sisältö uudelle riville), painetaan esc-näppäintä ja suoritetaan <code>:wq</code>, jolloin tallennamme tiedoston ja lopetamme. Lisätään vielä tarvittavat oikeudet:
+</p>
+  <div hljs no-escape># Siirrytään takaisin kotihakemistoon
 cd $HOME
 # Oikeudet .ssh-kansiolle (luku, kirjoitus ja suoritus)
 chmod 700 .ssh
@@ -260,7 +254,7 @@ chmod 600 .ssh/authorized_keys
   Pura lataamasi zip-paketti haluamaasi hakemistoon ja avaa kansiossa <code>config</code> oleva tiedosto <code>environment.sh</code> haluamallasi tekstieditorilla. Se näyttää seuraavalta:
 </p>
 
-<div hljs language="shell" no-escape># korvaa tämä omalla käyttäjätunnuksellasi
+<div hljs no-escape># korvaa tämä omalla käyttäjätunnuksellasi
 USERNAME="kalleilv"
 # korvaa tämä haluamallasi kansion nimellä
 PROJECT_FOLDER="tsoha"</div>
@@ -270,24 +264,18 @@ PROJECT_FOLDER="tsoha"</div>
   osoitteessa <a>USERNAME.users.cs.helsinki.fi/PROJECT_FOLDER</a>. Tallenna tiedosto, siirry terminaalissa Tsoha Bootstrapin juureen ja suorita seuraava komento:
 </p>
 
-<div hljs language="shell" no-escape>bash bootstrap.sh</div>
+<div hljs no-escape>bash bootstrap.sh</div>
 
 <p>
-  Tämä komento luo palvelimelle määrittämämme kansion ja siirtää Tsoha Bootstrapin tiedostot siihen. Jos käytät Windowsia, voit siirtää tiedostot palvelimelle käyttäen PuTTY:a. Sovelluksemme runko löytyy nyt osoitteesta <a>USERNAME.users.cs.helsinki.fi/PROJECT_FOLDER</a>, käydään kurkkaamassa, miltä se näyttää.
+  Tämä komento luo palvelimelle määrittämämme kansion ja siirtää Tsoha Bootstrapin tiedostot siihen. Sovelluksemme runko löytyy nyt osoitteesta <a>USERNAME.users.cs.helsinki.fi/PROJECT_FOLDER</a>, käydään kurkkaamassa, miltä se näyttää.
 </p>
 
 <p>
   Tämä riittää toistaiseksi, palaamme Tsoha Bootstrappin pariin taas viikolla 2.
 </p>
 
-<h3>3.6 XAMPP-kehitysympäristö</h3>
+<h3>3.6 Versionhallinta</h3>
 
-<p>
-  <strong><a href="https://www.apachefriends.org/index.html">XAMPP</a></strong> on yksi PHP:n suosituimmista kehitysympäristöistä, jonka avulla voit toteuttaa sovellustasi nopeasti ja vaivattomasti. Asenna se haluamallesi käyttöjärjestelmälle <a href="https://www.apachefriends.org/download.html">täältä</a>. Pelkkä asentaminen riittää toistaiseksi, puhumme lisää sen käytöstä ensi viikolla.
-</p>
-
-
-<h3>3.7 Versionhallinta</h3>
 <p>
   Aloita luomalla repositorio <a href="http://www.github.com">GitHub</a>:iin. Jos et ole vielä rekisteröitynyt, tee se nyt.
 </p>
@@ -295,7 +283,7 @@ PROJECT_FOLDER="tsoha"</div>
   Kun olet kirjautunut sisään pääset luomaan uuden repon klikkaamalla "+"-ikonia oikeassa ylälaidassa ja valitsemalla "New repository". Valitse repon nimi vapaasti ja klikkaa "Create repository".
   Sinut ohjataan reposi sivulle ja oikeassa alalaidassa on kenttä "HTTPS clone URL", kopioi sen sisältö. Siirry nyt terminaalissa hakemistoon, johon haluat kloonata reposi ja suorita tämä komento kopioimallasi polulla:
 </p>
-<div hljs language="shell" no-escape>git clone https://github.com/KAYTTAJATUNNUS/REPON_NIMI.git</div>
+<div hljs no-escape>git clone https://github.com/KAYTTAJATUNNUS/REPON_NIMI.git</div>
 <p>
   Siirrä seuraavaksi Tsoha Bootstrapin tiedostot kloonaamasi repoon.
 </p>
@@ -304,21 +292,21 @@ PROJECT_FOLDER="tsoha"</div>
 </p>
 <p>
   <strong>1. Lisätään tiedostot</strong>
-  <div hljs language="shell" no-escape>git add -A</div>
+  <div hljs no-escape>git add -A</div>
 </p>
 <p>
   <strong>2. Luodaan committi, jossa kerrotaan lyhyesti, mitä uutta tässä päivityksessä on</strong>
-  <div hljs language="shell" no-escape>git commit -m "Sovellus alustettu ja versionhallinta otettu käyttöön"</div>
+  <div hljs no-escape>git com mit -m "Sovellus alustettu ja versionhallinta otettu käyttöön"</div>
 </p>
 <p>
   <strong>3. Siirretään tiedostot repoon</strong>
-  <div hljs language="shell" no-escape>git push</div>
+  <div hljs no-escape>git push</div>
 </p>
 <p>
   Yksityskohtaisemmat Git-ohjeet löytyvät Ohjelmoinnin harjoitustyön <a href="http://javalabra.github.io/Javalabra2014-2/#/pages/ohjeet/Git-ohje.md">Git-ohje-sivulta</a>.
 </p>
 <hr>
-<a name="4-perusasioiden-dokumentointi"></a>
+<a id="4-perusasioiden-dokumentointi"></a>
 <h2>5. Perusasioiden dokumentointi</h2>
 <h3>4.1 Aiheen valinta</h3>
 <p>
@@ -351,7 +339,7 @@ Lisää vielä projektisi juuressa sijaitsevaan <code>README.md</code>-tiedostoo
 <h3>4.4 Labtool</h3>
 <strong><a href="http://tsoha-labtool.herokuapp.com">Labtool</a></strong> on kurssilla käytettävä sovellus, jonka avulla opiskelija voi katsella viikottaisista palautuksista saamiaan pisteitä ja ohjaajan kirjottamia palautetteita. Rekisteröidy labtooliin <a href="http://tsoha-labtool.herokuapp.com/register">tästä</a>.
 <hr>
-<a name="5-palautuksen-vaatimukset"></a>
+<a id="5-palautuksen-vaatimukset"></a>
 <h2>5. Palautuksen vaatimukset</h2>
 <ol>
   <li>
@@ -374,9 +362,8 @@ Lisää vielä projektisi juuressa sijaitsevaan <code>README.md</code>-tiedostoo
     Pystytä työympäristö. <strong>(1p)</strong>
     <ul>
       <li>Ota PHP-tuki käyttöön</li>
-      <li>Ota MySQL-tietokantapalvelin käyttöön</li>
+      <li>Ota PostgreSQL-tietokantapalvelin käyttöön</li>
       <li>Luo SSH-avain</li>
-      <li>Asenna XAMPP-kehitysympäristö</li>
     </ul>
   </li>
   <li>Rekisteröidy <a href="http://tsoha-labtool.herokuapp.com">labtooliin</a>.</li>

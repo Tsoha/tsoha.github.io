@@ -3,14 +3,14 @@
 </div>
 <h2>Sisällysluettelo</h2>
 <ul class="nav nav-pills nav-stacked">
-  <li><a href="#1-kirjautumisen-tarkistus-ja-uloskirjautuminen">1. Kirjautumisen tarkistus ja uloskirjautuminen</a></li>
-  <li><a href="#2-oman-sovelluksen-laajentaminen">2. Oman sovelluksen laajentaminen</a></li>
-  <li><a href="#3-dokumentaation-viimeistely">3. Dokumentaation viimeistely</a></li>
-  <li><a href="#4-pienta-hienosaatoa">4. Pientä hienosäätöä</a></li>
-  <li><a href="#5-palautuksen-vaatimukset">5. Palautuksen vaatimukset</a></li>
+  <li><a href="" ng-click="goto_anchor('1-kirjautumisen-tarkistus-ja-uloskirjautuminen')">1. Kirjautumisen tarkistus ja uloskirjautuminen</a></li>
+  <li><a href="" ng-click="goto_anchor('2-oman-sovelluksen-laajentaminen')">2. Oman sovelluksen laajentaminen</a></li>
+  <li><a href="" ng-click="goto_anchor('3-dokumentaation-viimeistely">3. Dokumentaation viimeistely</a></li>
+  <li><a href="" ng-click="goto_anchor('4-pienta-hienosaatoa')">4. Pientä hienosäätöä</a></li>
+  <li><a href="" ng-click="goto_anchor('5-palautuksen-vaatimukset')">5. Palautuksen vaatimukset</a></li>
 </ul>
 <hr>
-<a name="1-kirjautumisen-tarkistus-ja-uloskirjautuminen"></a>
+<a id="1-kirjautumisen-tarkistus-ja-uloskirjautuminen"></a>
 <h1>1. Kirjautumisen tarkistus ja uloskirjautuminen</h1>
 
 <h2>1.1 Kirjautumisen tarkistus</h1>
@@ -136,7 +136,7 @@ $app->post('/logout', function(){
 </nav>
 <!-- ... --></div>
 <hr>
-<a name="2-oman-sovelluksen-laajentaminen"></a>
+<a id="2-oman-sovelluksen-laajentaminen"></a>
 <h1>2. Oman sovelluksen laajentaminen</h1>
 
 Voit käyttää seuraavaksi aikaa oman sovelluksesi laajentamiseen. Muistathan, että arvosanan viisi saamiseksi sovelluksessasi tulee olla vähintään kahdessa tietokohteessa CRUD-nelikko. Koska kertaus on opintojen äiti, muistellaan seuraavaksi, mitä CRUD-nelikon toteuttamiseen liittyikään.
@@ -305,14 +305,14 @@ $app->post('/game/:id/destroy', function($id){
   </ul>
 </p>
 <hr>
-<a name="3-dokumentaation-viimeistely"></a>
+<a id="3-dokumentaation-viimeistely"></a>
 <h2>3. Dokumentaation viimeistely</h2>
 
 <p>
   Palataan hetkeksi dokumentaatioimme pariin. Jos sovelluksesi laajentaminen vaatii muutoksia dokumentaatioon, tee ne seuraavaksi. Sen jälkeen lisää dokumentaatiosi <a href="http://advancedkittenry.github.io/dokumentaatio-ohje.html#j%C3%A4rjestelm%C3%A4n-yleisrakenne">järjestelmän yleisrakenne</a>-osio sekä <a href="http://advancedkittenry.github.io/dokumentaatio-ohje.html#kayttoliittymakomponentit">käyttöliittymän ja järjestelmän komponentteja</a> kuvaava kaavio.
 </p>
 <hr>
-<a name="4-pienta-hienosaatoa"></a>
+<a id="4-pienta-hienosaatoa"></a>
 <h2>4. Pientä hienosäätöä</h2>
 
 <div class="alert alert-info">
@@ -479,9 +479,9 @@ $(document).ready(function(){
   Katson siis <code>$options</code>-parametrista, mikä on haluttu sivu (<code>page</code>-avaimen arvo) ja mikä on sen koko (<code>page_size</code>-avaimen arvo) ja valitsen oikeat rivit käyttämällä <code>LIMIT</code>- ja <code>OFFSET</code>-kometoja. Jotta tietäisin, kuinka monta peliä tietokannassa on, toteutan vielä <code>count</code>-metodin, joka palauttaa <code>Game</code>-taulun rivien lukumäärän. Kun tiedän tietokantaan talletettujen pelin lukumäärän saan sivujen lukumäärän seuraavasti:
 </p>
 
-<pre><code class="php">$games_count = Game::count();
+<div hljs language="php" no-escape>$games_count = Game::count();
 $page_size = 10;
-$pages = ceil($games_count/$page_size);</code></pre>
+$pages = ceil($games_count/$page_size);</div>
 
 <p>
   Näkymässäni sivuvalikko näyttää tältä:
@@ -499,16 +499,13 @@ $pages = ceil($games_count/$page_size);</code></pre>
 </nav></div>
 
 <hr>
-<a name="5-palautuksen-vaatimukset"></a>
+<a id="5-palautuksen-vaatimukset"></a>
 <h2>5. Palautuksen vaatimukset</h2>
 <ol>
   <li>Toteuta käyttäjän uloskirjautuminen ja estä kirjautumattoman käyttäjän pääsy sivuille, jotka vaativat kirjautumisen. <strong>(0,5p)</strong></li>
   <li>Edistä sovellustasi ja pidä koodi siistinä noudattamalla selkeää kansiorakennetta ja järkevää nimeämistä tiedostojen, luokkien ja metodien nimissä. Vaatimuksena on, että ainakin kahdelle tietokohteelle on toteutettu sivuja, kaikkia CRUD-nelikon osia ei kuitenkaan tarvitse molemmille toteuttaa. Lisäksi kaikkien toimintojen tulee toimia ja virhetilanteissa käyttäjälle täytyy antaa järkeviä virheilmoituksia. <strong>(1,5p)</strong></li>
   <li>Lisää dokumentaatioosi <a href="http://advancedkittenry.github.io/dokumentaatio-ohje.html#j%C3%A4rjestelm%C3%A4n-yleisrakenne">järjestelmän-yleisrakenne</a>-osio ja <a href="http://advancedkittenry.github.io/dokumentaatio-ohje.html#kayttoliittymakomponentit">käyttöliittymän ja järjestelmän komponentteja kuvaa kaavio</a>. <strong>(1p)</strong></li>
   <li>Kirjoita <a href="http://advancedkittenry.github.io/aikataulu/koodikatselmointi.html">koodikatselmointi</a> (vapaaehtoinen). <strong>(0-2p)</strong></li>
-  <li>
-    <strong>Siirrä sovelluksesi tiedostot kehitysympäristöstä users-palvelimelle!</strong>
-  </li>
   <li>
     <strong>Pushaa kaikki tekämäsi muutokset repoosi!</strong>
   </li>

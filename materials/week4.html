@@ -3,14 +3,14 @@
 </div>
 <h2>Sisällysluettelo</h2>
 <ul class="nav nav-pills nav-stacked">
-  <li><a href="#1-mallien-validointi">1. Mallien validointi</a></li>
-  <li><a href="#2-muokkaus-ja-poistotoiminnot">2. Muokkaus- ja poistotoiminnot</a></li>
-  <li><a href="#3-kirjautuminen">3. Kirjautuminen</a></li>
-  <li><a href="#4-palautuksen-vaatimukset">4. Palautuksen vaatimukset</a></li>
+  <li><a href="" ng-click="goto_anchor('1-mallien-validointi')">1. Mallien validointi</a></li>
+  <li><a href="" ng-click="goto_anchor('2-muokkaus-ja-poistotoiminnot')">2. Muokkaus- ja poistotoiminnot</a></li>
+  <li><a href="" ng-click="goto_anchor('3-kirjautuminen')">3. Kirjautuminen</a></li>
+  <li><a href="" ng-click="goto_anchor('4-palautuksen-vaatimukset')">4. Palautuksen vaatimukset</a></li>
 </ul>
 
 <hr>
-<a name="1-mallien-validointi"></a>
+<a id="1-mallien-validointi"></a>
 <h2>1. Mallien validointi</h2>
 Toteuttaessa viime viikolla tietokohteesi lisäystoiminnallisuutta saatoit ehkä miettiä, mitä tapahtuisi, jos käyttäjä
 syöttäisi lisäyslomakkeeseen vääränlaisia arvoja, kuten esimerkiksi tekstiä kokonaisluvun sijaan. Koska käyttäjän syötteet ovat arvaamattomia, on niiden validointi erittäin tärkeää.
@@ -27,7 +27,7 @@ syöttäisi lisäyslomakkeeseen vääränlaisia arvoja, kuten esimerkiksi teksti
     $game->save();
     // ...
   }else{
-    render_view('game/new.html', array('error' => 'Nimessä oli virhe!'));
+    self::render_view('game/new.html', array('error' => 'Nimessä oli virhe!'));
   }
 }</div>
 
@@ -199,7 +199,7 @@ Koska PHP on tyypitön, tapahtuu totuusarvojen kanssa joskus outoja tyyppimuunno
   Onneksesi Twig on niin kehittynyt sivupohjamoottori, että se hoitaa XSS-hyökkäyksen vaaran puolestasi. Upottamalla muuttujan <code>{{</code>- ja <code>}}</code>-merkkien sisään, muuttujan arvosta poistetaan HTML-tagit automattisesti. Ilman Twig:iä, HTML-tagien poistamiseen voi käyttää esimerkiksi <a href="http://php.net/htmlspecialchars" target="_blank">htmlspecialchars</a>-funktiota.
 </p>
 <hr>
-<a name="2-muokkaus-ja-poistotoiminnot"></a>
+<a id="2-muokkaus-ja-poistotoiminnot"></a>
 <h2>2. Muokkaus- ja poistotoiminnot</h2>
 
 <p>
@@ -284,7 +284,7 @@ $app->post('game/:id/destroy', function($id){
   </div>
 </p>
 <hr>
-<a name="3-kirjautuminen"></a>
+<a id="3-kirjautuminen"></a>
 <h2>3. Kirjautuminen</h2>
 <p>
   Jotta pelikirjasto olisi käyttäjäkohtainen, tarvitsen sovellukseeni kirjautumisen. Viikolla 2 tein jo pohjan kirjautumislomakkeelle, mutta siihen pitää tehdä vielä hieman muutoksia:
@@ -409,7 +409,7 @@ Koska POST-pyyntö ohjataan <code>UsersController</code> luokan <code>handle_log
   Toteuta seuraavaksi omaan sovellukseesi käyttäjän kirjautuminen. Päivitä myös tarvittaessa mallejasi niin, että ne ottavat huomioon kirjautuneen käyttäjän. Minun täytyy itse muokata <code>Game</code>-malliluokan <code>all</code>-metodia niin, että se ottaa parametrikseen kirjautuneen käyttäjän id:n ja hakee tietokannasta vain käyttäjän omat pelit.
 </p>
 <hr>
-<a name="4-palautuksen-vaatimukset"></a>
+<a id="4-palautuksen-vaatimukset"></a>
 <h2>4. Palautuksen vaatimukset</h2>
 
 <ol>
@@ -418,9 +418,6 @@ Koska POST-pyyntö ohjataan <code>UsersController</code> luokan <code>handle_log
   <li>Lisää malliisi tarvittavat validaattorit ja estä kontrollereissa virheellisten olioiden lisäys tietokantaan. Muista näyttää lomakkeissa virhetilanteissa virheilmoitukset ja täyttää kentät käyttäjän antamilla syötteillä. <strong>(0,5p)</strong></li>
   <li>Toteuta malliluokka sovelluksen käyttäjälle ja toteuta käyttäjän kirjautuminen. Toteuta <code>get_user_logged_in</code>-metodi ja käytä tarvittaessa kirjautuneen käyttäjän tietoa hyväksi näkymissä ja malleissa. <strong>(0,5p)</strong></li>
   <li>Kirjoita alustava <a href="http://advancedkittenry.github.io/dokumentaatio-ohje.html#k%C3%A4ynnistys--k%C3%A4ytt%C3%B6ohje" target="_blank">käynnistys- / käyttöohje</a> dokumentaatioosi. <strong>(0.5p)</strong></li>
-  <li>
-    <strong>Siirrä sovelluksesi tiedostot kehitysympäristöstä users-palvelimelle!</strong>
-  </li>
   <li>
     <strong>Pushaa kaikki tekämäsi muutokset repoosi!</strong>
   </li>

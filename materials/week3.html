@@ -3,14 +3,14 @@
 </div>
 <h2>Sisällysluettelo</h2>
 <ul class="nav nav-pills nav-stacked">
-  <li><a href="#1-mallit">1. Mallit</a></li>
-  <li><a href="#2-kontrollerit-ja-mallit">2. Kontrollerit ja mallit</a></li>
-  <li><a href="#3-lomakkeet-ja-lisaystoiminnot">3. Lomakkeet ja lisäystoiminnot</a></li>
-  <li><a href="#4-palautuksen-vaatimukset">4. Palautuksen vaatimukset</a></li>
+  <li><a href="" ng-click="goto_anchor('1-mallit')">1. Mallit</a></li>
+  <li><a href="" ng-click="goto_anchor('2-kontrollerit-ja-mallit')">2. Kontrollerit ja mallit</a></li>
+  <li><a href="" ng-click="goto_anchor('3-lomakkeet-ja-lisaystoiminnot')">3. Lomakkeet ja lisäystoiminnot</a></li>
+  <li><a href="" ng-click="goto_anchor('4-palautuksen-vaatimukset')">4. Palautuksen vaatimukset</a></li>
 </ul>
 
 <hr>
-<a name="1-mallit"></a>
+<a id="1-mallit"></a>
 <h2>1. Mallit</h2>
 
 <p>
@@ -189,6 +189,7 @@ class HelloWorldController extends BaseController{
     "classmap": [
       "vendor/Slim/Slim.php",
       "vendor/Twig/lib/Twig/Autoloader.php",
+      "config/database.php",
       "lib/",
       "app/controllers"
     ]
@@ -201,13 +202,7 @@ class HelloWorldController extends BaseController{
 </p>
 
 <p>
-  Lisää seuraavaksi kaikki sovelluksesi mallit automaattisesti ladattavien tiedostojen joukkoon lisäämällä niiden polku <code>classmap</code>-taulukkoon <code>composer.json</code>-tiedostossa. Kun polku on lisätty, tallenna ja suorita terminaalissa projektisi juuressa <code>php composer.phar dump-autoload</code>, joka päivittää <code>autoload_classmap.php</code>-tiedoston. Jos sisällytit malliluokkasi tiedoston kontrollerissa, voit nyt poistaa <code>require</code>-rivin, Composer hoitaa homman tästä eteenpäin.
-</p>
-
-<p>
-  <div class="alert alert-info">
-    Kun toteutat sovellustasi XAMPP:lla, muista suorittaa terminaalissa projektisi juuressa <code>php composer.phar dump-autoload</code> aina kun lisäät tiedoston <code>lib</code>-, <code>app/controllers</code>- tai <code>app/models</code>-kansioon. Windowssilla kommennon suorittaminen onnistuu avaamalla XAMPP:n Control Panelista <code>Shell</code>.
-  </div>
+  Lisää seuraavaksi kaikki sovelluksesi mallit automaattisesti ladattavien tiedostojen joukkoon lisäämällä niiden polku <code>classmap</code>-taulukkoon <code>composer.json</code>-tiedostossa. Kun polku on lisätty, tallenna ja buildaa. Buildaaminen yhteydessä suoritettava <code>deploy.sh</code> joka päivittää <code>autoload_classmap.php</code>-tiedoston suorittamalla projektisi juuressa komennon <code>php composer.phar dump-autoload</code>. Jos sisällytit malliluokkasi tiedoston kontrollerissa, voit nyt poistaa <code>require</code>-rivin, Composer hoitaa homman tästä eteenpäin.
 </p>
 
 <h3>1.3 SQL-injektio</h3>
@@ -235,7 +230,7 @@ $query->execute();</div>
 </p>
 
 <hr>
-<a name="2-kontrollerit-ja-mallit"></a>
+<a id="2-kontrollerit-ja-mallit"></a>
 <h2>2. Kontrollerit ja mallit</h2>
 <p>
   Kuten jo todettiin, mallit tarjoavat palveluita tietokannan muokkaamiseen ja hakuun. Käytännössä kontrolleri saattaa esimerkiksi pyytää mallilta jonkin tietokohteen oliot ja renderöi sen jälkeen näkymän, joka listaa ne. Katsomme seuraavaksi hieman tarkemmin, miten kontrollerit käyttävät malleja.
@@ -388,7 +383,14 @@ $app->get('/game/:id', function($id){
   Kuten huomaat, esittelysivun reittiin <code>/game/:id</code> on upotettu muuttuja <code>id</code>, joka on lisätty polkuun <code>:id</code>-syntaksilla. Nyt kun sovelluksessa menee esimerkiksi polkuun <code>game/1</code>, saa muuttuja arvokseen <code>1</code>. Tätä tietoa voimme käyttää kontrollerissa, hakeaksemme halutun pelin tietokannasta.
 </p>
 
-<a name="3-lomakkeet-ja-lisaystoiminnot"></a>
+<p>
+  <div class="alert alert-info">
+    Voit tulostaa koodin seasta viestejä PHP-logeihin <a href="http://php.net/manual/en/function.error-log.php" target="_blank">error_log</a>-funktion avulla. Muistathan, että pääset tarkkailemaan logeja suorittamalla terminaalissa projektisi juuressa komennon <code>bash php_logs.sh</code>.
+  </div>
+</p>
+
+<hr>
+<a id="3-lomakkeet-ja-lisaystoiminnot"></a>
 <h2>3. Lomakkeet ja lisäystoiminnot</h2>
 
 Olemme tähän asti käsitelleet, miten GET-pyynnöt kulkevat sovelluksemme läpi. Olemme tulleet kuitenkin pisteeseen, jossa haluamme ottaa vastaan syötteitä käyttäjältämme. Miten esimerkiksi käyttäjä voisi lisätä pelin kirjastoonsa?
@@ -503,15 +505,17 @@ $app->post('/game', function(){
   // ...
   public function save(){
     $connection = DB::connection();
-    $connection->prepare('...');
-    $connection->execute(array(...));
+    $query = $connection->prepare('INSERT INTO Game (...) VALUES (...) RETURNING id');
+    $query->execute(array(...));
 
-    $this->id = $connection->lastInsertId();
+    $row = $query->fetch();
+
+    $this->id = $row['id'];
   }
 }</div>
 
 <p>
-  Saamme siis viimeksi lisätyn rivin kutsumalla PDO:n <code>lastInsertId</code>-metodia. Lisään sen arvon olioni <code>id</code>-attribuutiksi.
+  Saamme siis viimeksi lisätyn rivin lisäämällä SQL-kyselyn loppuun komennon <code>RETURNIN id</code>, joka paluttaa lisätyn rivin id-sarakkeen arvon. Lisään sen arvon olioni <code>id</code>-attribuutiksi.
 </p>
 <p>
 <code>store</code>-metodissa ei siis tapahtu mitään kovin ihmeellistä. Mutta entäs metodin viimeinen rivi <code>self::redirect_to(...)</code>? Se on jotain aivan uutta, mitä ihmettä siinä tapahtuu?
@@ -556,15 +560,12 @@ exit();
   Toisena parametrina annetun viestin lähettäminen kohteena olevaan näkymään taas tapahtuu <a href="http://www.w3schools.com/php/php_sessions.asp" target="_blank">session</a>-avulla. Puhumme sessioista lisää ensi viikolla. <code>redirect_to</code>-metodin toteutukseen voi tutustua tarkemmin kurkkaamalla <code>lib/base_controller.php</code>-tiedostoa.
 </p>
 <hr>
-<a name="4-palautuksen-vaatimukset"></a>
+<a id="4-palautuksen-vaatimukset"></a>
 <h2>5. Palautuksen vaatimukset</h2>
 <ol>
   <li>Toteuta sovellukseesi vähintään yksi malliluokka, jossa on listaus- (<code>all</code>), haku- (<code>find</code>) ja lisäystoiminto (<code>save</code>). <strong>(2p)</strong></li>
   <li>Toteuta malliasi käyttämään kontrolleriin metodit, jotka esittävät tietokohteen listaus-, esittely- ja lisäysnäkymän. Toteuta myös kontrolleriisi metodi, joka mahdollistaa tietokohteen olion lisäämisen tietokantaan käyttäjän lähettämän lomakkeen tiedoilla. <strong>(1p)</strong></li>
   <li>Kirjoita <a href="http://advancedkittenry.github.io/aikataulu/koodikatselmointi.html" target="_blank">koodikatselmointi</a> (vapaaehtoinen). <strong>(0-2p)</strong></li>
-  <li>
-    <strong>Siirrä sovelluksesi tiedostot kehitysympäristöstä users-palvelimelle!</strong>
-  </li>
   <li>
     <strong>Pushaa kaikki tekämäsi muutokset repoosi!</strong>
   </li>
