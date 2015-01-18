@@ -86,7 +86,7 @@
 <h2>3. Työympäristön pystyttäminen</h2>
 <p>
   <div class="alert alert-warning">
-    Tässä vaiheessa tarvitse CS-tunnukset. Jos olet sivuaineopiskelija, lue <a href="http://www.cs.helsinki.fi/tietotekniikka/k-ytt-luvat" target="_blank">täältä</a> kohta "Sivuaineopiskelijat", jossa neuvotaan, miten saat ne.
+    Tässä vaiheessa tarvitset CS-tunnukset. Jos olet sivuaineopiskelija, lue <a href="http://www.cs.helsinki.fi/tietotekniikka/k-ytt-luvat" target="_blank">täältä</a> kohta "Sivuaineopiskelijat", jossa neuvotaan, miten saat ne.
   </div>
 </p>
 Löpinät sikseen ja ryhdytä hommiin! Tulemme pystyttämään sovelluksemme laitoksen <strong>users-palvelimelle</strong>, jossa pystymme pyörittämään <strong>PHP</strong>:lla tai <strong>Javalla</strong> toteutettua sovellusta käyttäen joko <strong>PostgreSQL</strong>- tai <strong>MySQL</strong>-tietokantapalvelinta.
@@ -199,7 +199,21 @@ kalleilv=> \q
   Suoritin siis komentotulkissa kyselyn <code>SELECT 1+1 AS numero</code> (muista ";" kyselyn loppuun!) ja suljin sen syöttämällä <code>\q</code>.
 </p>
 
-<h3>3.4 SSH-avain</h3>
+<h3>3.4 Hakemistojen välillä siirtyminen terminaalissa</h3>
+<p>
+  Tässä muutama vinkki hakemistojen välillä siirtymiseen terminaalissa, joista saattaa olla jatkossa hyötyä:
+</p>
+<div hljs no-escape># tällä komennolla voit tarkastella tämänhetkisen hakemiston tiedostoja:
+ls -la
+# tällä komennolla voit siirtyä hakemistoon:
+cd hakemiston_nimi
+# tällä komennolla voit siirtyä hakemistohierarkiassa yhden hakemiston taaksepäin:
+cd ..
+# tällä komennolla voit siirtyä kotihakemistoosi
+cd $HOME
+</div>
+
+<h3>3.5 SSH-avain</h3>
 <p>
   Luodaan seuraavaksi <strong>SSH-avain</strong>, jotta meidän ei aina tarvitsi kirjoittaa salasanaa SSH-yhteyden avaamisen yhteydessä. Poistutaan hetkeksi users-palvelimelta esimerkiksi avaamalla uusi terminaali, jonka jälkeen suoritetaan siinä komento <code>ssh-keygen</code>. Meiltä kysytään tiedoston nimeä ja salasanaa. Voit jättää sekä tiedoston nimen, että salasanan halutessasi tyhjäksi, korvaa vain tarvittaessa jo ennestään luotu <code>id_rsa.pub</code>-tiedosto. Jos päädyt asettamaan avaimellesi salasanan, täytyy sinun suorittaa terminaalissa jokaisen sisäänkirjautumisen jälkeen komento <code>ssh-add</code> ja syöttää avaimellesi valitsemasi salasana. Siis salasanan jättämien asettamatta on melko paljon vaivattomampaa. Avainparimme on nyt luotu.
 </p>
@@ -240,55 +254,65 @@ chmod 600 .ssh/authorized_keys
   <p>
     Se on siinä! Kokeile vielä, ettei SSH-yhteyden muodostaminen tarvitse salasanaa.
   </p>
-<h3>3.5 Tsoha Bootstrap</h3>
+<h3>3.6 Tsoha Bootstrap</h3>
 
 <p>
   <strong>Tsoha Bootstrap</strong> on paketti, joka sisältää paljon hyödyllisiä työkaluja ja valmiin kansiorakenteen sovellukseesi. Sen tarkoitus on päästää sinut nopeasti alkuun sovelluksesi kanssa ja ohjata sinua MVC-mallin noudattamisessa.
 </p>
 
 <p>
-  <a href="https://github.com/AdvancedKittenry/Tsoha-Bootstrap/archive/master.zip" class="btn btn-primary"><span class="glyphicon glyphicon-download-alt"></span> Lataa Tsoha Bootstrap</a>
+  Aloitetaan siirtymällä <strong><a href="http://github.com/">GitHubiin</a></strong>, joka web-pohjainen Git-repositorioiden hostaus palvelu. Selvällä suomen kielellä tämä tarkoittaa sitä, että voimme luoda sinne nk. <strong>repositorioita</strong>, joihin voimme tallettaa sovelluksemme lähdekoodin. Jos et ole vielä rekisteröitynyt GitHubiin, se onnistuu <a href="https://github.com/join" target="_blank">täältä</a>.
 </p>
 
 <p>
-  Pura lataamasi zip-paketti haluamaasi hakemistoon ja avaa kansiossa <code>config</code> oleva tiedosto <code>environment.sh</code> haluamallasi tekstieditorilla. Se näyttää seuraavalta:
+  <img src="assets/images/github-fork.png" class="pull-right" style="margin-left: 15px;">
+  Kun olet rekisteröitynyt, siirry <a href="https://github.com/AdvancedKittenry/Tsoha-Bootstrap" target="_blank">Tsoha Bootstrapin repositorioon</a>, jossa näet sen lähdekoodin. Forkkaa Tsoha Bootstrapin repositorio itsellesi klikkaamalla oikeasta yläkulmasta "Fork"-painiketta. Forkatusta repositoriosta tulee omasi ja se siirtyy omien repositorioidesi listaan. Siirry seuraavaksi forkkaamaasi repositorioon ja kopioi oikeassa alalaidassa sijaitsevan "HTTPS clone URL"-kentän sisältö, se näyttää seuraavanlaiselta:
+</p>
+
+<div hljs>https://github.com/KAYTTAJATUNNUS/Tsoha-Bootstrap.git</div>
+
+<p>
+  Siirry seuraavaksi terminaalissa hakemistoon, johon haluat <strong>kloonata</strong> repositoriosi. Repositorion kloonaaminen tarkoittaa yksinkertaisesti sitä, että luodaan repositorion niminen kansio, joka sisältää kaikki repositorion sisältämät lähdekoodit. Repositorion kloonaus tapahtuu terminaalissa seuraavasti (korvaa <code>KAYTTAJATUNNUS</code>-kohta omalla GitHubin käyttäjätunnuksellasi):
+</p>
+
+<div hljs># siirrytään haluamaamme hakemistoon (esimerkiksi työpöydälle)
+cd $HOME/Desktop
+# kloonataan repositorio
+git clone https://github.com/KAYTTAJATUNNUS/Tsoha-Bootstrap.git</div>
+
+<p>
+  Se on siinä! Tarkastele seuraavaksi työpöytääsi, sinne olisi pitänyt ilmestyä <code>Tsoha-Bootstrap</code> niminen kansio. Avaa <code>Tsoha-Bootstrap</code> kansio ja avaa sieltä <code>config</code>-kansiossa sijaitseva tiedosto <code>environment.sh</code> haluamallasi tekstieditorilla. Se näyttää seuraavalta:
 </p>
 
 <div hljs no-escape># korvaa tämä omalla käyttäjätunnuksellasi
 USERNAME="kalleilv"
 # korvaa tämä haluamallasi kansion nimellä
-PROJECT_FOLDER="tsoha"</div>
+PROJECT_FOLDER="tsoha"
+# sovelluksesi tulee sijaitsemaan osoitteessa USERNAME.users.cs.helsinki.fi/PROJECT_FOLDER</div>
 
 <p>
-  Korvaa <code>USERNAME</code>-muuttujan arvo omalla käyttäjätunnuksellasi ja <code>PROJECT_FOLDER</code>-muuttujan arvo kansion nimellä, johon haluat sovelluksesi palvelimella sijoittaa. Sovelluksesi tulee asennuksen jälkeen sijaitsemaan
-  osoitteessa <a>USERNAME.users.cs.helsinki.fi/PROJECT_FOLDER</a>. Tallenna tiedosto, siirry terminaalissa Tsoha Bootstrapin juureen ja suorita seuraava komento:
+  Korvaa <code>USERNAME</code>-muuttujan arvo omalla käyttäjätunnuksellasi ja <code>PROJECT_FOLDER</code>-muuttujan arvo kansion nimellä, johon haluat sovelluksesi users-palvelimella sijoittaa. Sovelluksesi tulee asennuksen jälkeen sijaitsemaan
+  osoitteessa <a>USERNAME.users.cs.helsinki.fi/PROJECT_FOLDER</a>. Tallenna tiedosto, siirry terminaalissa <code>Tsoha-Bootstrap</code>-kansion juureen ja suorita seuraava komento:
 </p>
 
 <div hljs no-escape>bash bootstrap.sh</div>
 
 <p>
-  Tämä komento luo palvelimelle määrittämämme kansion ja siirtää Tsoha Bootstrapin tiedostot siihen. Sovelluksemme runko löytyy nyt osoitteesta <a>USERNAME.users.cs.helsinki.fi/PROJECT_FOLDER</a>, käydään kurkkaamassa, miltä se näyttää.
+  Tämä komento luo palvelimelle määrittämämme kansion ja siirtää kaikki tarvittavat tiedostot siihen. Sovelluksemme runko löytyy nyt osoitteesta <a>USERNAME.users.cs.helsinki.fi/PROJECT_FOLDER</a>, käydään kurkkaamassa, miltä se näyttää.
 </p>
 
 <p>
   Tämä riittää toistaiseksi, palaamme Tsoha Bootstrappin pariin taas viikolla 2.
 </p>
 
-<h3>3.6 Versionhallinta</h3>
+<h3>3.7 Versionhallinta</h3>
 
 <p>
-  Aloita luomalla repositorio <a href="http://www.github.com">GitHub</a>:iin. Jos et ole vielä rekisteröitynyt, tee se nyt.
+  Lisätään seuraavaksi tekemämme muutokset versionhallintaan, jotta ne näkyvät repossamme GitHubissa. Siirrytään ensin terminaalissa repomme kansioon. Jos se on työpöydällä, se onnistuu seuraavasti:
 </p>
+<div hljs>cd $HOME/Desktop/Tsoha-Bootstrap</div>
 <p>
-  Kun olet kirjautunut sisään pääset luomaan uuden repon klikkaamalla "+"-ikonia oikeassa ylälaidassa ja valitsemalla "New repository". Valitse repon nimi vapaasti ja klikkaa "Create repository".
-  Sinut ohjataan reposi sivulle ja oikeassa alalaidassa on kenttä "HTTPS clone URL", kopioi sen sisältö. Siirry nyt terminaalissa hakemistoon, johon haluat kloonata reposi ja suorita tämä komento kopioimallasi polulla:
-</p>
-<div hljs no-escape>git clone https://github.com/KAYTTAJATUNNUS/REPON_NIMI.git</div>
-<p>
-  Siirrä seuraavaksi Tsoha Bootstrapin tiedostot kloonaamasi repoon.
-</p>
-<p>
-  Lisää sovelluksesi lähdekoodi versionhallintaa viikottain aloittaen tästä hetkestä. Tämä tapahtuu seuraavien komentojen suorittamisella reposi juuressa:
+  Kun olemme siirtyneet terminaalissa repomme kansioon, onnistuu muutosten lisääminen näiden yksinkertaisten komentojen avulla:
 </p>
 <p>
   <strong>1. Lisätään tiedostot</strong>
@@ -296,14 +320,17 @@ PROJECT_FOLDER="tsoha"</div>
 </p>
 <p>
   <strong>2. Luodaan committi, jossa kerrotaan lyhyesti, mitä uutta tässä päivityksessä on</strong>
-  <div hljs no-escape>git com mit -m "Sovellus alustettu ja versionhallinta otettu käyttöön"</div>
+  <div hljs no-escape>git commit -m "Sovellus alustettu ja versionhallinta otettu käyttöön"</div>
 </p>
 <p>
   <strong>3. Siirretään tiedostot repoon</strong>
   <div hljs no-escape>git push</div>
 </p>
 <p>
-  Yksityskohtaisemmat Git-ohjeet löytyvät Ohjelmoinnin harjoitustyön <a href="http://javalabra.github.io/Javalabra2014-2/#/pages/ohjeet/Git-ohje.md">Git-ohje-sivulta</a>.
+  Käy vielä tarkistamassa GitHubista reposi sivulta, että tiedostot on siirretty repoosi onnistuneesti. Yksityskohtaisemmat Git-ohjeet löytyvät Ohjelmoinnin harjoitustyön <a href="http://javalabra.github.io/Javalabra2014-2/#/pages/ohjeet/Git-ohje.md">Git-ohje-sivulta</a>.
+</p>
+<p>
+  <div class="alert alert-warning">Muista lisätä tekemäsi muutokset repoosi joka viikko, jotta ohjaaja voi seurata edistymistäsi.</div>
 </p>
 <hr>
 <a id="4-perusasioiden-dokumentointi"></a>
@@ -337,7 +364,7 @@ Aloitetaan dokumentaatiomme kirjoittaminen lisäämälle <code>doc</code>-kansio
 Lisää vielä projektisi juuressa sijaitsevaan <code>README.md</code>-tiedostoon aiheesi kuvaus tai linkki valmiiseen aiheeseen, linkki sovellukseesi ja linkki dokumentaatioosi (linkki kansiossa <code>doc</code> sijaitsevaan <code>pdf</code>-tiedostoon).
 
 <h3>4.4 Labtool</h3>
-<strong><a href="http://tsoha-labtool.herokuapp.com">Labtool</a></strong> on kurssilla käytettävä sovellus, jonka avulla opiskelija voi katsella viikottaisista palautuksista saamiaan pisteitä ja ohjaajan kirjottamia palautetteita. Rekisteröidy labtooliin <a href="http://tsoha-labtool.herokuapp.com/register">tästä</a>.
+<strong><a href="http://tsoha-labtool.herokuapp.com">Labtool</a></strong> on kurssilla käytettävä sovellus, jonka avulla opiskelija voi katsella viikottaisista palautuksista saamiaan pisteitä ja ohjaajan kirjottamia palautetteita. Rekisteröidy labtooliin <a href="http://tsoha-labtool.herokuapp.com/register">tästä</a>. Käytä "Github repository"-kentässä forkkaamasi repon polkua ja "The test URL of your application"-kentässä sovelluksesi etusivun polkua, joka on muotoa <a>KAYTTAJATUNNUS.users.cs.helsinki.fi/PROJEKTIN_KANSIO</a>.
 <hr>
 <a id="5-palautuksen-vaatimukset"></a>
 <h2>5. Palautuksen vaatimukset</h2>

@@ -64,14 +64,14 @@ Malli siis edustaa jotain sovelluksen tietokohdetta, kuten esimerkissämme, kurs
 <div hljs language="php" no-escape>$skyrim = new Game(array('id' => 1, 'name' => 'The Elder Scrolls V: Skyrim', 'description' => 'Arrow to the knee'));</div>
 
 <p>
-  Tämä konstruktori on monella tapaa kätevämpi kuin tavanomainen, mm. sen takia, ettei ole väliä, missä järjestyksessä parametrit antaa, tai antaako niitä ollenkaan. Voin siis asettaa haluamani attribuutit antamalla konstruktorille <a href="http://php.net/manual/en/language.types.array.php" target="_blank">assosiaatiolistan</a>, joka sisältää avain-arvo-pareja. Pääset assosiaatiolistassa avaimen arvoon syntaksilla <code>$lista['avain']</code>. Voit halutessasi luoda myös erilaisen konstruktorin. Pääsemme nyt luomamme olion attribuutteihin <code>-></code>-syntaksilla:
+  Tämä konstruktori on monella tapaa kätevämpi kuin tavanomainen, mm. sen takia, ettei ole väliä, missä järjestyksessä parametrit antaa, tai antaako niitä ollenkaan. Voin siis asettaa haluamani attribuutit antamalla konstruktorille <a href="http://php.net/manual/en/language.types.array.php" target="_blank">assosiaatiolistan</a>, joka sisältää avain-arvo-pareja. Pääset assosiaatiolistassa avaimen arvoon syntaksilla <code>$lista['avain']</code>. Voit halutessasi luoda myös erilaisen konstruktorin. Pääsemme nyt käsiksi luomamme olion attribuutteihin <code>-></code>-syntaksilla:
 </p>
 
 <div hljs language="php" no-escape>echo $skyrim->name;
 // The Elder Scrolls V: Skyrim</div>
 
 <p>
-  Yläluokan konstruktorin toteutus löytyy tiedostosta <code>lib/base_model.php</code>.
+  Jos haluat päästä käsiksi attribuutteihin luokan sisällä, onnistuu se <code>$this->attribuutin_nimi</code>-syntaksilla, jolloin esimerkin <code>name</code>-attribuutin arvo on <code>$this->name</code>. Yläluokan konstruktorin toteutus löytyy tiedostosta <code>lib/base_model.php</code>.
 </p>
 
 <p>
@@ -174,10 +174,10 @@ class HelloWorldController extends BaseController{
   Muista sisällyttää mallisi kontrolleriin <a href="http://php.net/manual/en/function.require.php" target="_blank">require</a>-kommennolla!
 </p>
 
-<h3>1.2 Composer - tiedostojen automaattinen lataaminen</h3>
+<h3>1.2 Composer - luokkien automaattinen lataaminen</h3>
 
 <p>
-  Olemme rakentamessa melko isoa sovellusta, jolloin <code>php</code>-tiedostoja kertyy melko paljon. Eikö olisi hauskaa, jos ei tarvitsisi erikseen lisätä <code>require</code>-riviä aina, kun haluat esimerkiksi käyttää malliluokkaa toisessa tiedostossa? Apuun tulee <strong><a href="https://getcomposer.org/" target="_blank">Composer</a></strong>, PHP:n riippuvuuksienhallitsija. Composer:in avulla voit määrittää, mitä riippuvuuksia sovelluksessasi on ja se asentaa ne puolestasi. Me olemme tosin enemmän kiinnostuneita Composer:in toisesta ominaisuusta, tiedostojen automaattisesta lataamisesta.
+  Olemme rakentamessa melko isoa sovellusta, jolloin <code>php</code>-tiedostoja kertyy melko paljon. Eikö olisi hauskaa, jos ei tarvitsisi erikseen lisätä <code>require</code>-riviä aina, kun haluat esimerkiksi käyttää malliluokkaa toisessa tiedostossa? Apuun tulee <strong><a href="https://getcomposer.org/" target="_blank">Composer</a></strong>, PHP:n riippuvuuksienhallitsija. Composer:in avulla voit määrittää, mitä riippuvuuksia sovelluksessasi on ja se asentaa ne puolestasi. Me olemme tosin enemmän kiinnostuneita Composer:in toisesta ominaisuusta, luokkien lataamisesta lataamisesta.
 </p>
 
 <p>
@@ -187,22 +187,27 @@ class HelloWorldController extends BaseController{
 <div hljs language="json" no-escape>{
   "autoload": {
     "classmap": [
-      "vendor/Slim/Slim.php",
-      "vendor/Twig/lib/Twig/Autoloader.php",
       "config/database.php",
       "lib/",
       "app/controllers"
     ]
+  },
+  "require": {
+    "slim/slim": "2.*",
+    "twig/twig": "~1.0"
   }
-}
-</div>
+}</div>
 
 <p>
-  Kerromme tässä tiedostossa, mitkä tiedostot haluamme ladata automaattisesti sovellukseemme. Olen määrittänyt <code>classmap</code>-taulukkoon, että haluan ladata automaattisesti Slim:n ja Twig:n sekä kaikki tiedostot kansioista <code>lib</code> ja <code>app/controllers</code>. Kun alustit sovelluksesi ensimmäistä kertaa komennolla <code>bootstrap.sh</code>, Composer asennettiin projektiisi ja sen juuressa suoritetiin <code>php composer.phar install</code>. Kyseinen komento lisäsi <code>vendor</code>-kansioon tiedoston <code>autoload.php</code>, joka käynnistää tiedostojen automaattisen lataamisen. Kyseinen tiedosto on sisällytetty sovellukseesi <code>index.php</code>-tiedostossa. Lisäksi Composer luo assosiaatiolistan, jonka avaimina toimii luokan nimet ja arvona polut tiedostoihin, jossa ne sijaitsevat. Tämä assosiaatiolista, jonka avulla Composer sisällyttää sovellukseesi tiedostot, jossa käyttämäsi luokat sijaitsevat, löytyy tiedostosta <code>vendor/composer/autoload_classmap.php</code>.
+  Kerromme tässä tiedostossa, mitä riippuvuuksia sovelluksessame on, meillä ne ovat Twig ja Slim, sekä mistä tiedostoista haluamme etsiä automaattisesti ladattavia luokkia. Olen määrittänyt <code>classmap</code>-taulukkoon, että haluan ladata automaattisesti luokat tiedostosta <code>config/database.php</code> sekä kaikista tiedostoista kansioista <code>lib</code> ja <code>app/controllers</code>. Kun alustit sovelluksesi ensimmäistä kertaa komennolla <code>bootstrap.sh</code>, Composer asennettiin projektiisi ja sen juuressa suoritetiin <code>php composer.phar install</code>. Kyseinen komento asensi sovelluksemme riippuvuudet ja lisäsi <code>vendor</code>-kansioon tiedoston <code>autoload.php</code>, joka käynnistää luokkien automaattisen lataamisen.
 </p>
 
 <p>
-  Lisää seuraavaksi kaikki sovelluksesi mallit automaattisesti ladattavien tiedostojen joukkoon lisäämällä niiden polku <code>classmap</code>-taulukkoon <code>composer.json</code>-tiedostossa. Kun polku on lisätty, tallenna ja buildaa. Buildaaminen yhteydessä suoritettava <code>deploy.sh</code> joka päivittää <code>autoload_classmap.php</code>-tiedoston suorittamalla projektisi juuressa komennon <code>php composer.phar dump-autoload</code>. Jos sisällytit malliluokkasi tiedoston kontrollerissa, voit nyt poistaa <code>require</code>-rivin, Composer hoitaa homman tästä eteenpäin.
+  Lisää seuraavaksi kaikki sovelluksesi mallit automaattisesti ladattavien luokkien joukkoon lisäämällä niiden polku, <code>app/models</code>, <code>classmap</code>-taulukkoon <code>composer.json</code>-tiedostoon. Kun polku on lisätty, tallenna ja siirrä sovelluksesi tiedostot palvelimelle. Kun suoritat <code>deploy.sh</code>-tiedoston siirtäessäsi tiedostosi palvelimelle, suoritetaan palvelimella projektisi juuressa komento <code>php composer.phar dump-autoload</code>, joka etsii automaattisesti ladattavat luokat määrittämistäsi poluista. Jos sisällytit malliluokkasi tiedoston kontrollerissa, voit nyt poistaa <code>require</code>-rivin, Composer hoitaa homman tästä eteenpäin.
+</p>
+
+<p>
+  <div class="alert alert-info">Jos innostut käyttämään sovelluksessasi Slim:in ja Twig:in lisäksi muita PHP-kirjastoja, määritä ne vain <code>require</code>-objektissa ja suorita users-palvelimen puolella projektisi juuressa komento <code>php composer.phar update</code>. Komennon suorittaminen päivittää sovelluksesi riippuvuudet.</div>
 </p>
 
 <h3>1.3 SQL-injektio</h3>
@@ -286,12 +291,12 @@ $query->execute();</div>
     // Haetaan kaikki pelit tietokannasta
     $games = Game::all();
     // Renderöidään views/game kansiossa sijaitseva tiedosto index.html muuttujan $games datalla
-    self::render_view('game/index.html', array('games' => $games));
+    View::make('game/index.html', array('games' => $games));
   }
 }</div>
 
 <p>
-  Katsotaanpa, mitä metodissa oikein tapahtuu. Haen siis <code>Game</code>-luokan <code>all</code>-metodin avulla kaikki pelit tietokannastani. Sen jälkeen renderöin kansiossa <code>views/game</code> sijaitsevan tiedoston <code>index.html</code>, mutta tällä kertaa välitän <code>render_view</code>-metodille näkymätiedoston lisäksi assosiaatiolistan, joka sisältää pelini <code>games</code>-avaimen arvona. Seuraavaksi minun täytyy muokata hieman näkymääni, jotta saan esitettyä siinä kontrollerin välittämän datan. Muokkaan <code>index.html</code> tiedoston seuraavan laiseksi:
+  Katsotaanpa, mitä metodissa oikein tapahtuu. Haen siis <code>Game</code>-luokan <code>all</code>-metodin avulla kaikki pelit tietokannastani. Sen jälkeen renderöin kansiossa <code>views/game</code> sijaitsevan tiedoston <code>index.html</code>, mutta tällä kertaa välitän <code>make</code>-metodille näkymätiedoston lisäksi assosiaatiolistan, joka sisältää pelini <code>games</code>-avaimen arvona. Seuraavaksi minun täytyy muokata hieman näkymääni, jotta saan esitettyä siinä kontrollerin välittämän datan. Muokkaan <code>index.html</code> tiedoston seuraavan laiseksi:
 </p>
 
 <div hljs language="xml" no-escape>{% extends "base.html" %}
@@ -365,17 +370,17 @@ $query->execute();</div>
 </p>
 
 <div hljs language="php" no-escape>// Etusivu (pelien listaussivu)
-$app->get('/', function(){
+$routes->get('/', function(){
   GameController::index();
 });
 
 // Pelien listaussivu
-$app->get('/game', function(){
+$routes->get('/game', function(){
   GameController::index();
 });
 
 // Pelin esittelysivu
-$app->get('/game/:id', function($id){
+$routes->get('/game/:id', function($id){
   GameController::show($id);
 });</div>
 
@@ -467,7 +472,7 @@ Olemme tähän asti käsitelleet, miten GET-pyynnöt kulkevat sovelluksemme läp
 </p>
 
 <div hljs language="php" no-escape>// ...
-$app->post('/game', function(){
+$routes->post('/game', function(){
   GameController::store();
 });</div>
 
@@ -493,7 +498,7 @@ $app->post('/game', function(){
     $game->save();
 
     // Ohjataan käyttäjä lisäyksen jälkeen pelin esittelysivulle
-    self::redirect_to('/game/' . $game->id, array('message' => 'Peli on lisätty kirjastoosi!'));
+    Redirect::to('/game/' . $game->id, array('message' => 'Peli on lisätty kirjastoosi!'));
   }
 }</div>
 
@@ -504,8 +509,7 @@ $app->post('/game', function(){
 <div hljs language="php" no-escape>class Game extends BaseModel{
   // ...
   public function save(){
-    $connection = DB::connection();
-    $query = $connection->prepare('INSERT INTO Game (...) VALUES (...) RETURNING id');
+    $query = DB::connection()->prepare('INSERT INTO Game (...) VALUES (...) RETURNING id');
     $query->execute(array(...));
 
     $row = $query->fetch();
@@ -518,10 +522,11 @@ $app->post('/game', function(){
   Saamme siis viimeksi lisätyn rivin lisäämällä SQL-kyselyn loppuun komennon <code>RETURNIN id</code>, joka paluttaa lisätyn rivin id-sarakkeen arvon. Lisään sen arvon olioni <code>id</code>-attribuutiksi.
 </p>
 <p>
-<code>store</code>-metodissa ei siis tapahtu mitään kovin ihmeellistä. Mutta entäs metodin viimeinen rivi <code>self::redirect_to(...)</code>? Se on jotain aivan uutta, mitä ihmettä siinä tapahtuu?
+  <code>store</code>-metodissa ei siis tapahtu mitään kovin ihmeellistä. Mutta entäs metodin viimeinen rivi <code>Redirect::to(...)</code>? Se on jotain aivan uutta, mitä ihmettä siinä tapahtuu?
 </p>
 <h3>4.3 Post/Redirect/Get - PRG</h3>
 
+<img src="assets/images/302.jpg" class="pull-left" style="width: 350px; height: auto; margin-right: 15px; margin-bottom: 15px;">
 <p>
   <a href="http://en.wikipedia.org/wiki/Post/Redirect/Get" target="_blank"><strong>Post/Redirect/Get</strong></a> on web-sovelluksien toteutuksessa käytetty suunnittelumalli, joka estää käyttäjää vahingossa lähettämästä samaa lomaketta kahdesti. Siinä käyttäjän lähettämän POST-pyynnön jälkeen selaimelle lähetetään <strong>uudelleenohjaus-pyyntö</strong> statuskoodilla 302, joka pyytää selainta tekemään GET-pyynnön muualle, kuten esimerkiksi polkuun <code>/game/1</code>.
 </p>
@@ -531,8 +536,10 @@ $app->post('/game', function(){
 </p>
 
 <p>
-  Ohjaamme siis käyttäjän POST-pyynnön jälkeen toiselle sivulle kutsumalla metodia <code>redirect_to</code>. Parametreikseen metodi ottaa tietenkin polun, mihin käyttäjä ohjataan, mutta lisäksi voit halutessasi antaa toiseksi parametriksi assosiaatiolistan, jonka sisältö, voidaan esittää kohdenäkymässä, esimerkiksi pelin esittelysivulla:
+  Ohjaamme siis käyttäjän POST-pyynnön jälkeen toiselle sivulle kutsumalla <code>Redirect</code>-luokan metodia <code>to</code>. Parametreikseen metodi ottaa tietenkin polun, mihin käyttäjä ohjataan, mutta lisäksi voit halutessasi antaa toiseksi parametriksi assosiaatiolistan, jonka sisältö, voidaan esittää kohdenäkymässä, esimerkiksi pelin esittelysivulla:
 </p>
+<div style="clear: both"></div>
+
 <div hljs language="xml"><!-- ... -->
 <!-- Näkymä games/show.html -->
 <div class="alert alert-success">
@@ -548,7 +555,7 @@ $app->post('/game', function(){
 </p>
 
 <p>
-  <code>redirect_to</code>-metodin toteutus on melko yksinkertainen, se käyttää vain <a href="http://php.net/manual/en/function.header.php" target="_blank">header</a>-funktiota lähettämään selaimelle uudelleenohjauspyynnön seuraavasti:
+  Luokan <code>Redirect</code> metodin <code>to</code> toteutus on melko yksinkertainen, se käyttää vain <a href="http://php.net/manual/en/function.header.php" target="_blank">header</a>-funktiota lähettämään selaimelle uudelleenohjauspyynnön seuraavasti:
 </p>
 
 <div hljs language="php" no-escape>header('Location: ' . $polku);
@@ -557,7 +564,7 @@ exit();
 </div>
 
 <p>
-  Toisena parametrina annetun viestin lähettäminen kohteena olevaan näkymään taas tapahtuu <a href="http://www.w3schools.com/php/php_sessions.asp" target="_blank">session</a>-avulla. Puhumme sessioista lisää ensi viikolla. <code>redirect_to</code>-metodin toteutukseen voi tutustua tarkemmin kurkkaamalla <code>lib/base_controller.php</code>-tiedostoa.
+  Toisena parametrina annetun viestin lähettäminen kohteena olevaan näkymään taas tapahtuu <a href="http://www.w3schools.com/php/php_sessions.asp" target="_blank">session</a>-avulla. Puhumme sessioista lisää ensi viikolla. <code>to</code>-metodin toteutukseen voi tutustua tarkemmin kurkkaamalla <code>lib/redirect.php</code>-tiedostoa.
 </p>
 <hr>
 <a id="4-palautuksen-vaatimukset"></a>

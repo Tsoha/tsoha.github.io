@@ -27,7 +27,7 @@ syöttäisi lisäyslomakkeeseen vääränlaisia arvoja, kuten esimerkiksi teksti
     $game->save();
     // ...
   }else{
-    self::render_view('game/new.html', array('error' => 'Nimessä oli virhe!'));
+    View::make('game/new.html', array('error' => 'Nimessä oli virhe!'));
   }
 }</div>
 
@@ -110,10 +110,10 @@ public static function store(){
     // Peli on validi, hyvä homma!
     $game->save();
 
-    self::redirect_to('/game/' . $game->id, array('message' => 'Peli on lisätty kirjastoosi!'));
+    Redirect::to('/game/' . $game->id, array('message' => 'Peli on lisätty kirjastoosi!'));
   }else{
     // Pelissä oli jotain vikaa :(
-    self::render_view('game/new.html', array('errors' => $errors, 'attributes' => $attributes));
+    View::make('game/new.html', array('errors' => $errors, 'attributes' => $attributes));
   }
 }</div>
 
@@ -212,7 +212,7 @@ Koska PHP on tyypitön, tapahtuu totuusarvojen kanssa joskus outoja tyyppimuunno
   public static function edit($id){
     $game = Game::find($id);
 
-    self::render_view('game/edit.html', array('attributes' => $game));
+    View::make('game/edit.html', array('attributes' => $game));
   }
 
   // Pelin muokkaaminen (lomakkeen käsittely)
@@ -232,11 +232,11 @@ Koska PHP on tyypitön, tapahtuu totuusarvojen kanssa joskus outoja tyyppimuunno
     $errors = $game->errors();
 
     if(count($errors) > 0){
-      self::render_view('game/edit.html', array('errors' => $errors, 'attributes' => $attributes));
+      View::make('game/edit.html', array('errors' => $errors, 'attributes' => $attributes));
     }else{
       $game->update();
 
-      redirect_to('/game/' . $game->id, array('message' => 'Peliä on muokattu onnistuneesti!'));
+      Redirect::to('/game/' . $game->id, array('message' => 'Peliä on muokattu onnistuneesti!'));
     }
   }
 
@@ -246,7 +246,7 @@ Koska PHP on tyypitön, tapahtuu totuusarvojen kanssa joskus outoja tyyppimuunno
     Game::destroy($id);
 
     // Ohjataan käyttäjä pelien listaussivulle ilmoituksen kera
-    self::redirect_to('/game', array('message' => 'Peli on poistettu onnistuneesti!'));
+    Redirect::to('/game', array('message' => 'Peli on poistettu onnistuneesti!'));
   }
 }</div>
 
@@ -255,17 +255,17 @@ Koska PHP on tyypitön, tapahtuu totuusarvojen kanssa joskus outoja tyyppimuunno
 </p>
 
 <div hljs language="php" no-escape>//...
-$app->get('game/:id/edit', function($id){
+$routes->get('game/:id/edit', function($id){
   // Pelin muokkauslomakkeen esittäminen
   GameController::edit($id);
 });
 
-$app->post('game/:id/edit', function($id){
+$routes->post('game/:id/edit', function($id){
   // Pelin muokkaaminen
   GameController::update($id);
 });
 
-$app->post('game/:id/destroy', function($id){
+$routes->post('game/:id/destroy', function($id){
   // Pelin poisto
   GameController::destroy($id);
 });</div>
@@ -315,12 +315,12 @@ $app->post('game/:id/destroy', function($id){
 </p>
 
 <div hljs language="php" no-escape>// ...
-$app->get('/login', function(){
+$routes->get('/login', function(){
   // Kirjautumislomakkeen esittäminen
   UserController::login();
 });
 
-$app->post('/login', function(){
+$routes->post('/login', function(){
   // Kirjautumisen käsittely
   UserController::handle_login();
 });</div>
@@ -331,7 +331,7 @@ Koska POST-pyyntö ohjataan <code>UsersController</code> luokan <code>handle_log
 
 <div hljs language="php" no-escape>class UserController extends BaseController{
   public static function login(){
-      self::render_view('users/login.html');
+      View::make('users/login.html');
   }
 
   public static function handle_login(){
@@ -340,11 +340,11 @@ Koska POST-pyyntö ohjataan <code>UsersController</code> luokan <code>handle_log
     $user = User::authenticate($params['username'], $params['password']);
 
     if(!$user){
-      self::render_view('/login', array('error' => 'Väärä käyttäjätunnus tai salasana!', 'username' => $params['username']));
+      View::make('/login', array('error' => 'Väärä käyttäjätunnus tai salasana!', 'username' => $params['username']));
     }else{
       $_SESSION['user'] = $user->id;
 
-      self::redirect_to('/', array('message' => 'Tervetuloa takaisin' . $user->name . '!'));
+      Redirect::to('/', array('message' => 'Tervetuloa takaisin' . $user->name . '!'));
     }
   }
 }</div>
@@ -361,7 +361,7 @@ Koska POST-pyyntö ohjataan <code>UsersController</code> luokan <code>handle_log
 <h3>3.1 Sessiot</h3>
 
 <p>
-  Haluamme usein tallentaa käyttäjästämme tilapäistä tietoa, kuten esimerkissä kirjautuneen käyttäjän id:n, joka ei katoa, vaikka käyttäjä siirtyy sovelluksen sisällä sivulta toiselle. HTTP-protokolla on tilaton protokolla, joten kirjautuneen käyttäjän id:n tallentaminen tavalliseen muuttujaan on hyödytöntä, koska sen arvo ei säily käyttäjän seuraavaan pyyntöön asti. Ongelman ratkaisu on <strong>sessiot</strong>.
+  Haluamme usein tallentaa käyttäjästämme tilapäistä tietoa, kuten esimerkissä kirjautuneen käyttäjän id:n, joka ei katoa, vaikka käyttäjä siirtyy sovelluksemme sisällä sivulta toiselle. HTTP-protokolla on tilaton protokolla, joten kirjautuneen käyttäjän id:n tallentaminen tavalliseen muuttujaan on hyödytöntä, koska sen arvo ei säily käyttäjän seuraavaan pyyntöön asti. Ongelman ratkaisu on <strong>sessiot</strong>.
 </p>
 
 <p>

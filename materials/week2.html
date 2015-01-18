@@ -76,6 +76,7 @@ Valmis! Sovelluksesi on nyt valmiina osoitteessa $USERNAME.users.cs.helsinki.fi/
 <p>
   Voit halutessasi tietenkin käyttää mitä tahansa muuta editoria. Kun haluat siirtää sovelluksesi tiedostot palvelimelle, suorita vain terminaalissa projektisi juuressa komento <code>bash deploy.sh</code>.
 </p>
+
 <hr>
 <a id="2-kontrollerit-ja-reitit"></a>
 <h2>2. Kontrollerit ja reitit</h2>
@@ -99,13 +100,13 @@ Valmis! Sovelluksesi on nyt valmiina osoitteessa $USERNAME.users.cs.helsinki.fi/
 </p>
 
 <p>
-  Käynnistä asentamasi Sublime Text ja avaa siinä projektisi, kätevintä on avata suoraan koko projektikansio editoriin. Siirrytään sitten kansioon <code>app</code>, jossa näet MVC-mallin mukaisen kansiorakenteen. Avataan kansiosta <code>controllers</code> tiedosto <code>hello_world_controller.php</code>, joka toimii esimerkkinä kontrollerista. Se näyttää seuraavalta:
+  Avaa projektisi valitsemassari editorissa ja siirry siinä kansioon <code>app</code>, jossa näet MVC-mallin mukaisen kansiorakenteen. Avataan kansiosta <code>controllers</code> tiedosto <code>hello_world_controller.php</code>, joka toimii esimerkkinä kontrollerista. Se näyttää seuraavalta:
 </p>
 
 <div hljs language="php" no-escape>class HelloWorldController extends BaseController{
 
   public static function index(){
-    self::render_view('home.html');
+    View::make('home.html');
   }
 
   public static function sandbox(){
@@ -115,7 +116,7 @@ Valmis! Sovelluksesi on nyt valmiina osoitteessa $USERNAME.users.cs.helsinki.fi/
 }</div>
 
 <p>
-  Näemme tiedostossa luokan <code>BaseController</code> perivän luokan <code>HelloWorldController</code>, jolla on <strong><a href="http://php.net/manual/en/language.oop5.static.php" target="_blank">staattiset</a></strong> metodit <code>index</code> ja <code>sandbox</code>. Korvataan rivi <code>self::render_view('home.html');</code>, rivillä <code>echo 'Tämä on etusivu!';</code>. Tallennetaan, buildataan ja siirrytään sovelluksemme etusivulle selaimella. Huomaamme, että näytölle tulee teksti "Tämä on etusivu!".
+  Näemme tiedostossa luokan <code>BaseController</code> perivän luokan <code>HelloWorldController</code>, jolla on <strong><a href="http://php.net/manual/en/language.oop5.static.php" target="_blank">staattiset</a></strong> metodit <code>index</code> ja <code>sandbox</code>. Korvataan rivi <code>View::make('home.html');</code>, rivillä <code>echo 'Tämä on etusivu!';</code>. Kun rivi on korvattu, tallennetaan ja siirretään sovelluksemme tiedostot palvelimelle (NetBeans:issä se tapahtuu painamalla "Run"-painiketta, Sublime Text:ssä valitsemlla Tools > Build, tai yksinkertaisesti suorittamalla terminaalissa projektisi juuressa komennon <code>bash deploy.sh</code>) ja siirrytään sen jälkeen sovelluksemme etusivulle selaimella. Huomaamme, että näytölle tulee teksti "Tämä on etusivu!".
 </p>
 
 <h3>2.2 Reitit</h3>
@@ -124,11 +125,11 @@ Valmis! Sovelluksesi on nyt valmiina osoitteessa $USERNAME.users.cs.helsinki.fi/
   Mutta miten sovelluksemme tietää, että etusivulla pitäisi kutsua luokan <code>HelloWorldController</code> metodia <code>index</code>? Kurkataanpa kansiossa <code>config</code> olevaa tiedostoa <code>routes.php</code>. Se näyttää seuraavalta:
 </p>
 
-<div hljs language="php" no-escape>$app->get('/', function() {
+<div hljs language="php" no-escape>$routes->get('/', function() {
   HelloWorldController::index();
 });
 
-$app->get('/hiekkalaatikko', function() {
+$routes->get('/hiekkalaatikko', function() {
   HelloWorldController::sandbox();
 });</div>
 
@@ -152,7 +153,7 @@ $app->run();
 </div>
 
 <p>
-  Reititys perustuu siihen, että web-palvelinohjelmisto ohjaa kaikki sovellukseemme kohdistuneet HTTP-pyynnöt <code>index.php</code>-tiedostoon, jossa Slim käsittelee pyynnöt ja ohjaa ne haluamillesi kontrollereille. Tämä määritetään users-palvelimella projektimme juuressa sijaitsevassa <code>.htaccess</code>-tiedostossa, jonka sisältö on seuraava:
+  Jos kurkkaat projektisi juuressa sijaitsevaa <code>index.php</code>-tiedostoa, huomaat, kuinka Slim:iä on käytetty sovelluksessasi. Reititys perustuu siihen, että web-palvelinohjelmisto ohjaa kaikki sovellukseemme kohdistuneet HTTP-pyynnöt <code>index.php</code>-tiedostoon, jossa Slim käsittelee pyynnöt ja ohjaa ne haluamillesi kontrollereille. Tämä määritetään users-palvelimella projektimme juuressa sijaitsevassa <code>.htaccess</code>-tiedostossa, jonka sisältö on seuraava:
 </p>
 
 <div hljs>RewriteEngine On
@@ -161,7 +162,7 @@ RewriteRule ^ index.php [QSA,L]</div>
 
 <p>
   <div class="alert alert-info">
-    Kaatuiko sovelluksesi? Ei hätää! Pääset katsomaan PHP:n logeja, jotka sisältävät virheilmoitukset, suorittamalla terminaalissa projektisi juuressa komennon <code>bash php_logs.sh</code>. Voit myös katsoa PHP:n logeja users-palvelimen puolella suorittamalla SSH-yhteyden muodostamisen jälkeen komento <code>tail -f /home/userlogs/$USER.error</code>.
+    Kaatuiko sovelluksesi? Ei hätää! Pääset katsomaan PHP:n logeja, jotka sisältävät virheilmoitukset, suorittamalla terminaalissa projektisi juuressa komennon <code>bash php_logs.sh</code>. Luettuasi logit, voit sulkea ne näppäilemällä terminaaliin <code>Ctrl+C</code>. Voit myös katsoa PHP:n logeja users-palvelimen puolella suorittamalla SSH-yhteyden muodostamisen jälkeen komento <code>tail -f /home/userlogs/$USER.error</code>.
   </div>
 </p>
 <hr>
@@ -229,14 +230,14 @@ RewriteRule ^ index.php [QSA,L]</div>
   Kun HTML on tullut hieman tutummaksi, luodaan <code>app/views</code>-kansioon tiedosto <code>helloworld.html</code> ja lisätään sinne h1-tagi, jonka sisällä lukee "Hello World!". Siirrytään sitten jo tarkastelemaamme <code>app/controllers/hello_world_controller.php</code>-tiedostoon ja muokataan metodi <code>sandbox</code> seuraavanlaiseksi:
 </p>
 <div hljs language="php" no-escape>public static function sandbox(){
-    self::render_view('helloworld.html');
+    View::make('helloworld.html');
   }
 }</div>
 <p>
-  Metodissamme <code>BaseController</code> luokan staattinen metodi <code>render_view</code> renderöi kansiossa <code>app/views</code> sijaitsevan <code>html</code>-tiedostomme <code>helloworld.html</code>. Huomaa, että oman tai perittävän luokan staattiseen metodiin viitataan <code>self</code>-avainsanalla.
+  Metodissamme kutsumme luokan <code>View</code> staattista metodia <code>make</code>, joka renderöi kansiossa <code>app/views</code> sijaitsevan <code>html</code>-tiedostomme <code>helloworld.html</code>. <code>make</code>-metodin toteutus on melko yksinkertainen, se käyttää <strong>Twig</strong>-nimistä kirjastoa, johon tutustumme pian tarkemmin. Voit tutustua metodin toteutukseen tarkemmin <code>lib/view.php</code>-tiedostossa.
 </p>
 <p>
-  Buildataan ja siirrytään sovelluksessamme polkuun <code>/hiekkalaatikko</code>. Kontrollerimme renderöi nyt juuri luomamme HTML-tiedoston, joka tosin näyttää vielä hieman rujolta.
+  Siirretään sovelluksemme tiedostot palvelimelle ja siirrytään sovelluksessamme polkuun <code>/hiekkalaatikko</code>. Kontrollerimme renderöi nyt juuri luomamme HTML-tiedoston, joka tosin näyttää vielä hieman rujolta.
 </p>
 <h3>3.3 Bootstrap ja kauniimmat näkymät</h3>
 <p>
@@ -653,30 +654,30 @@ RewriteRule ^ index.php [QSA,L]</div>
   // ...
 
   public static function game_list(){
-    self::render_view('suunnitelmat/game_list.html');
+    View::make('suunnitelmat/game_list.html');
   }
 
   public static function game_show(){
-    self::render_view('suunnitelmat/game_show.html');
+    View::make('suunnitelmat/game_show.html');
   }
 
   public static function login(){
-    self::render_view('suunnitelmat/login.html');
+    View::make('suunnitelmat/login.html');
   }
 }</div>
         <p>
           Lisätään vielä uusille metodeille reitit <code>config</code> kansiossa sijaitseen <code>routes.php</code>-tiedostoon:
         </p>
         <div hljs language="php" no-escape>// ...
-$app->get('/game', function() {
+$routes->get('/game', function() {
   HelloWorldController::game_list();
 });
 
-$app->get('/game/1', function() {
+$routes->get('/game/1', function() {
   HelloWorldController::game_show();
 });
 
-$app->get('/login', function() {
+$routes->get('/login', function() {
   HelloWorldController::login();
 });
         </div>

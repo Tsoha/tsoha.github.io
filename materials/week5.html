@@ -11,9 +11,9 @@
 </ul>
 <hr>
 <a id="1-kirjautumisen-tarkistus-ja-uloskirjautuminen"></a>
-<h1>1. Kirjautumisen tarkistus ja uloskirjautuminen</h1>
+<h2>1. Kirjautumisen tarkistus ja uloskirjautuminen</h2>
 
-<h2>1.1 Kirjautumisen tarkistus</h1>
+<h3>1.1 Kirjautumisen tarkistus</h3>
 <p>
   En halua, että kirjautumaton käyttäjä pääsee katsomaan peleihin liittyviä sivuja. Lisään siis <code>lib/base_controller.php</code>-tiedostossa sijaitsevaan <code>BaseController</code>-luokkaan metodin, joka ohjaa käyttäjän kirjautumissivulle, jos hän ei ole kirjautunut sisään:
 </p>
@@ -22,7 +22,7 @@
 
   public static function check_logged_in(){
     if(!isset($_SESSION['user'])){
-      self::redirect_to('/login', array('message' => 'Kirjaudu ensin sisään!'));
+      Redirect::to('/login', array('message' => 'Kirjaudu ensin sisään!'));
     }
   }
   //...
@@ -85,7 +85,7 @@
   public static function logout(){
     $_SESSION['user'] = null;
 
-    self::redirect_to('/login', array('message' => 'Olet kirjautunut ulos!'));
+    Redirect::to('/login', array('message' => 'Olet kirjautunut ulos!'));
   }
 }</div>
 
@@ -94,7 +94,7 @@
 </p>
 
 <div hljs language="php" no-escape>//...
-$app->post('/logout', function(){
+$routes->post('/logout', function(){
   UserController::logout();
 });</div>
 
@@ -137,13 +137,13 @@ $app->post('/logout', function(){
 <!-- ... --></div>
 <hr>
 <a id="2-oman-sovelluksen-laajentaminen"></a>
-<h1>2. Oman sovelluksen laajentaminen</h1>
+<h2>2. Oman sovelluksen laajentaminen</h2>
 
 Voit käyttää seuraavaksi aikaa oman sovelluksesi laajentamiseen. Muistathan, että arvosanan viisi saamiseksi sovelluksessasi tulee olla vähintään kahdessa tietokohteessa CRUD-nelikko. Koska kertaus on opintojen äiti, muistellaan seuraavaksi, mitä CRUD-nelikon toteuttamiseen liittyikään.
 
-<h2>2.1 CRUD-nelikon toteuttamisen muistilista</h2>
+<h3>2.1 CRUD-nelikon toteuttamisen muistilista</h3>
 
-<h3>1. Malliluokan toteuttaminen</h3>
+<h4>Malliluokan toteuttaminen</h4>
 <p>
   Aloita toteuttamalla malliluokka kansioon <code>app/models</code>. Muista periä luokassasi <code>BaseModel</code>-luokka. Lisää malliluokkaasi metodit tietokohteen listaamiselle (<code>all</code>), haulle (<code>find</code>), lisäämiselle (<code>save</code>), muokkaamiselle (<code>update</code>) ja poistamiselle (<code>destroy</code>). Muistathan, että tietokantayhteyden sai muodostettua kutsumalla <code>DB</code>-luokan <code>connection</code>-metodia:
 </p>
@@ -182,7 +182,7 @@ public function __construct($attributes){
   return $erros;
 }</div>
 
-<h3>2. Kontrolleriluokan toteuttaminen</h3>
+<h4>Kontrolleriluokan toteuttaminen</h4>
 
 <p>
   Toteuta seuraavaksi malliluokkaasi käyttämä kontrolleriluokka kansioon <code>app/controllers</code>. Muista periä luokassasi <code>BaseController</code>-luokka. Lisää kontrolleriluokkaasi metodit näkymien näyttämiselle ja käyttäjän pyyntöjen käsittelyyn:
@@ -193,17 +193,17 @@ public function __construct($attributes){
   public static function index(){
     $games = Game::all();
 
-    self::render_view('games/index.html', array('games' => $games));
+    View::make('games/index.html', array('games' => $games));
   }
 
   public static function show($id){
     $game = Game::find($id);
 
-    self::render_view('games/show.html', array('game' => $game));
+    View::make('games/show.html', array('game' => $game));
   }
 
   public static function create(){
-    self::render_view('game/create.html');
+    View::make('game/create.html');
   }
 
   public static function store(){
@@ -222,16 +222,16 @@ public function __construct($attributes){
     if(count($errors) == 0){
       $game->save();
 
-      self::redirect_to('/game/' . $game->id, array('message' => 'Peli on lisätty kirjastoosi!'));
+      Redirect::to('/game/' . $game->id, array('message' => 'Peli on lisätty kirjastoosi!'));
     }else{
-      self::render_review('game/new.html', array('errors' => $errors, 'attributes' => $attributes));
+      View::make('game/new.html', array('errors' => $errors, 'attributes' => $attributes));
     }
   }
 
   public static function edit($id){
     $game = Game::find($id);
 
-    self::render_view('game/edit.html', array('game' => $game));
+    View::make('game/edit.html', array('game' => $game));
   }
 
   public static function update($id){
@@ -252,50 +252,50 @@ public function __construct($attributes){
     if(count($errors) == 0){
       $game->update();
 
-      self::redirect_to('/game/' . $game->id, array('message' => 'Peliä on muokattu onnistuneesti!'));
+      Redirect::to('/game/' . $game->id, array('message' => 'Peliä on muokattu onnistuneesti!'));
     }else{
-      self::render_view('/game/edit.html', array('errors' => $erros, 'attributes' => $attributes));
+      View::make('/game/edit.html', array('errors' => $erros, 'attributes' => $attributes));
     }
   }
 
 }</div>
 
-<h3>3. Reittien lisääminen</h3>
+<h4>Reittien lisääminen</h4>
 
 <p>
   Lisää kontrollereillesi reitit <code>config</code>-kansiossa sijaitsevaan <code>routes.php</code>-tiedostoon:
 </p>
 
 <div hljs language="php" no-escape>//...
-$app->get('/game', function(){
+$routes->get('/game', function(){
   GameController::index();
 });
 
-$app->get('/game/:id', function($id){
+$routes->get('/game/:id', function($id){
   GameController::show($id);
 });
 
-$app->get('/game/create', function(){
+$routes->get('/game/create', function(){
   GameController::create();
 });
 
-$app->post('/game', function(){
+$routes->post('/game', function(){
   GameController::store();
 });
 
-$app->get('/game/:id/edit', function($id){
+$routes->get('/game/:id/edit', function($id){
   GameController::edit($id);
 });
 
-$app->post('/game/:id/edit', function($id){
+$routes->post('/game/:id/edit', function($id){
   GameController::update($id);
 });
 
-$app->post('/game/:id/destroy', function($id){
+$routes->post('/game/:id/destroy', function($id){
   GameController::destroy($id);
 });</div>
 
-<h3>Näkymien toteuttaminen</h3>
+<h4>Näkymien toteuttaminen</h4>
 
 <p>
   Toteuta lopuksi tarvitsemasi näkymät. Lisää näkymätiedostot <code>app/views</code>-kansioon oman tietokohteesi nimiseen kansioon, kuten minä sijoitin pelien näkymät kansioon <code>game</code>. Muista näkymiäsi toteuttaessa seuraavat asiat:
@@ -395,7 +395,7 @@ $(document).ready(function(){
 
     $games = Game::all($options);
 
-    self::render_view('game/index.html', array('games' => $games));
+    View::make('game/index.html', array('games' => $games));
   }
 }</div>
 
