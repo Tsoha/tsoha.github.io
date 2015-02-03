@@ -3,15 +3,139 @@
 </div>
 <h2>Sisällysluettelo</h2>
 <ul class="nav nav-pills nav-stacked">
-  <li><a href="" ng-click="goto_anchor('1-mallit')">1. Mallit</a></li>
-  <li><a href="" ng-click="goto_anchor('2-kontrollerit-ja-mallit')">2. Kontrollerit ja mallit</a></li>
-  <li><a href="" ng-click="goto_anchor('3-lomakkeet-ja-lisaystoiminnot')">3. Lomakkeet ja lisäystoiminnot</a></li>
-  <li><a href="" ng-click="goto_anchor('4-palautuksen-vaatimukset')">4. Palautuksen vaatimukset</a></li>
+  <li><a href="" ng-click="goto_anchor('1-php-haltuun')">1. PHP haltuun</a></li>
+  <li><a href="" ng-click="goto_anchor('2-mallit')">2. Mallit</a></li>
+  <li><a href="" ng-click="goto_anchor('3-kontrollerit-ja-mallit')">3. Kontrollerit ja mallit</a></li>
+  <li><a href="" ng-click="goto_anchor('4-lomakkeet-ja-lisaystoiminnot')">4. Lomakkeet ja lisäystoiminnot</a></li>
+  <li><a href="" ng-click="goto_anchor('5-palautuksen-vaatimukset')">5. Palautuksen vaatimukset</a></li>
 </ul>
 
 <hr>
-<a id="1-mallit"></a>
-<h2>1. Mallit</h2>
+
+<h2>1. PHP haltuun</h2>
+<p>
+  Ennen kuin etenemme sovelluksemme toteutuksessa pidemmälle, sukelletaan hetkeksi PHP:n saloihin.
+</p>
+<h3>1.1 Taulukot ja assosiaatiolistat</h3>
+
+<p>
+  PHP:n luultavasti tärkein tietorakenne on <strong>taulukko</strong> (<code>array</code>), joka on kokoelma otuksia, kuten merkkijonoja, kokonaislukuja, tai toisia taulukoita. Koska PHP on tyypitön, voi taulukko koostua erityyppisistä arvoista, vaikkin se voi olla hieman sekavaa. Taulukon alustaminen on helppoa, tässä on esimerkki taulukosta merkkijonoja:
+</p>
+
+<div hljs no-escape>$kaverit = array('Henri', 'Elina', 'Riku', 'Viivi', 'Jorma', 'Teo');</div>
+
+<p>
+  Nyt <code>$kaverit</code>-muuttujassa on taulukko, jossa on kuusi merkkijonoa. Katsotaan, mitä voimme saada irti tästä taulukosta:
+</p>
+
+<div hljs no-escape>echo 'Kallen esimmäinen kaveri on:\n';
+echo $kaverit[0] . '\n';
+// Henri
+echo 'Kallen viimeinen kaveri on:\n';
+echo $kaverit[5] . '\n';
+// Teo
+echo 'Kallen kavereita ovat:\n'
+foreach($kaverit as $kaveri){
+  echo $kaveri . '\n';
+  // Tähän tulostuu kaverin nimi
+}
+// Lisätään Kallelle kaveri
+$kaverit[] = 'Helena';
+echo 'Kallen viimeinen kaveri on:\n';
+echo $kaverit[6] . '\n';
+// Helena
+echo 'Kalella on yhteensä ' . count($kaverit) . ' kaveria';
+// Kallella on yhteensä 7 kaveria
+</div>
+
+<p>
+  Merkkijonon alkioihin voi siis Javan tapaan viitata indeksillä, jolloin esimmäinen alkio on indeksissä 0. <code>$kaverit[0]</code> on siis taulukon esimmäinen alkio. Taulukon läpikäyntiin voi käyttää <code>foreach</code>-looppia, johon annetaan iteroitava taulukko ja iteroitavan alkion nimi. Iteroitavaan alkioon voi viitata loopin sisällä, jolloin esimerkissä tulostuu kaikki taulukon alkiot.
+</p>
+
+<p>
+  Taulukkoon voi myös helposti lisätä alkioita. Se tapahtuu esimerkissä kohdassa <code>$kaverit[] = 'Helena'</code>. Alkion lisääminen taulukkoon onnistuu myös <a href="http://php.net/manual/en/function.array-push.php" target="_blank">array_push</a>-funktion avulla, jolloin esimerkissä alkion <code>'Helena'</code> voisi lisätä taulukkoon <code>$kaverit</code> kutsulla <code>array_push($kaverit, 'Helena')</code>. Toinen hyödyllinen taulukkoihin liittyvä funktio on <a href="http://php.net/manual/en/function.count.php" target="_blank">count</a>, joka palauttaa taulukon alkioiden lukumäärän.
+</p>
+
+<p>
+  Toinen erittäin tärkeä tietorakenne on <strong>assosiaatiolista</strong>, joka muistuttaa Javan HashMap:ia. Assosiaatiolista koostuu avain-arvo-pareista, joka esitetään seuraavasti:
+</p>
+
+<div hljs no-escape>$iat = array(
+  'kalle' => 22,
+  'elina' => 24,
+  'henri' => 21
+);</div>
+
+<p>
+  <code>$iat</code>-assosiaatiolistassa on avaimet <code>kalle</code>, <code>elina</code> ja <code>henri</code> ja niitä vastaavat arvot <code>22</code>, <code>24</code>, <code>21</code>. <strong>Assosiaatiolistan avaimen täytyy aina olla merkkijono</strong>. Katsotaan, miten voimme käsitellä assosiaatiolistoja:
+</p>
+
+<div hljs no-escape>echo 'Kalle on ' . $iat['kalle'] . ' vuotta vanha\n';
+// Kalle on 22 vuotta vanha
+echo 'Elina on ' . $iat['elina'] . ' vuotta vanha\n';
+// Elina on 24 vuotta vanha
+echo 'Henri on ' . $iat['henri'] . ' vuotta vanha\n';
+// Henri on 21 vuotta vanha
+// Kallella on syntymäpäivät, vaihdetaan hänen ikänsä
+$iat['kalle'] = 23;
+echo 'Kalle on ' . $iat['kalle'] . ' vuotta vanha\n';
+// Kalle on 23 vuotta vanha</div>
+
+<p>
+  Kuten esimerkistä näkee, assosiaatiolistan avainta vastaavan arvon saa syntaksilla <code>$lista['avain']</code>, jolloin avaimen <code>kalle</code> arvo esimerkissä <code>$iat['kalle']</code>. Avaimen arvoa voi myös muuttaa, kuten esimerkissä avaimen <code>kalle</code> arvoksi asetettiin <code>23</code>, kohdassa <code>$iat['kalle'] = 23</code>.
+</p>
+
+<h3>1.2 Luokat</h3>
+
+<p>
+  Katsotaan seuraavaksi lyhyesti, miten Javasta tutut <strong>luokat</strong> toteutetaan PHP:ssa. Tässä on esimerkki luokasta <code>Koira</code>:
+</p>
+
+<div hljs no-escape>class Koira{
+  // attribuutit
+  public $nimi, $omistaja, $paino, $ika;
+  // konstruktori
+  public function __construct($nimi, $omistaja, $paino, $ika){
+    $this->nimi = $nimi;
+    $this->omistaja = $omistaja;
+    $this->paino = $paino;
+    $this->ika = $ika;
+  }
+  // olioon liittyvä julkinen metodi
+  public function hauku(){
+    $sanonta = $this->mita_koira_sanoo();
+    return $this->nimi . ': ' . $sanonta . '!';
+  }
+  // luokkaan liittyvä staattinen metodi
+  public static function eliokunta(){
+    return 'Nisäkkäät';
+  }
+  // olioon liittyvä privaatti metodi
+  private function mita_koira_sanoo(){
+    return 'Hau, hau!';
+  }
+}</div>
+
+<p>
+  Esimerkissä <code>Koira</code>-luokkaan liittyy neljä attribuuttia - <code>$nimi</code>, <code>$omistaja</code>, <code>$paino</code> ja <code>$ika</code>. Attribuuttien näkyvyysalueeksi on asetettu <code>pulic</code>, joten niihin pääsee käsiksi kaikkialta, myös luokan ulkopuolelta. Luokan konstruktori määritetään metodissa <code>__construct</code>, joka ottaa parametreikseen kaikki koiraan liittyvät tiedot. Olion attribuutteihin pystyy viittamaan syntaksilla <code>$this->attribuutin_nimi</code>, jolloin esimerkissä nimi attribuutin arvo on <code>$this->nimi</code>.
+</p>
+
+<p>
+  Luokalla voi myös olla sen olioon liittyviä metodeja, tai itse luokkaan liittyviä metodeja, eli staattisia metodeja. <code>Koira</code>-luokalle on määritelty oliometodit <code>hauku</code> ja <code>mita_koira_sanoo</code> sekä staattinen metodi <code>eliokunta</code>. Tässä pieni esimerkki <code>Koira</code>-luokan käytöstä:
+</p>
+
+<div hljs no-escape>$rekku = new Koira('Rekku', 'Kalle', 10, 2);
+echo $rekku->nimi;
+// Rekku
+echo $rekku->hauku();
+// Rekku: Hau, hau!
+echo Koira::eliokunta();
+// Nisäkkäät
+</div>
+
+<hr>
+<a id="2-mallit"></a>
+<h2>2. Mallit</h2>
 
 <p>
   Palataan taas ensimmäisellä viikolla esitettyyn esimerkkiin ja muistellaan, mitä siinä puhuttiin malleista:
@@ -29,7 +153,7 @@
 
 Malli siis edustaa jotain sovelluksen tietokohdetta, kuten esimerkissämme, kurssia ja tarjoaa kontrollereille tietokannan muokkaamiseen ja hakuun liittyviä palveluita.
 
-<h3>1.1 Oman sovelluksemme mallit</h3>
+<h3>2.1 Oman sovelluksemme mallit</h3>
 
 <p>
   Katsotaan seuraavaksi, miten mallit käytännössä toteutetaan. Omassa sovelluksessani minun täytyy jotenkin suorittaa peleihin liittyviä tietokantaoperaatiota. Tarvitsen siis pelille mallin. Lisään <code>app/models</code>-kansioon tiedoston <code>game.php</code>, johon toteutan malliluokkani. Tässä on <code>Game</code>-luokan runko:
@@ -39,7 +163,8 @@ Malli siis edustaa jotain sovelluksen tietokohdetta, kuten esimerkissämme, kurs
 }</div>
 
 <p>
-  <div class="alert alert-info">
+  <div class="alert alert-warning">
+    <h4>Muistathan?</h4>
     Muista lisätä jokaisen luomasi <code>php</code>-tiedoston alkuun rivi <code>&lt;?php</code>.
   </div>
 </p>
@@ -50,7 +175,7 @@ Malli siis edustaa jotain sovelluksen tietokohdetta, kuten esimerkissämme, kurs
 
 <div hljs language="php" no-escape>class Game extends BaseModel{
   // Attribuutit
-  public $id, $user_id, $name, $played, $description, $published, $publisher, $added;
+  public $id, $player_id, $name, $played, $description, $published, $publisher, $added;
   // Konstruktori
   public function __construct($attributes){
     parent::__construct($attributes);
@@ -95,7 +220,7 @@ Malli siis edustaa jotain sovelluksen tietokohdetta, kuten esimerkissämme, kurs
       // Tämä on PHP:n hassu syntaksi alkion lisäämiseksi taulukkoon :)
       $games[] = new Game(array(
         'id' => $row['id'],
-        'user_id' => $row['user_id'],
+        'player_id' => $row['player_id'],
         'name' => $row['name'],
         'played' => $row['played'],
         'description' => $row['description'],
@@ -110,7 +235,14 @@ Malli siis edustaa jotain sovelluksen tietokohdetta, kuten esimerkissämme, kurs
 }</div>
 
 <p>
-  Käydäänpä läpi, mitä metodissa tapahtuu. Määrittelen aluksi staattisen metodin <code>all</code> ja kutsun <code>DB</code>-luokan staattista metodia <code>connection</code>, joka palauttaa <strong><a href="http://php.net/manual/en/book.pdo.php" target="_blank">PDO</a></strong>-tietokantakirjaston tarjoaman PDO-yhteysolion. Alustan tietokantakyselyn kutsumalla PDO-yhteysolion metodia <code>prepare</code>, joka ottaa parametrikseen suoritettavan tietokantakyselyn. Seuraavalla rivillä suoritan kyselyni kutsumalla <code>execute</code>-metodia. Kyselyn suorittamisen jälkeen kyselyn tuottamiin riveihin pääsee käsiksi kutsumalla <code>fetchAll</code>-metodia, joka palauttaa rivit taulukkona assosiaatiolistoja, jonka avaimina toimivat sarakkeiden nimet ja arvoina niiden sisältö. Käyn rivit läpi <code>for</code>-loopissa ja luon jokaisen rivin arvoista <code>Game</code>-olion, jonka lisään <code>games</code>-taulukkoon.
+  Käydäänpä läpi, mitä metodissa tapahtuu. Määrittelen aluksi staattisen metodin <code>all</code> ja kutsun <code>DB</code>-luokan staattista metodia <code>connection</code>, joka palauttaa <strong><a href="http://php.net/manual/en/book.pdo.php" target="_blank">PDO</a></strong>-tietokantakirjaston tarjoaman PDO-yhteysolion. Alustan tietokantakyselyn kutsumalla PDO-yhteysolion metodia <code>prepare</code>, joka ottaa parametrikseen suoritettavan tietokantakyselyn. Seuraavalla rivillä suoritan kyselyni kutsumalla <code>execute</code>-metodia. Kyselyn suorittamisen jälkeen kyselyn tuottamiin riveihin pääsee käsiksi kutsumalla <code>fetchAll</code>-metodia, joka palauttaa rivit taulukkona assosiaatiolistoja, jonka avaimina toimivat sarakkeiden nimet ja arvoina niiden sisältö. Käyn rivit läpi <code>foreach</code>-loopissa ja luon jokaisen rivin arvoista <code>Game</code>-olion, jonka lisään <code>games</code>-taulukkoon.
+</p>
+
+<p>
+  <div class="alert alert-info">
+    <h4>Vinkki</h4>
+    Tietokantakyselyitä kannattaa kokeilla <code>psql</code>-komentotulkissa ennen kuin käytät niitä malleissa, jotta voit olla varma, että ne toimivat haluamallasi tavalla. Muistathan, että pääset käyttämään komentotulkkia ottamalla SSH-yhteyden users-palvelimeen komennolla <code>ssh kayttajatunnus@users.cs.helsinki.fi</code> (korvaa kohta <code>kayttajatunnus</code> omalla CS-käyttäjätunnuksellasi) ja suorittamalla users-palvelimen puolella komennon <code>psql</code>. Kun testaamasi tietokantakysely toimii, voit sulkea komentotulkin syöttämällä <code>\q</code> ja painamalle <kbd>enter</kbd>-painiketta.
+  </div>
 </p>
 
 <p>
@@ -128,7 +260,7 @@ Malli siis edustaa jotain sovelluksen tietokohdetta, kuten esimerkissämme, kurs
     if($row){
       $game = new Game(array(
         'id' => $row['id'],
-        'user_id' => $row['user_id'],
+        'player_id' => $row['player_id'],
         'name' => $row['name'],
         'played' => $row['played'],
         'description' => $row['description'],
@@ -150,6 +282,7 @@ Malli siis edustaa jotain sovelluksen tietokohdetta, kuten esimerkissämme, kurs
 
 <p>
   <div class="alert alert-info">
+    <h4>Vinkki</h4>
     <code>DB</code>-luokka löytyy kansion <code>lib</code> tiedostosta <code>database.php</code>. Käyttämäsi staattinen <code>connection</code>-metodi palauttaa PDO-olion, jonka avulla muodostetaan tietokantayhteys.
   </div>
 </p>
@@ -174,10 +307,10 @@ class HelloWorldController extends BaseController{
   Muista sisällyttää mallisi kontrolleriin <a href="http://php.net/manual/en/function.require.php" target="_blank">require</a>-kommennolla!
 </p>
 
-<h3>1.2 Composer - luokkien automaattinen lataaminen</h3>
+<h3>2.2 Composer ja luokkien automaattinen lataaminen</h3>
 
 <p>
-  Olemme rakentamessa melko isoa sovellusta, jolloin <code>php</code>-tiedostoja kertyy melko paljon. Eikö olisi hauskaa, jos ei tarvitsisi erikseen lisätä <code>require</code>-riviä aina, kun haluat esimerkiksi käyttää malliluokkaa toisessa tiedostossa? Apuun tulee <strong><a href="https://getcomposer.org/" target="_blank">Composer</a></strong>, PHP:n riippuvuuksienhallitsija. Composer:in avulla voit määrittää, mitä riippuvuuksia sovelluksessasi on ja se asentaa ne puolestasi. Me olemme tosin enemmän kiinnostuneita Composer:in toisesta ominaisuusta, luokkien lataamisesta lataamisesta.
+  Olemme rakentamessa melko isoa sovellusta, jolloin <code>php</code>-tiedostoja kertyy melko paljon. Eikö olisi hauskaa, jos ei tarvitsisi erikseen lisätä <code>require</code>-riviä aina, kun haluat esimerkiksi käyttää malliluokkaa toisessa tiedostossa? Apuun tulee <strong><a href="https://getcomposer.org/" target="_blank">Composer</a></strong>, PHP:n riippuvuuksienhallitsija. Composer:in avulla voit määrittää, mitä riippuvuuksia sovelluksessasi on ja se asentaa ne puolestasi. Me olemme tosin enemmän kiinnostuneita Composer:in toisesta ominaisuusta, luokkien automaattisesta lataamisesta.
 </p>
 
 <p>
@@ -188,7 +321,7 @@ class HelloWorldController extends BaseController{
   "autoload": {
     "classmap": [
       "config/database.php",
-      "lib/",
+      "lib",
       "app/controllers"
     ]
   },
@@ -198,6 +331,8 @@ class HelloWorldController extends BaseController{
   }
 }</div>
 
+<img src="assets/images/composer.png" class="pull-right" style="width: 200px; height: auto; margin-left: 15px; margin-bottom: 15px;">
+
 <p>
   Kerromme tässä tiedostossa, mitä riippuvuuksia sovelluksessame on, meillä ne ovat Twig ja Slim, sekä mistä tiedostoista haluamme etsiä automaattisesti ladattavia luokkia. Olen määrittänyt <code>classmap</code>-taulukkoon, että haluan ladata automaattisesti luokat tiedostosta <code>config/database.php</code> sekä kaikista tiedostoista kansioista <code>lib</code> ja <code>app/controllers</code>. Kun alustit sovelluksesi ensimmäistä kertaa komennolla <code>bootstrap.sh</code>, Composer asennettiin projektiisi ja sen juuressa suoritetiin <code>php composer.phar install</code>. Kyseinen komento asensi sovelluksemme riippuvuudet ja lisäsi <code>vendor</code>-kansioon tiedoston <code>autoload.php</code>, joka käynnistää luokkien automaattisen lataamisen.
 </p>
@@ -206,11 +341,16 @@ class HelloWorldController extends BaseController{
   Lisää seuraavaksi kaikki sovelluksesi mallit automaattisesti ladattavien luokkien joukkoon lisäämällä niiden polku, <code>app/models</code>, <code>classmap</code>-taulukkoon <code>composer.json</code>-tiedostoon. Kun polku on lisätty, tallenna ja siirrä sovelluksesi tiedostot palvelimelle. Kun suoritat <code>deploy.sh</code>-tiedoston siirtäessäsi tiedostosi palvelimelle, suoritetaan palvelimella projektisi juuressa komento <code>php composer.phar dump-autoload</code>, joka etsii automaattisesti ladattavat luokat määrittämistäsi poluista. Jos sisällytit malliluokkasi tiedoston kontrollerissa, voit nyt poistaa <code>require</code>-rivin, Composer hoitaa homman tästä eteenpäin.
 </p>
 
+<div style="clear: both"></div>
+
 <p>
-  <div class="alert alert-info">Jos innostut käyttämään sovelluksessasi Slim:in ja Twig:in lisäksi muita PHP-kirjastoja, määritä ne vain <code>require</code>-objektissa ja suorita users-palvelimen puolella projektisi juuressa komento <code>php composer.phar update</code>. Komennon suorittaminen päivittää sovelluksesi riippuvuudet.</div>
+  <div class="alert alert-info">
+    <h4>Vinkki</h4>
+    Jos innostut käyttämään sovelluksessasi Slim:in ja Twig:in lisäksi muita PHP-kirjastoja, määritä ne vain <code>require</code>-objektissa ja suorita users-palvelimen puolella projektisi juuressa komento <code>php composer.phar update</code>. Komennon suorittaminen päivittää sovelluksesi riippuvuudet.
+  </div>
 </p>
 
-<h3>1.3 SQL-injektio</h3>
+<h3>2.3 SQL-injektio</h3>
 
 <p>
   Kun upotit muuttujia tietokantakyselyysi PDO:n avulla saatoit ehkä miettiä, miksi emme vain upota muuttujia suoraan tietokantakyselyihimme? Se onnistuisi helposti näin:
@@ -223,7 +363,7 @@ $query->execute();</div>
   Ongelma on, ettemme voi koskaan tietää, mikä <code>$id</code>-muuttujan arvo on, emme edes tiedä, onko se kokonaisluku. Pahimmassa tauksessa sen arvo on tämä:
 </p>
 
-<div hljs language="php" no-escape>$id = '1 ; DROP TABLE Game; SELECT * FROM Game';</div>
+<div hljs language="php" no-escape>$id = '1 ; DROP TABLE Game; SELECT * FROM Player';</div>
 
 <p>
   Oops! Sinne meni tietokantataulumme.
@@ -234,14 +374,18 @@ $query->execute();</div>
   SQL-injektion vaara on aina olemassa, kun upotamme käyttäjän syöttämiä arvoja suoraan tietokantakyselyymme. Yleensä tietokantakyselyt kannattaakin suorittaa kirjastoluokkien tarjoamien palvelujen avulla, jotka hoitavat SQL-injektioiden ehkäisyn puolestasi. PHP:ssa tälläinen kirjasto on jo käyttämämme <a href="http://php.net/manual/en/book.pdo.php" target="_blank">PDO</a>.
 </p>
 
+<p>
+  <img src="assets/images/sql-injektio.png">
+</p>
+
 <hr>
-<a id="2-kontrollerit-ja-mallit"></a>
-<h2>2. Kontrollerit ja mallit</h2>
+<a id="3-kontrollerit-ja-mallit"></a>
+<h2>3. Kontrollerit ja mallit</h2>
 <p>
   Kuten jo todettiin, mallit tarjoavat palveluita tietokannan muokkaamiseen ja hakuun. Käytännössä kontrolleri saattaa esimerkiksi pyytää mallilta jonkin tietokohteen oliot ja renderöi sen jälkeen näkymän, joka listaa ne. Katsomme seuraavaksi hieman tarkemmin, miten kontrollerit käyttävät malleja.
 <p>
 
-<h3>2.1 Sisältöä näkymiin</h3>
+<h3>3.1 Sisältöä näkymiin</h3>
 <p>
   Haluan sovellukseeni näkymän, joka listaa kaikki käyttäjän pelit. Tein sille viime viikolla jo näkymän, joka näytti tältä:
 </p>
@@ -296,16 +440,16 @@ $query->execute();</div>
 }</div>
 
 <p>
-  Katsotaanpa, mitä metodissa oikein tapahtuu. Haen siis <code>Game</code>-luokan <code>all</code>-metodin avulla kaikki pelit tietokannastani. Sen jälkeen renderöin kansiossa <code>views/game</code> sijaitsevan tiedoston <code>index.html</code>, mutta tällä kertaa välitän <code>make</code>-metodille näkymätiedoston lisäksi assosiaatiolistan, joka sisältää pelini <code>games</code>-avaimen arvona. Seuraavaksi minun täytyy muokata hieman näkymääni, jotta saan esitettyä siinä kontrollerin välittämän datan. Muokkaan <code>index.html</code> tiedoston seuraavan laiseksi:
+  Katsotaanpa, mitä metodissa oikein tapahtuu. Haen siis <code>Game</code>-luokan <code>all</code>-metodin avulla kaikki pelit tietokannastani. Sen jälkeen renderöin kansiossa <code>views/game</code> sijaitsevan tiedoston <code>index.html</code>, mutta tällä kertaa välitän <code>make</code>-metodille näkymätiedoston lisäksi assosiaatiolistan, joka sisältää pelini <code>games</code>-avaimen arvona. Seuraavaksi minun täytyy muokata hieman näkymääni, jotta saan esitettyä siinä kontrollerin välittämän datan. Muokkaan <code>index.html</code> tiedoston seuraavanlaiseksi:
 </p>
 
 <div hljs language="xml" no-escape>{% extends "base.html" %}
 
 {% block content %}
-  &lt;h1>Käyttäjän Henri pelikirjasto</h1>
+  &lt;h1>Käyttäjän Henri pelikirjasto&lt;/h1>
 
   &lt;p>
-    &lt;a href="{{base_path}}/game/create" class="btn btn-success">Lisää peli</a>
+    &lt;a href="{{base_path}}/game/create" class="btn btn-success">Lisää peli&lt;/a>
   &lt;/p>
 
   &lt;table class="table table-striped table-bordered">
@@ -321,7 +465,7 @@ $query->execute();</div>
     &lt;/thead>
 
     &lt;tbody>
-      {{ '{% for game in games %}' }}
+      {% for game in games %}
         &lt;tr>
           &lt;td>&lt;a href="{{base_path}}/game/{{game.id}}">{{game.name}}</a>&lt;/td>
           &lt;td>{{game.published}}&lt;/td>
@@ -334,7 +478,7 @@ $query->execute();</div>
               {% endif %}
           &lt;/td>
           &lt;td>{{game.added}}&lt;/td>
-          &lt;td><a class="btn btn-default btn-sm" href="{{base_path}}/game/{{game.id}}/edit">Muokkaa</a>&lt;/td>
+          &lt;td>&lt;a class="btn btn-default btn-sm" href="{{base_path}}/game/{{game.id}}/edit">Muokkaa&lt;/a>&lt;/td>
         &lt;/tr>
       {% endfor %}
     &lt;/tbody>
@@ -343,18 +487,20 @@ $query->execute();</div>
 
 <p>
   <div class="alert alert-info">
-    Sovelluksen näkymät kannattaa jaotella tietokohteiden mukaan <code>app/views</code>-kansioon. Kuten huomasit lisäsin tietokohteeni <code>game</code> näkymät kansioon <code>game</code>. Tämä selkeyttää huomattavasti näkymien hallintaa.
+    <h4>Vinkki</h4>
+    Sovelluksen näkymät kannattaa jaotella kansioihin tietokohteiden mukaan <code>app/views</code>-kansioon. Kuten huomasit lisäsin tietokohteeni <code>game</code> näkymät kansioon <code>game</code>. Tämä selkeyttää huomattavasti näkymien hallintaa.
   </div>
 </p>
 
 <p>
   <div class="alert alert-warning">
+    <h4>Muistathan?</h4>
     Muista lisätä kaikkien näkymäsi polkujen eteen, kuten linkkeihin, <code>{{base_path}}</code>, muuten polut osoittavat <code>htdocs</code> kansion juureen, eivätkä oman projektikansiosi juureen.
   </div>
 </p>
 
 <p>
-  Näkymässä ei tapahdu mitään kovien erikoista, käyn <code>{% for game in games %}</code>-blokin sisällä läpi kaikki <code>games</code>-muuttujaan talletetut pelit, jotka annoin näkymälle. Blokin sisällä upotan jokaisen pelin tiedot taulukkoon syntaksilla <code>{{muuttujan_nimi}}</code> ja teen <code>{% if game.played %}</code>-blokin avulla pienen ehtolauseen kaunistaakseni näkymääni. Twigillä voi tehdä siis vaikka mitä, lue <a href="http://twig.sensiolabs.org/doc/templates.html" target="_blank">täältä</a> lisää sen hyödyllisistä ominaisuuksista.
+  Näkymässä ei tapahdu mitään kovien erikoista, käyn <code>{% for game in games %}</code>-blokin sisällä läpi kaikki <code>games</code>-muuttujaan talletetut pelit, jotka annoin näkymälle. <code>for</code>-blokki muistuttaa hyvin paljon <code>foreach</code>-looppia, se tarvitsee vain iteroitavan listan ja nimen iteroitavalle alkiolle. Blokin sisällä upotan jokaisen pelin tiedot taulukkoon syntaksilla <code>{{muuttujan_nimi}}</code> ja teen <code>{% if game.played %}</code>-blokin avulla pienen ehtolauseen kaunistaakseni näkymääni. Twigillä voi tehdä siis vaikka mitä, lue <a href="http://twig.sensiolabs.org/doc/templates.html" target="_blank">täältä</a> lisää sen hyödyllisistä ominaisuuksista.
 </p>
 
 <p>
@@ -362,7 +508,7 @@ $query->execute();</div>
 </p>
 
 <h3>
-  2.2 Dynaamiset reitit
+  3.2 Dynaamiset reitit
 </h3>
 
 <p>
@@ -390,13 +536,14 @@ $routes->get('/game/:id', function($id){
 
 <p>
   <div class="alert alert-info">
-    Voit tulostaa koodin seasta viestejä PHP-logeihin <a href="http://php.net/manual/en/function.error-log.php" target="_blank">error_log</a>-funktion avulla. Muistathan, että pääset tarkkailemaan logeja suorittamalla terminaalissa projektisi juuressa komennon <code>bash php_logs.sh</code>.
+    <h4>Vinkki</h4>
+    Voit tulostaa koodin seasta viestejä PHP-logeihin <a href="http://php.net/manual/en/function.error-log.php" target="_blank">error_log</a>-funktion avulla. Muistathan, että pääset tarkkailemaan logeja suorittamalla terminaalissa projektisi juuressa komennon <code>bash php_logs.sh</code>. Logit pystyy sulkeamaan näppäilemällä terminaaliin <kbd>ctrl+c</kbd>.
   </div>
 </p>
 
 <hr>
-<a id="3-lomakkeet-ja-lisaystoiminnot"></a>
-<h2>3. Lomakkeet ja lisäystoiminnot</h2>
+<a id="4-lomakkeet-ja-lisaystoiminnot"></a>
+<h2>4. Lomakkeet ja lisäystoiminnot</h2>
 
 Olemme tähän asti käsitelleet, miten GET-pyynnöt kulkevat sovelluksemme läpi. Olemme tulleet kuitenkin pisteeseen, jossa haluamme ottaa vastaan syötteitä käyttäjältämme. Miten esimerkiksi käyttäjä voisi lisätä pelin kirjastoonsa?
 
@@ -452,17 +599,18 @@ Olemme tähän asti käsitelleet, miten GET-pyynnöt kulkevat sovelluksemme läp
 
 <p>
   Lomakkeeni lähettää kenttiensä sisällöt polkuun <code>/game</code>, joka käy ilmi katsomalla <code>form</code>-tagin <code>action</code>-attribuutin arvoa. Muista lisätä polun eteen palvelimella sijaitsevan projektisi kansion nimi, joka löytyy muuttujasta <code>base_path</code>. Lisäksi lomakkeeni metodiksi on määritelty <code>post</code>, joka käy ilmi <code>method</code>-attribuutin arvosta. Metodi olisi voinut olla myös <code>get</code>.
-  Olen myös määritellyt jokaiselle lomakkeeni kentälle <code>name</code>-attribuutin, jonka avulla voin myöhemmin viitata kenttään ja hakea sen arvon.
+  Olen myös määritellyt jokaiselle lomakkeeni kentälle <code>name</code>-attribuutin, jonka avulla voin myöhemmin viitata kenttään ja hakea sen arvon lomaketta käsittelevässä kontrollerissa.
 </p>
 
 <p>
   <div class="alert alert-info">
+    <h4>Vinkki</h4>
     Tekstikentät eivät ole suinkaan ainoita lomakkeen elementtejä. Voit lisäksi lähettää lomakkeiden kautta esimerkiksi monivalintakenttiä ja checkboxeja. <a href="http://www.w3schools.com/html/html_form_elements.asp" target="_blank">Täältä</a> löydät listan lomakkeen elementeistä.
   </div>
 </p>
 
 <p>
-  Seuraavaksi katsomme, miten pääsemme käsiksi lomakkeen lähettämiin tietoihin.
+  Seuraavaksi katsomme, miten pääsemme käsiksi lomakkeen lähettämiin tietoihin kontrollerissamme.
 </p>
 
 <h3>4.2 Käyttäjän syötteiden käsittely kontrollereissa</h3>
@@ -472,12 +620,27 @@ Olemme tähän asti käsitelleet, miten GET-pyynnöt kulkevat sovelluksemme läp
 </p>
 
 <div hljs language="php" no-escape>// ...
+// Pelin lisääminen tietokantaan
 $routes->post('/game', function(){
   GameController::store();
-});</div>
+});
+
+// Pelin lisäyslomakkeen näyttäminen
+$routes->get('/game/new', function(){
+  GameController::create();
+});
+// Määritetään reitti game/:id vasta tässä, jottei se mene sekaisin reitin game/new kanssa
+</div>
 
 <p>
-  Eli muutamme vain metodiksi <code>post</code>, aika helppoa eikö? Katsotaan seuraavaksi, mitä <code>GameController</code>-luokan <code>store</code>-metodissa tapahtuu:
+  <div class="alert alert-warning">
+    <h4>Muistathan?</h4>
+    Slim valitsee määrittämistäsi reiteistä ensimmäisen, joka vastaa pyynnön polkua. Tällöin esimerkiksi pyyntö sovelluksen polkuun <code>game/new</code> saattaa mennä sekasin reitin <code>game/:id</code>-kanssa. Ongelman ratkaisu on määrittää reitti <code>game/new</code> ennen reittiä <code>game/:id</code>.
+  </div>
+</p>
+
+<p>
+  Eli muutamme vain metodiksi <code>post</code>, aika helppoa eikö? Käyttäjän lähettämän lomakkeen siis käsittelee <code>GameController</code>-luokan metodi <code>store</code>. Katsotaan, mitä siellä tapahtuu:
 </p>
 
 <div hljs language="php" no-escape>class GameControllers extends BaseController{
@@ -486,7 +649,7 @@ $routes->post('/game', function(){
     // POST-pyynnön muuttujat sijaitsevat $_POST nimisessä assosiaatiolistassa
     $params = $_POST;
 
-    // Luon uuden pelin käyttäjän syöttämien tietojen perusteella kutsumalla Game mallini create metodia
+    // Alustetaan uusi Game-luokan olion käyttäjän syöttämillä arvoilla
     $game = new Game(array(
       'name' => $params['name'],
       'description' => $params['description'],
@@ -494,7 +657,7 @@ $routes->post('/game', function(){
       'published' => $params['published']
     ));
 
-    // Kutsutaan mallin save metodia, joka tallentaa olion tietokantaan
+    // Kutsutaan alustamamme olion save metodia, joka tallentaa olion tietokantaan
     $game->save();
 
     // Ohjataan käyttäjä lisäyksen jälkeen pelin esittelysivulle
@@ -504,22 +667,24 @@ $routes->post('/game', function(){
 
 
 <p>
-  Katsotaan, mitä toteuttamassani metodissa oikein tapahtuu. Aluksi otan POST-pyynnön mukana tulleet muuttujat talteen, ne sijaitsevat <code>$_POST</code>-muuttujassa assosiaatiolistana, jolloin esimerkiksi lomakkeen <code>name</code>-kentän sisältö on <code>$_POST['name']</code>. Sen jälkeen luon <code>Game</code>-olion pyyntöön liittyvien muuttujien mukaisesti ja kutsun luomani olion metodia <code>save</code>, joka tallentaa sen tietokantaan. Metodissa ei tapahtu mitään muuta kovin kummallista, paitsi se, että se lisää olion <code>id</code>-attribuutiksi tietokantaan lisätyn rivin <code>id</code>-sarakkeen arvon. Se onnistuu seuraavasti:
+  Katsotaan, mitä toteuttamassani metodissa oikein tapahtuu. Aluksi otan POST-pyynnön mukana tulleet muuttujat talteen, jotka sisältävät käyttäjän täyttämien kenttien arvot. Ne sijaitsevat <code>$_POST</code>-muuttujassa assosiaatiolistana, jolloin esimerkiksi lomakkeen <code>description</code>-kentän sisältö on <code>$_POST['description']</code>. Assosiaatiolistan avaimet ovat siis lomakkeessa määrittämieni kenttien <code>name</code>-attribuuttien arvoja. Sen jälkeen luon <code>Game</code>-olion pyyntöön liittyvien muuttujien mukaisesti ja kutsun luomani olion metodia <code>save</code>, joka tallentaa sen tietokantaan. Metodissa ei tapahtu mitään muuta kovin kummallista, paitsi se, että se lisää olion <code>id</code>-attribuutiksi tietokantaan lisätyn rivin <code>id</code>-sarakkeen arvon. Se onnistuu seuraavasti:
 </p>
 <div hljs language="php" no-escape>class Game extends BaseModel{
-  // ...
+  // Huomaathan, että save-metodi ei ole staattinen!
   public function save(){
-    $query = DB::connection()->prepare('INSERT INTO Game (...) VALUES (...) RETURNING id');
-    $query->execute(array(...));
-
+    // Lisätään RETURNING id tietokantakyselymme loppuun, niin saamme lisätyn rivin id-sarakkeen arvon
+    $query = DB::connection()->prepare('INSERT INTO Game (name, published, publisher, description) VALUES (:name, :published, :publisher, :description) RETURNING id');
+    // Muistathan, että olion attribuuttiin pääse syntaksilla $this->attribuutin_nimi
+    $query->execute(array('name' => $this->name, 'published' => $this->published, 'publisher' => $this->publisher, 'description' => $this->description));
+    // Haetaan kyselyn tuottama rivi, joka sisältää lisätyn rivin id-sarakkeen arvon
     $row = $query->fetch();
-
+    // Asetetaan lisätyn rivin id-sarakkeen arvo oliomme id-attribuutin arvoksi
     $this->id = $row['id'];
   }
 }</div>
 
 <p>
-  Saamme siis viimeksi lisätyn rivin lisäämällä SQL-kyselyn loppuun komennon <code>RETURNIN id</code>, joka paluttaa lisätyn rivin id-sarakkeen arvon. Lisään sen arvon olioni <code>id</code>-attribuutiksi.
+  Saamme siis viimeksi lisätyn rivin lisäämällä SQL-kyselyn loppuun komennon <code>RETURNIN id</code>, joka paluttaa lisätyn rivin id-sarakkeen arvon. Lisään sen arvon olioni <code>id</code>-attribuutiksi, jotta voin käyttää sitä kontrollerissani. Muistathan, että tietokantakyselyyn pystyy upottamaan muuttujilla käyttämällä tietokantakyselyssä <code>:upotettavan_muuttujan_nimi</code>-syntaksia (muista <code>:</code>-muuttujan nimen eteen!) ja antamalla <code>execute</code>-metodissa upotettavien muuttujien arvot assosiaatiolistana, jonka avaimina toimivat muuttujien nimet ja arvoina niitä vastaavat arvot. Jos tietokantakyselyiden syntaksi on päässyt unohtumaan, kannattaa virkistää muistia <strong><a href="http://www.tutorialspoint.com/postgresql/postgresql_insert_query.htm" target="_blank">INSERT INTO</a></strong>-lauseiseiden osalta.
 </p>
 <p>
   <code>store</code>-metodissa ei siis tapahtu mitään kovin ihmeellistä. Mutta entäs metodin viimeinen rivi <code>Redirect::to(...)</code>? Se on jotain aivan uutta, mitä ihmettä siinä tapahtuu?
@@ -528,15 +693,15 @@ $routes->post('/game', function(){
 
 <img src="assets/images/302.jpg" class="pull-left" style="width: 350px; height: auto; margin-right: 15px; margin-bottom: 15px;">
 <p>
-  <a href="http://en.wikipedia.org/wiki/Post/Redirect/Get" target="_blank"><strong>Post/Redirect/Get</strong></a> on web-sovelluksien toteutuksessa käytetty suunnittelumalli, joka estää käyttäjää vahingossa lähettämästä samaa lomaketta kahdesti. Siinä käyttäjän lähettämän POST-pyynnön jälkeen selaimelle lähetetään <strong>uudelleenohjaus-pyyntö</strong> statuskoodilla 302, joka pyytää selainta tekemään GET-pyynnön muualle, kuten esimerkiksi polkuun <code>/game/1</code>.
+  <a href="http://en.wikipedia.org/wiki/Post/Redirect/Get" target="_blank"><strong>Post/Redirect/Get</strong></a> on web-sovelluksien toteutuksessa käytetty suunnittelumalli, joka estää käyttäjää vahingossa lähettämästä samaa lomaketta kahdesti. Siinä käyttäjän lähettämän POST-pyynnön jälkeen selaimelle lähetetään <strong>uudelleenohjauspyyntö</strong> statuskoodilla 302, joka pyytää selainta tekemään GET-pyynnön muualle, kuten esimerkiksi polkuun <code>/game/1</code>.
 </p>
 
 <p>
-  Kuvitellaan hetki, ettei koko suunnittelumallia olisi olemassakaan, eli emme ohjaisi käyttäjää polkuun <code>/game/ID</code> pelin lisäämisen jälkeen, vaan renderöisimme näkymän <code>game/show.html</code>. Ongelmana on, että vaikka renderöimme näkymän <code>game/show.html</code>, olemme silti polussa <code>/game</code>, joka on lomakkeen kohdepolku. Jos käyttäjä nyt päivittää selaimessa sivun, lisäyslomake lähetetään uudestaan, vaikka käyttäjä luuli päivittävänsä pelin esittelysivun. Sitä emme halua.
+  Kuvitellaan hetki, ettei koko suunnittelumallia olisi olemassakaan, eli emme ohjaisi käyttäjää polkuun <code>/game/ID</code> pelin lisäämisen jälkeen, vaan renderöisimme näkymän <code>game/show.html</code>. Ongelmana on, että vaikka renderöimme näkymän <code>game/show.html</code>, olemme silti polussa <code>/game</code>, joka on lomakkeen kohdepolku. Jos käyttäjä nyt päivittää selaimessaan sivun, lisäyslomake lähetetään uudestaan, vaikka käyttäjä luuli päivittävänsä pelin esittelysivun. Sitä emme halua.
 </p>
 
 <p>
-  Ohjaamme siis käyttäjän POST-pyynnön jälkeen toiselle sivulle kutsumalla <code>Redirect</code>-luokan metodia <code>to</code>. Parametreikseen metodi ottaa tietenkin polun, mihin käyttäjä ohjataan, mutta lisäksi voit halutessasi antaa toiseksi parametriksi assosiaatiolistan, jonka sisältö, voidaan esittää kohdenäkymässä, esimerkiksi pelin esittelysivulla:
+  Ohjaamme siis käyttäjän POST-pyynnön jälkeen toiselle sivulle kutsumalla <code>Redirect</code>-luokan metodia <code>to</code>. Parametreikseen metodi ottaa tietenkin polun, mihin käyttäjä ohjataan, mutta lisäksi voit halutessasi antaa toiseksi parametriksi assosiaatiolistan, jonka sisältö voidaan esittää kohdenäkymässä, esimerkiksi pelin esittelysivulla:
 </p>
 <div style="clear: both"></div>
 
@@ -567,11 +732,11 @@ exit();
   Toisena parametrina annetun viestin lähettäminen kohteena olevaan näkymään taas tapahtuu <a href="http://www.w3schools.com/php/php_sessions.asp" target="_blank">session</a>-avulla. Puhumme sessioista lisää ensi viikolla. <code>to</code>-metodin toteutukseen voi tutustua tarkemmin kurkkaamalla <code>lib/redirect.php</code>-tiedostoa.
 </p>
 <hr>
-<a id="4-palautuksen-vaatimukset"></a>
+<a id="5-palautuksen-vaatimukset"></a>
 <h2>5. Palautuksen vaatimukset</h2>
 <ol>
-  <li>Toteuta sovellukseesi vähintään yksi malliluokka, jossa on listaus- (<code>all</code>), haku- (<code>find</code>) ja lisäystoiminto (<code>save</code>). <strong>(2p)</strong></li>
-  <li>Toteuta malliasi käyttämään kontrolleriin metodit, jotka esittävät tietokohteen listaus-, esittely- ja lisäysnäkymän. Toteuta myös kontrolleriisi metodi, joka mahdollistaa tietokohteen olion lisäämisen tietokantaan käyttäjän lähettämän lomakkeen tiedoilla. <strong>(1p)</strong></li>
+  <li>Toteuta sovellukseesi vähintään yksi malliluokka, jossa on kaikki tietokohteen oliot tietokannasta hakeva metodi (esim. <code>all</code>), tietyllä id:llä varustetun tietokohteen olion tietokannasta hakeva metodi (esim. <code>find</code>) ja tietokohteen olion tietokantaan lisäävä metodi (esim. <code>save</code>). <strong>(1,5p)</strong></li>
+  <li>Toteuta malliasi käyttämään kontrolleriin metodit, jotka esittävät tietokohteen listaus-, esittely- ja lisäysnäkymän. Toteuta myös kontrolleriisi metodi, joka mahdollistaa tietokohteen olion lisäämisen tietokantaan käyttäjän lähettämän lomakkeen tiedoilla. <strong>(1,5p)</strong></li>
   <li>Kirjoita <a href="http://advancedkittenry.github.io/aikataulu/koodikatselmointi.html" target="_blank">koodikatselmointi</a> (vapaaehtoinen). <strong>(0-2p)</strong></li>
   <li>
     <strong>Pushaa kaikki tekämäsi muutokset repoosi!</strong>

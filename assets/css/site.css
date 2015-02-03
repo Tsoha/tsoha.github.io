@@ -45,6 +45,11 @@ pre{
   max-height: 300px;
 }
 
+pre code{
+  overflow-x: scroll;
+  white-space: pre;
+}
+
 body{
   background-color: rgb(230,230,230);
 }

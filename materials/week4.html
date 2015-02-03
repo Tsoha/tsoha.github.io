@@ -88,8 +88,37 @@ $this->{$metodin_nimi}();
 
 <p>
   <div class="alert alert-info">
+    <h4>Vinkki</h4>
     PHP:lle löytyy monta tutustumisen arvoista validointikirjastoa, joista yksi käytetyimmistä on <a href="https://github.com/vlucas/valitron" target="_blank">Valitron</a>. Voit halutessasi käyttää myös sitä, tai mitä tahansa toista löytämääsi kirjastoa, malliesi validointiin.
   </div>
+</p>
+
+<p>
+  Kokeillaan vielä toteuttamaamme <code>errors</code>-metodia <code>HelloWorldController</code>-luokan <code>sandbox</code>-metodissa, ennenkuin ryhdymme tositoimiin:
+</p>
+
+<div hljs language="php" no-escape>// ...
+public static function sandbox(){
+  $doom = new Game(array(
+    'name' => 'd',
+    'published' => 'eilen',
+    'publisher' => 'id Software',
+    'description' => 'Boom, boom!'
+  ));
+
+  $errors = $doom->errors();
+
+  print_r($errors);
+}</div>
+
+<p>
+  Kun siirryn sovelluksessani polkuun <code>/hiekkalaatikko</code>, ilmestyy sivulle seuraava tuloste:
+</p>
+
+<div hljs language="php" no-escape> Array ( [0] => 'Nimen pituuden tulee olla vähintään kolme merkkiä!' [1] => 'Julkaisupäivän tulee olla päivämäärä!' )</div>
+
+<p>
+  Toteuttamani <code>errors</code>-metodi toimii siis, kuten pitääkin. Voin siis seuraavaksi ottaa sen käyttöön <code>GameController</code>-luokan <code>store</code>-metodissa:
 </p>
 
 <div hljs language="php" no-escape>// ...
@@ -228,12 +257,14 @@ Koska PHP on tyypitön, tapahtuu totuusarvojen kanssa joskus outoja tyyppimuunno
       'description' => $params['description']
     );
 
+    // Alustetaan Game-olio käyttäjän syöttämillä tiedoilla
     $game = new Game($attributes);
     $errors = $game->errors();
 
     if(count($errors) > 0){
       View::make('game/edit.html', array('errors' => $errors, 'attributes' => $attributes));
     }else{
+      // Kutsutaan alustetun olion update-metodia, joka päivittää pelin tiedot tietokannassa
       $game->update();
 
       Redirect::to('/game/' . $game->id, array('message' => 'Peliä on muokattu onnistuneesti!'));
@@ -242,8 +273,10 @@ Koska PHP on tyypitön, tapahtuu totuusarvojen kanssa joskus outoja tyyppimuunno
 
   // Pelin poistaminen
   public static function destroy($id){
-    // Kutsutaan Game-malliluokan metodia destroy, joka poistaa pelin annetulla id:llä
-    Game::destroy($id);
+    // Alustetaan Game-olio annetulla id:llä
+    $game = new Game(array('id' => $id));
+    // Kutsutaan Game-malliluokan metodia destroy, joka poistaa pelin sen id:llä
+    $game->destroy();
 
     // Ohjataan käyttäjä pelien listaussivulle ilmoituksen kera
     Redirect::to('/game', array('message' => 'Peli on poistettu onnistuneesti!'));
@@ -271,7 +304,10 @@ $routes->post('game/:id/destroy', function($id){
 });</div>
 
 <p>
-  Toteuta seuraavaksi omaan sovellukseesi muokkaus- ja poistotoiminto. Muista validoida muokkauslomakkeessa käyttäjän syöttämät kentät, kuten itsekkin tein omassa sovelluksessani. Käytettävyyden kannalta on helpointa, jos poistotoiminto toimii nappia painamalla. Käytin omassa sovelluksessani tätä pientä lomaketta:
+  Toteuta seuraavaksi omaan sovellukseesi tietokohteen muokkaus- ja poistotoiminto. Aloita toimintojen toteuttaminen malliluokastasi, johon toteutat metodit olion muokkaamiselle ja poistamiselle. Jos tietokantakyselyiden muodostaminen tuottaa vaikeuksia, kannattaa tutustua <strong><a href="http://www.tutorialspoint.com/postgresql/postgresql_update_query.htm" target="_blank">UPDATE</a></strong>-kyselyihin muokkauksen ja <strong><a href="http://www.tutorialspoint.com/postgresql/postgresql_delete_query.htm" target="_blank">DELETE</a></strong>-kyselyihin poistamisen kanssa.
+</p>
+<p>
+  Muista validoida muokkauslomakkeessa käyttäjän syöttämät kentät, kuten itsekkin tein omassa sovelluksessani. Käytettävyyden kannalta on helpointa, jos poistotoiminto toimii nappia painamalla. Käytin omassa sovelluksessani tätä pientä lomaketta:
 </p>
 
 <div hljs language="xml"><form method="post" action="{{base_path}}/game/{{game.id}}/destroy">
@@ -280,6 +316,7 @@ $routes->post('game/:id/destroy', function($id){
 
 <p>
   <div class="alert alert-info">
+    <h4>Vinkki</h4>
     Saatoit huomata, että pelin muokkaus- ja lisäyslomake ovat käytännössä täysin samanlaiset. Twig tarjoaa uudelleenkäytettävien elementtien luomiseen <a href="http://twig.sensiolabs.org/doc/tags/macro.html" target="_blank">makrot</a>.
   </div>
 </p>
@@ -326,12 +363,12 @@ $routes->post('/login', function(){
 });</div>
 
 <p>
-Koska POST-pyyntö ohjataan <code>UsersController</code> luokan <code>handle_login</code>-metodille minun täytyy lisätä <code>app/controllers</code> kansioon tiedosto <code>users_controllers.php</code>:
+Koska POST-pyyntö ohjataan <code>UserController</code> luokan <code>handle_login</code>-metodille minun täytyy lisätä <code>app/controllers</code> kansioon tiedosto <code>user_controller.php</code>:
 </p>
 
 <div hljs language="php" no-escape>class UserController extends BaseController{
   public static function login(){
-      View::make('users/login.html');
+      View::make('user/login.html');
   }
 
   public static function handle_login(){
@@ -340,18 +377,18 @@ Koska POST-pyyntö ohjataan <code>UsersController</code> luokan <code>handle_log
     $user = User::authenticate($params['username'], $params['password']);
 
     if(!$user){
-      View::make('/login', array('error' => 'Väärä käyttäjätunnus tai salasana!', 'username' => $params['username']));
+      View::make('user/login.html', array('error' => 'Väärä käyttäjätunnus tai salasana!', 'username' => $params['username']));
     }else{
       $_SESSION['user'] = $user->id;
 
-      Redirect::to('/', array('message' => 'Tervetuloa takaisin' . $user->name . '!'));
+      Redirect::to('/', array('message' => 'Tervetuloa takaisin ' . $user->name . '!'));
     }
   }
 }</div>
 
 <p>
-  Kontrollerissa ei ole hirveästi mitään uutta. <code>login</code>-metodi renderöi kirjautumislomakkeen ja <code>handle_login</code> pyytää <code>User</code>-mallilta tietokannasta käyttäjän, joka vastaa käyttäjän antamaa käyttäjänimeä ja salasanaa, kutsumalla sen <code>authenticate</code>-metodia. Jos käyttäjää ei löydy, <code>authenticate</code>-metodi palauttaa <code>false</code>, jolloin
-  ohjaamme käyttäjän takaisin kirjautumislomakkeeseen ja ilmoitamme, että käyttäjätunnus tai salasana oli väärä.
+  Kontrollerissa ei ole hirveästi mitään uutta. <code>login</code>-metodi renderöi kirjautumislomakkeen ja <code>handle_login</code> pyytää <code>User</code>-mallilta tietokannasta käyttäjän, joka vastaa käyttäjän antamaa käyttäjänimeä ja salasanaa, kutsumalla sen <code>authenticate</code>-metodia. Jos käyttäjää ei löydy, <code>authenticate</code>-metodi palauttaa <code>null</code>, jolloin
+  ohjaamme käyttäjän takaisin kirjautumislomakkeeseen ja ilmoitamme, että käyttäjätunnus tai salasana oli väärä. Jos käyttäjä löytyy tietokannasta, palauttaa <code>authenticate</code>-metodi löytyneen käyttäjän <code>User</code>-oliona.
 </p>
 
 <p>
@@ -392,7 +429,7 @@ Koska POST-pyyntö ohjataan <code>UsersController</code> luokan <code>handle_log
 }</div>
 
 <p>
-  Voin nyt kutsua tätä metodia missä tahansa kontrollerissa kutsumalla yläluokan <code>get_user_logged_in</code>-metodia. Lisäksi näkymissäni on nyt käytössä <code>user_logged_in</code>-muuttuja, joka sisältää toteuttamani metodin palautusarvon, eli kirjautuneen käyttäjän. Voin käyttää sitä esimerkiksi käyttäjän pelikirjaston listaavassa näkymässä:
+  Voin nyt kutsua tätä metodia missä tahansa kontrollerissa kutsumalla yläluokan <code>get_user_logged_in</code>-metodia. Muistathan, että luokan sisäistä staattista metodia kutsuttiin <code>self::metodin_nimi()</code>-syntaksilla. Lisäksi näkymissäni on nyt käytössä <code>user_logged_in</code>-muuttuja, joka sisältää toteuttamani metodin palautusarvon, eli kirjautuneen käyttäjän. Voin käyttää sitä esimerkiksi käyttäjän pelikirjaston listaavassa näkymässä:
 </p>
 
 <div hljs language="xml">{% extends "base.html" %}
@@ -413,9 +450,9 @@ Koska POST-pyyntö ohjataan <code>UsersController</code> luokan <code>handle_log
 <h2>4. Palautuksen vaatimukset</h2>
 
 <ol>
-  <li>Lisää malliisi muokkaus (<code>update</code>)- ja poistotoiminnot (<code>destroy</code>). <strong>(1p)</strong></li>
-  <li>Lisää käyttäjälle mahdollisuus muokkaukseen ja poistoon lisäämällä kontrolleriin tarvittavat medotit ja toteuttamalla tarvittavat näkymät. <strong>(0,5p)</strong></li>
-  <li>Lisää malliisi tarvittavat validaattorit ja estä kontrollereissa virheellisten olioiden lisäys tietokantaan. Muista näyttää lomakkeissa virhetilanteissa virheilmoitukset ja täyttää kentät käyttäjän antamilla syötteillä. <strong>(0,5p)</strong></li>
+  <li>Lisää malliluokkaasi metodi tietokohteen olion muokkaamiselle (esim. <code>update</code>)- ja poistolle (esim. <code>destroy</code>). <strong>(1p)</strong></li>
+  <li>Lisää käyttäjälle mahdollisuus muokkaukseen ja poistoon lisäämällä kontrolleriin tarvittavat medotit ja toteuttamalla tarvittavat näkymät. Muokkausnäkymä on luultavasti lisäysnäkymää muistuttava lomake ja poisto voi tapahtua painiketta painamalla esimerkiksi tietokohteen esittely- tai listaussivulla. <strong>(0,5p)</strong></li>
+  <li>Lisää malliisi tarvittavat validaattorit ja estä kontrollereissa virheellisten syötteiden lisääminen tietokantaan. Muista näyttää lomakkeissa virhetilanteissa virheilmoitukset ja täyttää kentät käyttäjän antamilla syötteillä. <strong>(0,5p)</strong></li>
   <li>Toteuta malliluokka sovelluksen käyttäjälle ja toteuta käyttäjän kirjautuminen. Toteuta <code>get_user_logged_in</code>-metodi ja käytä tarvittaessa kirjautuneen käyttäjän tietoa hyväksi näkymissä ja malleissa. <strong>(0,5p)</strong></li>
   <li>Kirjoita alustava <a href="http://advancedkittenry.github.io/dokumentaatio-ohje.html#k%C3%A4ynnistys--k%C3%A4ytt%C3%B6ohje" target="_blank">käynnistys- / käyttöohje</a> dokumentaatioosi. <strong>(0.5p)</strong></li>
   <li>

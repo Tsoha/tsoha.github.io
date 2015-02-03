@@ -7,7 +7,8 @@
   <li><a href="" ng-click="goto_anchor('2-oman-sovelluksen-laajentaminen')">2. Oman sovelluksen laajentaminen</a></li>
   <li><a href="" ng-click="goto_anchor('3-dokumentaation-viimeistely">3. Dokumentaation viimeistely</a></li>
   <li><a href="" ng-click="goto_anchor('4-pienta-hienosaatoa')">4. Pientä hienosäätöä</a></li>
-  <li><a href="" ng-click="goto_anchor('5-palautuksen-vaatimukset')">5. Palautuksen vaatimukset</a></li>
+  <li><a href="" ng-click="goto_anchor('5-lisenssin-valinta')">5. Lisenssin valinta</a></li>
+  <li><a href="" ng-click="goto_anchor('6-palautuksen-vaatimukset')">6. Palautuksen vaatimukset</a></li>
 </ul>
 <hr>
 <a id="1-kirjautumisen-tarkistus-ja-uloskirjautuminen"></a>
@@ -39,17 +40,17 @@
     //...
   }
 
-  public static function show(){
+  public static function show($id){
     self::check_logged_in();
     //...
   }
 
-  public static function edit(){
+  public static function edit($id){
     self::check_logged_in();
     //...
   }
 
-  public static function update(){
+  public static function update($id){
     self::check_logged_in();
     //...
   }
@@ -64,7 +65,7 @@
     //...
   }
 
-  public static function destroy(){
+  public static function destroy($id){
     self::check_logged_in();
     //...
   }
@@ -74,7 +75,7 @@
   Toteuta myös omaan sovellukseesi tarkistukset kirjautuneen käyttäjän osalta. Omassa sovelluksessasi saattaa olla monimutkaisempia rajoituksia käyttäjäoikeuksille, mutta kaikki metodit käyttäjäoikeuksien tarkastamiseen kannattaa toteuttaa <code>BaseController</code>-luokkaan.
 </p>
 
-<h2>1.2 Uloskirjautuminen</h2>
+<h3>1.2 Uloskirjautuminen</h3>
 
 <p>
   Seuraavaksi käyttäjä tarvitsee tietenkin mahdollisuuden kirjautua ulos. Lisään tätä varten <code>UserController</code>-luokkaan metodin <code>logout</code>:
@@ -139,7 +140,7 @@ $routes->post('/logout', function(){
 <a id="2-oman-sovelluksen-laajentaminen"></a>
 <h2>2. Oman sovelluksen laajentaminen</h2>
 
-Voit käyttää seuraavaksi aikaa oman sovelluksesi laajentamiseen. Muistathan, että arvosanan viisi saamiseksi sovelluksessasi tulee olla vähintään kahdessa tietokohteessa CRUD-nelikko. Koska kertaus on opintojen äiti, muistellaan seuraavaksi, mitä CRUD-nelikon toteuttamiseen liittyikään.
+Voit käyttää seuraavaksi aikaa oman sovelluksesi laajentamiseen. Muistathan, että arvosanan viisi saamiseksi sovelluksessasi tulee olla vähintään kahdessa tietokohteessa CRUD-nelikko. <strong>Tällä viikolla ei kuitenkaan tarvitse toteuttaa tietokohteelle kokonaista CRUD-nelikkoa, listaus- ja esittelytoiminnot riittävät hyvin</strong>. Koska kertaus on opintojen äiti, muistellaan seuraavaksi, mitä CRUD-nelikon toteuttamiseen liittyikään.
 
 <h3>2.1 CRUD-nelikon toteuttamisen muistilista</h3>
 
@@ -179,7 +180,7 @@ public function __construct($attributes){
     $errors[] = 'Nimen pituuden tulee olla vähintään kolme merkkiä!';
   }
 
-  return $erros;
+  return $errors;
 }</div>
 
 <h4>Kontrolleriluokan toteuttaminen</h4>
@@ -191,29 +192,47 @@ public function __construct($attributes){
 <div hljs language="php" no-escape>class GameController extends BaseController{
 
   public static function index(){
-    $games = Game::all();
+    self::check_logged_in();
+
+    $user_logged_in = self::get_user_logged_in();
+    $games = Game::all(array('player_id' => $user_logged_in->id));
 
     View::make('games/index.html', array('games' => $games));
   }
 
   public static function show($id){
+    self::check_logged_in();
+
+    $user_logged_in = self::get_user_logged_in();
     $game = Game::find($id);
 
-    View::make('games/show.html', array('game' => $game));
+    // Katsotaan, onko kirjautunut käyttäjä pelin pelaaja
+    if($game->is_played_by($user_logged_in)){
+      View::make('games/show.html', array('game' => $game));
+    }else{
+      Redirect::to('/game', array('error' => 'Peli ei kuulu kirjastoosi!'));
+    }
   }
 
   public static function create(){
+    self::check_logged_in();
+
     View::make('game/create.html');
   }
 
   public static function store(){
+    self::check_logged_in();
+
+    $user_logged_in = self::get_user_logged_in();
+
     $params = $_POST;
 
     $attributes = array(
       'name' => $params['name'],
       'description' => $params['description'],
       'publisher' => $params['publisher'],
-      'published' => $params['published']
+      'published' => $params['published'],
+      'player_id' => $user_logged_in->id
     );
 
     $game = new Game($attributes);
@@ -229,12 +248,22 @@ public function __construct($attributes){
   }
 
   public static function edit($id){
+    self::check_logged_in();
+
+    $user_logged_in = self::get_user_logged_in();
     $game = Game::find($id);
 
-    View::make('game/edit.html', array('game' => $game));
+    if($game->is_played_by($user_logged_in)){
+      View::make('game/edit.html', array('game' => $game));
+    }else{
+      Redirect::to('/game', array('error' => 'Peli ei kuulu kirjastoosi!'));
+    }
   }
 
   public static function update($id){
+    self::check_logged_in();
+
+    $user_logged_in = self::get_user_logged_in();
     $params = $_POST;
 
     $attributes = array(
@@ -249,12 +278,29 @@ public function __construct($attributes){
     $game = new Game($attributes);
     $errors = $game->errors();
 
-    if(count($errors) == 0){
+    if(!$game->is_played_by($user_logged_in){
+      Redirect::to('/game', array('error' => 'Peli ei kuulu kirjastoosi!'));
+    }if(count($errors) == 0){
       $game->update();
 
       Redirect::to('/game/' . $game->id, array('message' => 'Peliä on muokattu onnistuneesti!'));
     }else{
       View::make('/game/edit.html', array('errors' => $erros, 'attributes' => $attributes));
+    }
+  }
+
+  public static function destroy($id){
+    self::check_logged_in();
+
+    $user_logged_in = self::get_user_logged_in();
+    $game = new Game(array('id' => $id));
+
+    if($game->is_played_by($user_logged_in){
+      $game->destroy();
+
+      Redirect::to('/game', array('message' => 'Peli on poistettu kirjastostasi!'));
+    }else{
+      Redirect::to('/game', array('error' => 'Peli ei kuulu kirjastoosi!'));
     }
   }
 
@@ -315,8 +361,9 @@ $routes->post('/game/:id/destroy', function($id){
 <a id="4-pienta-hienosaatoa"></a>
 <h2>4. Pientä hienosäätöä</h2>
 
-<div class="alert alert-info">
-  Tämä osio sisältää muutaman vapaaehtoisen toiminnon sovellukseesi, joita voit toteuttaa mielesi mukaan. <strong>Mitään toimintoa ei siis tarvitse toteuttaa ellet halua, eikä se vaikuta arvosanaasi!</strong>
+<div class="alert alert-warning">
+  <h4>Muistathan?</h4>
+  Tämä osio sisältää muutaman vapaaehtoisen toiminnon sovellukseesi, joita voit toteuttaa mielesi mukaan. <strong>Mitään toimintoa ei siis tarvitse toteuttaa, ellet halua, eikä se vaikuta arvosanaasi!</strong>
 </div>
 
 <h3>4.1 Poistamisen vahvistaminen</h3>
@@ -355,8 +402,8 @@ $(document).ready(function(){
 <div hljs language="php" no-escape>class Game{
   // ...
   public static function all($options){
-    $query_string = 'SELECT * FROM Game WHERE user_id = :user_id';
-    $options = array('user_id' => $options['user_id']);
+    $query_string = 'SELECT * FROM Game WHERE player_id = :player_id';
+    $options = array('player_id' => $options['player_id']);
 
     if(isset($options['search'])){
       $query_string .= ' AND name LIKE :like';
@@ -378,7 +425,7 @@ $(document).ready(function(){
 }</div>
 
 <p>
-  Lisäsin <code>all</code> metodille <code>$options</code>-parametrin, jossa määritän kirjautuneen käyttäjän id:n <code>user_id</code>- ja vapaaehtoisen hakusanan <code>search</code>-avaimen arvolla. Seuraavaksi minun täytyy tehdä pari pientä muutosta <code>GameController</code>-luokkaan:
+  Lisäsin <code>all</code> metodille <code>$options</code>-parametrin, jossa määritän kirjautuneen käyttäjän id:n <code>player_id</code>- ja vapaaehtoisen hakusanan <code>search</code>-avaimen arvolla. Seuraavaksi minun täytyy tehdä pari pientä muutosta <code>GameController</code>-luokkaan:
 </p>
 
 <div hljs language="php" no-escape>class GameController{
@@ -387,7 +434,7 @@ $(document).ready(function(){
 
     $user_logged_in = self::get_user_logged_in();
     $params = $_GET;
-    $options = array('user_id' => $user_logged_in->id);
+    $options = array('player_id' => $user_logged_in->id);
 
     if(isset($params['search'])){
       $options['search'] = $params['search'];
@@ -451,7 +498,7 @@ $(document).ready(function(){
 <div hljs language="php" no-escape>class Game{
   // ...
   public static function all($options){
-    $user_id = $options['user_id'];
+    $user_id = $options['player_id'];
 
     if(isset($options['page'] && isset($options['page_size'])){
       $page_size = $options['page_size'];
@@ -499,11 +546,35 @@ $pages = ceil($games_count/$page_size);</div>
 </nav></div>
 
 <hr>
-<a id="5-palautuksen-vaatimukset"></a>
-<h2>5. Palautuksen vaatimukset</h2>
+
+<a id="5-lisenssin-valinta"></a>
+<h2>5. Lisenssin valinta</h2>
+
+<p>
+  Sovelluksemme alkaa olla loppusuoralla ja on aika valita toteuttamallemme sovellukselle <strong>lisenssi</strong>, joka kertoo, mitkä ovat muiden ihmisten oikeudet sovelluksemme suhteen. Lisessin valinta on erittäin helppoa, valitse vain <a href="http://creativecommons.org/choose/" target="_blank">täältä</a>, mitä rajoitteita haluat asettaa. Kun olet valinnut lisenssin, lisää tekstilomakkeeseen generoitu koodi reposi <code>README.md</code>-tiedoston alalaitaan, jolloin sinne ilmestyy tätä muistuttava kuva (lisenssistä riippuen tietenkin):
+</p>
+
+<p>
+  <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons -lisenssi" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />Tämä teos on lisensoitu <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Nimeä 4.0 Kansainvälinen -lisenssillä</a>.
+</p>
+
+<p>
+  <strong>Lisenssin valitseminen ei ole pakollista, mutta erittäin suotavaa.</strong>
+</p>
+
+<p>
+  <div class="alert alert-info">
+    <h4>Vinkki</h4>
+    Kaikissa Tsoha Bootstrapin käyttämissä kirjastoissa on käytössä <a href="http://choosealicense.com/licenses/mit/" target="_blank">MIT-lisenssi</a>, joten kaupallisen lisenssin valitseminen omalla sovellukselle on myös mahdollista.
+  </div>
+</p>
+
+<hr>
+<a id="6-palautuksen-vaatimukset"></a>
+<h2>6. Palautuksen vaatimukset</h2>
 <ol>
   <li>Toteuta käyttäjän uloskirjautuminen ja estä kirjautumattoman käyttäjän pääsy sivuille, jotka vaativat kirjautumisen. <strong>(0,5p)</strong></li>
-  <li>Edistä sovellustasi ja pidä koodi siistinä noudattamalla selkeää kansiorakennetta ja järkevää nimeämistä tiedostojen, luokkien ja metodien nimissä. Vaatimuksena on, että ainakin kahdelle tietokohteelle on toteutettu sivuja, kaikkia CRUD-nelikon osia ei kuitenkaan tarvitse molemmille toteuttaa. Lisäksi kaikkien toimintojen tulee toimia ja virhetilanteissa käyttäjälle täytyy antaa järkeviä virheilmoituksia. <strong>(1,5p)</strong></li>
+  <li>Edistä sovellustasi ja pidä koodi siistinä noudattamalla selkeää kansiorakennetta ja järkevää nimeämistä tiedostojen, luokkien ja metodien nimissä. Vaatimuksena on, että ainakin kahdelle tietokohteelle on toteutettu sivuja, kaikkia CRUD-nelikon osia ei kuitenkaan tarvitse toteuttaa. Lisäksi kaikkien toimintojen tulee toimia ja virhetilanteissa käyttäjälle täytyy antaa järkeviä virheilmoituksia. <strong>(1,5p)</strong></li>
   <li>Lisää dokumentaatioosi <a href="http://advancedkittenry.github.io/dokumentaatio-ohje.html#j%C3%A4rjestelm%C3%A4n-yleisrakenne">järjestelmän-yleisrakenne</a>-osio ja <a href="http://advancedkittenry.github.io/dokumentaatio-ohje.html#kayttoliittymakomponentit">käyttöliittymän ja järjestelmän komponentteja kuvaa kaavio</a>. <strong>(1p)</strong></li>
   <li>Kirjoita <a href="http://advancedkittenry.github.io/aikataulu/koodikatselmointi.html">koodikatselmointi</a> (vapaaehtoinen). <strong>(0-2p)</strong></li>
   <li>

@@ -14,7 +14,10 @@
 <a id="1-tyokalut"></a>
 <h2>1. Työkalut</h2>
 <p>
-  <div class="alert alert-warning">Tässä vaiheessa SSH-avain pitää olla luotu. Jos et ole vielä luonut avainta, lue viime viikon ohje. Jos törmäät ongelmaan, että SSH-yhteys pyytää salasanaa, johtuu se siitä, että avaimesi on suojattu salasanalla. Ongelma ratkee suorittamalla terminaalissa <code>ssh-add</code>.</div>
+  <div class="alert alert-warning">
+    <h4>Muistathan?</h4>
+    Tässä vaiheessa SSH-avain pitää olla luotu. Jos et ole vielä luonut avainta, lue viime viikon ohje. Jos törmäät ongelmaan, että SSH-yhteys pyytää salasanaa, johtuu se siitä, että avaimesi on suojattu salasanalla. Ongelma ratkee suorittamalla terminaalissa <code>ssh-add</code>.
+  </div>
 </p>
 <h3>1.1 NetBeans</h3>
 
@@ -24,7 +27,7 @@
 
 <p>
   <img src="assets/images/netbeans-run-conf.jpg" style="width: 500px; height: auto; margin: 0px 15px 15px 0px" class="pull-left">
-  Jotta saamme tiedostot siirrettyä palvelimelle vaivattomasti, seuraavaksi meidän pitää ajaa <code>deploy.sh</code>-tiedosto aina, kun painat "Run". Se onnistuu painamalla oikeaa hiirenpainiketta projektin päällä, valitsemlla "Properties" ja siirtymällä "Project Properties"-ikkunasta kohtaan "Run configuration". Luodaan uusi konfiguraatio klikkaamalla "Configuration"-valikosta "New..." ja antamalla nimeksi vaikkapa tsoha. Valitse seuraavaksi "Run as"-valikosta "Script (run in command line)" ja lisää "PHP Interpreter"-kenttään polku <code>/bin/bash</code>. Lisää vielä "Index File"-kenttään tiedosto <code>deploy.sh</code> ja paina "Ok".
+  Jotta saamme tiedostot siirrettyä palvelimelle vaivattomasti, seuraavaksi meidän pitää ajaa <code>deploy.sh</code>-tiedosto aina, kun painat "Run". Se onnistuu painamalla oikeaa hiirenpainiketta projektin päällä, valitsemlla "Properties" ja siirtymällä "Project Properties"-ikkunasta kohtaan "Run configuration". Luodaan uusi konfiguraatio klikkaamalla "Configuration"-valikosta "New..." ja antamalla nimeksi vaikkapa tsoha. Valitse seuraavaksi "Run as"-valikosta "Script (run in command line)", poista valinta "Use Default PHP Interpreter" ja lisää "PHP Interpreter"-kenttään polku <code>/bin/bash</code>. Lisää vielä "Index File"-kenttään tiedosto <code>deploy.sh</code> ja paina "Ok".
 </p>
 
 <p>
@@ -49,25 +52,30 @@
 }</div>
 
 <p>
+  <img src="assets/images/sublime-build.png" style="margin-right: 15px; margin-bottom: 15px" class="pull-left">
   Korvaa kohta <code>POLKU_RPOJEKTIISI</code> projektikansiosi sijainnilla ja tallennetaan tiedosto nimellä <code>tsoha.sublime-build</code>. Valitaan vielä Tools > Build System ja valitaan luomamme tsoha build system käytettäväksi build systemiksi. Nyt aina kun buildaamme projektimme, tiedostot siirtyvät automaattisesti palvelimelle. Kätevää!
 </p>
 
+<div style="clear: both"></div>
+
 <p>
-  Kokeile buildata projektisi, se onnistuu valitsemalla Tools > Build, tai nopeammin näppäinyhdistelmällä Ctrl+B. Editorin alalaitaan pitäisi tulla tätä muistuttava teksti:
+  Kokeile buildata projektisi, se onnistuu valitsemalla Tools > Build, tai nopeammin näppäinyhdistelmällä <kbd>ctrl+b</kbd>. Editorin alalaitaan pitäisi tulla tätä muistuttava teksti:
 </p>
 
-<pre><code class="bash">Siirretään tiedostoja users-palvelimelle......
+<pre><code class="bash">Siirretään tiedostoja users-palvelimelle...
 Valmis!
-Generoidaan Composerilla classmap_autoload.php-tiedosto......
+Suoritetaan komentoa php composer.phar dump-autoload...
 Generating autoload files
-Valmis! Sovelluksesi on nyt valmiina osoitteessa $USERNAME.users.cs.helsinki.fi/$PROJECT_FOLDER
+Valmis! Sovelluksesi on nyt valmiina osoitteessa kalleilv.users.cs.helsinki.fi/tsoha
 </code></pre>
 
 <p>
   <div class="alert alert-warning">
+    <h4>Muistathan?</h4>
     Jos muokkaat projektikansiosi sijaintia, muista päivittää <code>tsoha.sublime-build</code> tiedosto. Pääset siihen käsiksi valitsemalla Preferences > Browse Packages ja valitsemalla <code>tsoha.sublime-build</code>-tiedoston kansiosta <code>Packages/User</code>.
   </div>
   <div class="alert alert-info">
+    <h4>Vinkki</h4>
     Kun työskentelet sovelluksesi parissa, kannattaa sinun avata koko projektikansiosi editoriin, jotta siirtyminen tiedostojen välillä olisi vaivattomampaa. Tämä onnistuu avaamalla Sublime Text ja valitsemalla File > Open folder.
   </div>
 </p>
@@ -76,7 +84,16 @@ Valmis! Sovelluksesi on nyt valmiina osoitteessa $USERNAME.users.cs.helsinki.fi/
 <p>
   Voit halutessasi tietenkin käyttää mitä tahansa muuta editoria. Kun haluat siirtää sovelluksesi tiedostot palvelimelle, suorita vain terminaalissa projektisi juuressa komento <code>bash deploy.sh</code>.
 </p>
-
+<p>
+  <div class="alert alert-danger">
+    <h4>Tärkeää!</h4>
+    <code>deploy.sh</code>-tiedoston suorittaminen suorittaa users-palvelimella projektisi juuressa komennon <code>php composer.phar dump-autoload</code> (tästä lisää viikolla 3). Jos siirrät projektisi tiedostot palvelimelle jollain toisella, kuin edellä mainituilla tavoilla, muista suorittaa kyseinen komento aina, kun lisäät <code>php</code>-tiedostoja sovellukseesi.
+  </div>
+</p>
+<h3>1.4 Huomio Windowsin käyttäjät!</h3>
+<p>
+  Edellä esitetyt keinot tiedostojen siirtämiseksi palvelimelle eivät toimi Windowsilla, koska <code>deploy.sh</code>-tiedostoa ei (eikä muita <code>sh</code>-tiedostoja) voida suorittaa. Ongelman ratkaisu on pyörittää Ubuntua Windowsissa <strong><a href="https://www.virtualbox.org/" target="_blank">VirtualBoxin</a></strong> kautta (<a href="http://www.psychocats.net/ubuntu/virtualbox" target="_blank">täältä</a> löytyy hyvä asennusohje).
+</p>
 <hr>
 <a id="2-kontrollerit-ja-reitit"></a>
 <h2>2. Kontrollerit ja reitit</h2>
@@ -106,6 +123,7 @@ Valmis! Sovelluksesi on nyt valmiina osoitteessa $USERNAME.users.cs.helsinki.fi/
 <div hljs language="php" no-escape>class HelloWorldController extends BaseController{
 
   public static function index(){
+    // make-metodi renderöi app/views-kansiossa sijaitsevia tiedostoja
     View::make('home.html');
   }
 
@@ -138,7 +156,7 @@ $routes->get('/hiekkalaatikko', function() {
 </p>
 
 <p>
-  Vanhaan hyvään aikaan jokainen kontrolleri oli oma <code>php</code>-tiedostonsa, jolloin kyselyt kohdistuivat polun sijaan suoraan tiedostoon. Tämä tapa tulee kuitenkin erittäin sekavaksi sovelluksen kasvaessa. Olemme siis ajan hermolla ja käytämme sovelluksessamme reitityskirjastoa, jonka avulla voimme kätevästi ohjata pyynnön tiettyyn polkuun tietyn kontrollerin hoidettavaksi. Yksi tälläinen kirjasto on pieni, mutta kätevää <strong><a href="http://www.slimframework.com/">Slim</a></strong>-kirjasto, joka on alustettu projektiisi tiedostossa <code>index.php</code>. Slim:n käyttäminen sovelluksessa on melko yksinkertaista, tässä esimerkki sen kotisivuilta:
+  Vanhaan hyvään aikaan jokainen kontrolleri oli oma <code>php</code>-tiedostonsa, jolloin kyselyt kohdistuivat polun sijaan suoraan tiedostoon. Vanhassa tavassa on kuitenkin monta ongelmaa, muunmaessa se että, sovelluksen kansiorakenne on erittäin rajoitettu, polut eivät ole selkeitä (esim. <code>/kurssit.php?id=1</code> polun <code>/kurssit/1</code> sijaan) ja, että tiedostojen määrä kasvaa todella nopeasti. Olemme siis ajan hermolla ja käytämme sovelluksessamme reitityskirjastoa, jonka avulla voimme kätevästi ohjata pyynnön tiettyyn polkuun tietyn kontrollerin hoidettavaksi. Yksi tälläinen kirjasto on pieni, mutta kätevää <strong><a href="http://www.slimframework.com/">Slim</a></strong>-kirjasto, joka on alustettu projektiisi tiedostossa <code>index.php</code>. Slim:n käyttäminen sovelluksessa on melko yksinkertaista, tässä esimerkki sen kotisivuilta:
 </p>
 
 <div hljs language="php" no-escape>require "path/to/Slim.php";
@@ -161,8 +179,40 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^ index.php [QSA,L]</div>
 
 <p>
+  Kerrataan vielä lyhyesti, miten GET-pyyntö sovelluksemme etusivulle (polkuun <code>/</code>) etenee sovelluksessamme:
+</p>
+
+<p>
+  <img src="assets/images/kutsun-eteneminen.png">
+</p>
+
+<ol>
+  <li>Käyttäjän kirjoitettua sovelluksemme osoitteen selaimen osoiteriville, selain tekee GET-pyynnön palvelimelle</li>
+  <li>Web-palvelin ohjelmisto lukee <code>.htaccess</code>-tiedostosta, että kaikki pyynnöt ohjataan <code>index.php</code>-tiedostoon</li>
+  <li><p>
+        <code>index.php</code>-tiedostossa alustetaan Slim ja sisällytetään <code>routes.php</code>-tiedostossa sijaitsevat sovelluksemme reitit:
+      </p>
+      <div hljs no-escape>// ...
+$routes = new \Slim\Slim();
+// ...
+// Otetaan reitit käyttöön
+require 'config/routes.php';</div>
+  </li>
+  <li>
+    <p><code>routes.php</code>-tiedostossa on määritelty seuraava reitti:</p>
+<div hljs no-escape>$routes->get('/', function() {
+  HelloWorldController::index();
+});</div>
+    <p>
+      Slim löytää määrittelemistämme reiteistä pyyntöä vastaavan polun <code>/</code> ja kutsuu <code>HelloWorldController</code>-luokan metodia <code>index</code>, joka sijaitsee tiedostossa <code>hello_world_controller.php</code>.
+    </p>
+  </li>
+</ol>
+
+<p>
   <div class="alert alert-info">
-    Kaatuiko sovelluksesi? Ei hätää! Pääset katsomaan PHP:n logeja, jotka sisältävät virheilmoitukset, suorittamalla terminaalissa projektisi juuressa komennon <code>bash php_logs.sh</code>. Luettuasi logit, voit sulkea ne näppäilemällä terminaaliin <code>Ctrl+C</code>. Voit myös katsoa PHP:n logeja users-palvelimen puolella suorittamalla SSH-yhteyden muodostamisen jälkeen komento <code>tail -f /home/userlogs/$USER.error</code>.
+    <h4>Vinkki</h4>
+    Kaatuiko sovelluksesi? Ei hätää! Pääset katsomaan PHP:n logeja, jotka sisältävät virheilmoitukset, suorittamalla terminaalissa projektisi juuressa komennon <code>bash php_logs.sh</code>. Luettuasi logit, voit sulkea ne näppäilemällä terminaaliin <kbd>ctrl+c</kbd>. Voit myös katsoa PHP:n logeja users-palvelimen puolella suorittamalla SSH-yhteyden muodostamisen jälkeen komennon <code>tail -f /home/userlogs/$USER.error</code>.
   </div>
 </p>
 <hr>
@@ -305,6 +355,7 @@ RewriteRule ^ index.php [QSA,L]</div>
 
 <p>
   <div class="alert alert-info">
+    <h4>Vinkki</h4>
     Jos kauniiden käyttöliittymien toteuttaminen kiinnostaa, kannattaa tutustustua <a href="http://www.w3schools.com/css/" target="_blank">W3Schools</a>:in CSS-tutoriaaliin. Kansiossa <code>assets/css</code> on tiedosto <code>site.css</code>, johon voit toteuttaa tyylejäsi.
   </div>
 </p>
@@ -700,7 +751,7 @@ $routes->get('/login', function() {
 <h2>4. Tietokantayhteyden muodostaminen ja tietokantataulut</h2>
 <h3>4.1 Tietokantayhteyden muodostaminen</h3>
 <p>
-  Tsoha Bootstrap on jo hoitanut tietokantayhteyden muodostamisen puolestasi, onneksi olkoon! Siirry kuitenkin sovelluksessasi polkuun <code>/tietokantayhteys</code> ja varmista asia. Sivulle pitäisi ilmestyä seuraavanlainen ilmoitus:
+  Tsoha Bootstrap on jo hoitanut tietokantayhteyden muodostamisen puolestasi, onneksi olkoon! Siirry kuitenkin selaimessa sovelluksesi polkuun <code>/tietokantayhteys</code> ja varmista asia. Sivulle pitäisi ilmestyä seuraavanlainen ilmoitus:
 </p>
 <div class="alert alert-success">
   Tietokantayhdeyn muodostaminen onnistui!
@@ -722,13 +773,13 @@ $routes->get('/login', function() {
 </p>
 <div hljs language="sql" no-escape>CREATE TABLE Player(
   id SERIAL PRIMARY KEY, -- SERIAL tyyppinen pääavain pitää huolen, että tauluun lisätyllä rivillä on aina uniikki pääavain. Kätevää!
-  name varchar(50) NOT NULL,
+  name varchar(50) NOT NULL, -- Muista erottaa sarakkeiden määrittelyt pilkulla!
   password varchar(50) NOT NULL
 );
 
 CREATE TABLE Game(
   id SERIAL PRIMARY KEY,
-  user_id INTEGER REFERENCES Player(id), -- Viiteavain Player-tauluun
+  player_id INTEGER REFERENCES Player(id), -- Viiteavain Player-tauluun
   name varchar(50) NOT NULL,
   played boolean DEFAULT FALSE,
   description varchar(400),
@@ -739,6 +790,7 @@ CREATE TABLE Game(
 </div>
 <p>
   <div class="alert alert-warning">
+    <h4>Muistathan?</h4>
     Muistaa luoda taulu ennen kuin viittaat siihen toisessa taulussa viiteavaimella, kuten omassa sovelluksessani loin <code>Player</code>-taulun ennen <code>Game</code>-taulua.
   </div>
 </p>
@@ -748,10 +800,13 @@ CREATE TABLE Game(
 <p>
   Lisätään tauluillemme myös poistolauseet, jolloin voimme poistaa ne tarvittaessa. Lisätään poistolauseet <code>drop_tables.sql</code>-tiedostoon:
 </p>
-<div hljs language="sql" no-escape>DROP TABLE IF EXISTS Game;
-DROP TABLE IF EXISTS Player;</div>
+<div hljs language="sql" no-escape>DROP TABLE IF EXISTS Game CASCADE; -- Muista IF EXISTS ja CASCADE parametrit!
+DROP TABLE IF EXISTS Player CASCADE;</div>
   <p>
-    Tallennetaan molemmat tiedostot ja buildataan. Suorita sen jälkeen terminaalissa projektisi juuressa komento <code>bash create_tables.sh</code>, tämä ajaa <code>create_tables.sql</code>-tiedoston tietokannassasi. Jos syntaksissasi oli virheitä, korjaa virheet ja aja <code>bash create_tables.sh</code> uudestaan.
+    Muista lisätä <code>DROP TABLE</code>-komennon eteen <code>IF EXISTS</code>-parametri, muuten komennon suorittaminen taululle, jota ei ole luotu, aiheuttaa virheilmoituksen. Lisäksi on hyvä lisätä <code>CASCADE</code>-parametri, joka kertoo, että kun taulu poistetaan, myös siihen viittaavat rivit poistetaan, jolloin vältytään virheilmoituksilta.
+  </p>
+  <p>
+    Tallenna seuraavaksi molemmat tiedostot ja siirrä ne tuttuun tapaan palvelimelle.  Suorita sen jälkeen terminaalissa projektisi juuressa komento <code>bash create_tables.sh</code>, joka ajaa ensin <code>drop_tables.sql</code>- ja sen jälkeen <code>create_tables.sql</code>-tiedoston tietokantaasi. Jos syntaksissasi oli virheitä, korjaa virheet ja aja <code>bash create_tables.sh</code> uudestaan.
   </p>
   <p>
     Kun saat tietokantataulusi ajattetua tietokantaan onnistuneesti, lisää niihin hieman testidataa. Tämä onnistuu lisäämällä tarvittavat <code>INSERT INTO</code>-lauseet <code>add_test_data.sql</code> tiedostoon. Oma testidatani näyttää tältä:
@@ -763,14 +818,26 @@ INSERT INTO Player (name, password) VALUES ('Henri', 'Henri123');
 -- Game taulun testidata
 INSERT INTO Game (name, description, published, publisher, added) VALUES ('The Elder Scrolls V: Skyrim', 'Arrow to the knee', '2011-11-11', 'Bethesda Softworks', NOW());</div>
   <p>
-    Tallenna, buildaa ja aja testidata tietokantaan suorittamalla projektisi juuressa <code>bash add_test_data.sh</code>.
+    Tallenna, siirrä sovelluksesi tiedostot palvelimelle ja aja testidata tietokantaan suorittamalla projektisi juuressa komento <code>bash add_test_data.sh</code>.
   </p>
   <p>
-    Voimme tarkastella tietokantamme tauluja ja niiden sisältöä menemällä sovelluksessamme polkuun <code>/tietokantayhteys</code>.
+    Voimme tarkastella tietokantamme tauluja ja niiden sisältöä menemällä selaimessa sovelluksessamme polkuun <code>/tietokantayhteys</code>. Voit myös halutessasi listata tietokantaulusi <code>psql</code>-komentotulkin avulla seuraavasti:
   </p>
+<div hljs no-escape>
+kalleilv=> \dt
+List of relations
+Schema |  Name  | Type  |  Owner
+--------+--------+-------+----------
+public | game   | table | kalleilv
+public | player | table | kalleilv
+(2 rows)</div>
+<p>
+  Suoritin siis komentotulkissa vain komennon <code>\dt</code>, joka listaa tietokantani tietokantataulut.
+</p>
   <p>
     <div class="alert alert-info">
-      Voit myös halutessasi ajaa <code>sql</code>-tiedostot tietokantaasi komentotulkin avulla. Tämä onnistuu users-palvelimella komennolla <code>psql < tiedoston_nimi.sql</code>.
+      <h4>Vinkki</h4>
+      Voit myös halutessasi ajaa <code>sql</code>-tiedostot tietokantaasi komentotulkin avulla. Tämä onnistuu users-palvelimella komennolla <code>psql < polku/tiedostoon/tiedoston_nimi.sql</code>.
     </div>
   </p>
   <hr>

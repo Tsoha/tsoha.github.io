@@ -37,6 +37,7 @@
 
 <p>
   <div class="alert alert-info">
+    <h4>Vinkki</h4>
     Kuva on otettu Firefoxin Development Toolbar:sta, joka on erittäin kätevä työkalu web-sovellusten kehittämisessä. Pääset käyttämään työkalua menemällä selaimessasi Työkalut > Web-työkalut > Developer Toolbar ja siirtymällä "Network"-tabiin.
   </div>
 </p>
@@ -86,6 +87,7 @@
 <h2>3. Työympäristön pystyttäminen</h2>
 <p>
   <div class="alert alert-warning">
+    <h4>Muistathan?</h4>
     Tässä vaiheessa tarvitset CS-tunnukset. Jos olet sivuaineopiskelija, lue <a href="http://www.cs.helsinki.fi/tietotekniikka/k-ytt-luvat" target="_blank">täältä</a> kohta "Sivuaineopiskelijat", jossa neuvotaan, miten saat ne.
   </div>
 </p>
@@ -234,7 +236,7 @@ The keys randomart image is:
 |                 |
 +-----------------+</div>
 <p>
-  Katsotaan tulosteesta, mihin <code>id_rsa.pub</code>-tiedosto (tai itse nimeämäsi <code>pub</code>-tiedosto) luotiin, minulta se löytyy kansiosta <code>/Users/kalle/.ssh</code> ja laitoksen koneilla <code>/home/kayttajatunnus/.ssh</code>. Siirrytään oikeaan kansioon suorittamalla terminaalissa <code>cd OMA_POLKUNI</code>. Avataan tiedosto <code>id_rsa.pub</code> suorittamalla <code>cat id_rsa.pub</code> ja kopioidaan terminaalista tiedoston sisältö. Laitetaan sisältö hetkeksi talteen vaikkapa tekstitiedostoon vanhalla kunnon ctrl+V-näppäinyhdistelmällä.
+  Katsotaan tulosteesta, mihin <code>id_rsa.pub</code>-tiedosto (tai itse nimeämäsi <code>pub</code>-tiedosto) luotiin, minulta se löytyy kansiosta <code>/Users/kalle/.ssh</code> ja laitoksen koneilla <code>/home/kayttajatunnus/.ssh</code>. Siirrytään oikeaan kansioon suorittamalla terminaalissa <code>cd OMA_POLKUNI</code>. Avataan tiedosto <code>id_rsa.pub</code> suorittamalla <code>cat id_rsa.pub</code> ja kopioidaan terminaalista tiedoston sisältö. Laitetaan sisältö hetkeksi talteen vaikkapa tekstitiedostoon vanhalla kunnon copypaste-menetelmällä.
 </p>
 
 <p>
@@ -242,7 +244,7 @@ The keys randomart image is:
 </p>
 <div hljs no-escape>ssh kayttajatunnus@users.cs.helsinki.fi</div>
 <p>
-  Kun yhteys on muodostettu, luodaan kotihakemistoosi kansio <code>.ssh</code>, jos ei jo ole siellä. Tämä onnistuu suorittamalla <code>mkdir .ssh</code>. Siirrytään luomaamme kansioon suorittamalla <code>cd .ssh</code> ja luodaan tiedosto <code>authorized_keys</code> suorittamalla <code>touch authorized_keys</code>. Avataan luomma tiedosto vim-editorissa suorittamalla <code>vim authorized_keys</code> ja painetaan a-näppäintä, jolloin pääsemme muokkaamaan tiedostoa. Copy-Pastetaan tallettamamme <code>id_rsa.pub</code>-tiedoston sisältö editoriin (Huom! Jos tiedossa oli jo ennestään avain, pasteta sisältö uudelle riville), painetaan esc-näppäintä ja suoritetaan <code>:wq</code>, jolloin tallennamme tiedoston ja lopetamme. Lisätään vielä tarvittavat oikeudet:
+  Kun yhteys on muodostettu, luodaan kotihakemistoosi kansio <code>.ssh</code>, jos ei jo ole siellä. Tämä onnistuu suorittamalla <code>mkdir .ssh</code>. Siirrytään luomaamme kansioon suorittamalla <code>cd .ssh</code> ja luodaan tiedosto <code>authorized_keys</code> suorittamalla <code>touch authorized_keys</code>. Avataan luomma tiedosto vim-editorissa suorittamalla <code>vim authorized_keys</code> ja painetaan <kbd>a</kbd>-näppäintä, jolloin pääsemme muokkaamaan tiedostoa. copypastetetaan tallettamamme <code>id_rsa.pub</code>-tiedoston sisältö editoriin (Huom! Jos tiedossa oli jo ennestään avain, pasteta sisältö uudelle riville), painetaan <kbd>esc</kbd>-näppäintä, kirjoitetaan <code>:wq</code> ja painetaan <kbd>enter</kbd>-näppäintä, jolloin tallennamme tiedoston ja lopetamme. Lisätään vielä tarvittavat oikeudet:
 </p>
   <div hljs no-escape># Siirrytään takaisin kotihakemistoon
 cd $HOME
@@ -266,7 +268,7 @@ chmod 600 .ssh/authorized_keys
 
 <p>
   <img src="assets/images/github-fork.png" class="pull-right" style="margin-left: 15px;">
-  Kun olet rekisteröitynyt, siirry <a href="https://github.com/AdvancedKittenry/Tsoha-Bootstrap" target="_blank">Tsoha Bootstrapin repositorioon</a>, jossa näet sen lähdekoodin. Forkkaa Tsoha Bootstrapin repositorio itsellesi klikkaamalla oikeasta yläkulmasta "Fork"-painiketta. Forkatusta repositoriosta tulee omasi ja se siirtyy omien repositorioidesi listaan. Siirry seuraavaksi forkkaamaasi repositorioon ja kopioi oikeassa alalaidassa sijaitsevan "HTTPS clone URL"-kentän sisältö, se näyttää seuraavanlaiselta:
+  Kun olet rekisteröitynyt, siirry <a href="https://github.com/Tsoha/Tsoha-Bootstrap" target="_blank">Tsoha Bootstrapin repositorioon</a>, jossa näet sen lähdekoodin. Forkkaa Tsoha Bootstrapin repositorio itsellesi klikkaamalla oikeasta yläkulmasta "Fork"-painiketta. Forkatusta repositoriosta tulee omasi ja se siirtyy omien repositorioidesi listaan. Siirry seuraavaksi forkkaamaasi repositorioon ja kopioi oikeassa alalaidassa sijaitsevan "HTTPS clone URL"-kentän sisältö, se näyttää seuraavanlaiselta:
 </p>
 
 <div hljs>https://github.com/KAYTTAJATUNNUS/Tsoha-Bootstrap.git</div>
@@ -292,7 +294,7 @@ PROJECT_FOLDER="tsoha"
 
 <p>
   Korvaa <code>USERNAME</code>-muuttujan arvo omalla käyttäjätunnuksellasi ja <code>PROJECT_FOLDER</code>-muuttujan arvo kansion nimellä, johon haluat sovelluksesi users-palvelimella sijoittaa. Sovelluksesi tulee asennuksen jälkeen sijaitsemaan
-  osoitteessa <a>USERNAME.users.cs.helsinki.fi/PROJECT_FOLDER</a>. Tallenna tiedosto, siirry terminaalissa <code>Tsoha-Bootstrap</code>-kansion juureen ja suorita seuraava komento:
+  osoitteessa <a>USERNAME.users.cs.helsinki.fi/PROJECT_FOLDER</a> (jossa <code>USERNAME</code> ja <code>PROJECT_FOLDER</code> ovat asettamiesi muuttujien arvot). Tallenna tiedosto, siirry terminaalissa <code>Tsoha-Bootstrap</code>-kansion juureen ja suorita seuraava komento:
 </p>
 
 <div hljs no-escape>bash bootstrap.sh</div>
@@ -327,14 +329,35 @@ PROJECT_FOLDER="tsoha"
   <div hljs no-escape>git push</div>
 </p>
 <p>
-  Käy vielä tarkistamassa GitHubista reposi sivulta, että tiedostot on siirretty repoosi onnistuneesti. Yksityskohtaisemmat Git-ohjeet löytyvät Ohjelmoinnin harjoitustyön <a href="http://javalabra.github.io/Javalabra2014-2/#/pages/ohjeet/Git-ohje.md">Git-ohje-sivulta</a>.
+  Käy vielä tarkistamassa GitHubista reposi sivulta, että tiedostot on siirretty repoosi onnistuneesti.
 </p>
 <p>
-  <div class="alert alert-warning">Muista lisätä tekemäsi muutokset repoosi joka viikko, jotta ohjaaja voi seurata edistymistäsi.</div>
+  Saatat törmätä ongelmaan, jossa <code>git push</code>, komennon suorittamisen jälkeen terminaaliin ilmestyy seuraavanlainen virheilmoitus:
+</p>
+<div hljs no-escape>mac-macbook-air:Tsoha-Bootstrap kalle$ git push
+To https://github.com/Tsoha/Tsoha-Bootstrap.git
+! [rejected]        master -> master (fetch first)
+error: failed to push some refs to 'https://github.com/Tsoha/Tsoha-Bootstrap.git'
+hint: Updates were rejected because the remote contains work that you do
+hint: not have locally. This is usually caused by another repository pushing
+hint: to the same ref. You may want to first integrate the remote changes
+hint: (e.g., 'git pull ...') before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.</div>
+<p>
+  Tämä johtuu siitä, että olet tehnyt muutoksia repoosi toiselta koneelta tai olet edioitunut jotain tiedostoa suoraan GitHubista. Ongelma ratkeaa suorittamalla reposi kansiossa komento <code>git pull</code>, joka päivittää lokaalin reposi tiedostot. <code>git pull</code>-komennon suorittamisen jälkeen terminaaliin aukeaa yleensä editorinäkymä, jonka voit sulkea syöttämällä <code>:q</code> ja painamalla <kbd>enter</kbd>-painiketta.
+</p>
+<p>
+  Yksityskohtaisemmat Git-ohjeet löytyvät Ohjelmoinnin harjoitustyön <a href="http://javalabra.github.io/Javalabra2014-2/#/pages/ohjeet/Git-ohje.md">Git-ohje-sivulta</a>.
+</p>
+<p>
+  <div class="alert alert-warning">
+    <h4>Muistathan?</h4>
+    Muista lisätä tekemäsi muutokset repoosi joka viikko, jotta ohjaaja voi seurata edistymistäsi.
+  </div>
 </p>
 <hr>
 <a id="4-perusasioiden-dokumentointi"></a>
-<h2>5. Perusasioiden dokumentointi</h2>
+<h2>4. Perusasioiden dokumentointi</h2>
 <h3>4.1 Aiheen valinta</h3>
 <p>
 Tässä materiaalissa toteutan pienen sovelluksen, joka ratkaisee ystäväni ongelman. Ystävälleni Henrille on kertynyt todella paljon pelejä, eikä hän koskaan muista, mitkä niistä hän on jo läpäissyt ja mitkä on vielä kesken.
@@ -355,7 +378,8 @@ Henri haluaa siis mahdollisuuden lisätä pelejä kirjastoonsa ja muokata niiden
 Aloitetaan dokumentaatiomme kirjoittaminen lisäämälle <code>doc</code>-kansiossa sijaitsevaan <code>dokumentaatio.pdf</code>-tiedostoon <strong><a href="http://advancedkittenry.github.io/dokumentaatio-ohje.html#johdanto">johdanto</a></strong> ja <strong><a href="http://advancedkittenry.github.io/dokumentaatio-ohje.html#yleiskuva-j%C3%A4rjestelm%C3%A4st%C3%A4">käyttötapaukset</a></strong>. Lisää kurssin edetessä aina kaikki dokumentaation osat tähän yhteen tiedostoon, niin dokumentaation lukeminen on helpompaa.
 <p>
   <div class="alert alert-info">
-    <a href="http://www.yworks.com/en/products/yfiles/yed/">yEd</a> on kätevä kaavioeditori, jota kannattaa ehdottomasti kokeilla.
+    <h4>Vinkki</h4>
+    <a href="http://www.yworks.com/en/products/yfiles/yed/">yEd</a> on kätevä kaavioeditori, jota kannattaa ehdottomasti kokeilla. Löydät UML-kaavioiden kannalta hyödylliset elementit valitsemalla oikeasta valikosta "UML" (joudut luultavasti skrollaamaan valikkoa hieman).
   </div>
 </p>
 
