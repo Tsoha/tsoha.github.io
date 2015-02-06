@@ -79,12 +79,16 @@ public function __construct($attributes){
 </p>
 
 <div hljs language="php" no-escape>$metodin_nimi = 'testi_metodi';
-$this->{$metodin_nimi}();
-</div>
+$this->{$metodin_nimi}();</div>
 
 <p>
-  Kun kokoat kaikkien validointimetodien palauttamat virheilmoitukset yhdeksi taulukoksi, voi <a href="http://php.net/manual/en/function.array-merge.php" target="_blank">array_merge</a>-funktiosta olla hyötyä.
+  Kun kokoat kaikkien validointimetodien palauttamat virheilmoitukset yhdeksi taulukoksi, voi <a href="http://php.net/manual/en/function.array-merge.php" target="_blank">array_merge</a>-funktiosta olla hyötyä. Muista, että <code>array_merge</code>-funktio palauttaa taulukon, joka sisältää kaikki parametreina saatujen taulukoiden alkiot, <strong>se ei siirrä toisen taulukon alkioita toiseen taulukkoon.</strong>
 </p>
+
+<div hljs language="php" no-escape>// Tämä ei toimi! :(
+array_merge($errors, $validator_errors);
+// Tämä toimii :)
+$errors = array_merge($errors, $validator_errors);</div>
 
 <p>
   <div class="alert alert-info">
@@ -108,14 +112,14 @@ public static function sandbox(){
 
   $errors = $doom->errors();
 
-  print_r($errors);
+  var_dump($errors);
 }</div>
 
 <p>
-  Kun siirryn sovelluksessani polkuun <code>/hiekkalaatikko</code>, ilmestyy sivulle seuraava tuloste:
+  Kun siirryn selaimessani sovellukseni polkuun <code>/hiekkalaatikko</code>, ilmestyy sivulle seuraava tuloste:
 </p>
 
-<div hljs language="php" no-escape> Array ( [0] => 'Nimen pituuden tulee olla vähintään kolme merkkiä!' [1] => 'Julkaisupäivän tulee olla päivämäärä!' )</div>
+<div hljs language="php" no-escape>array(2) { [0]=> string(54) "Nimen pituuden tulee olla vähintään kolme merkkiä!" [1]=> string(44) "Julkaisupäivän tulee olla päivämäärä!" }</div>
 
 <p>
   Toteuttamani <code>errors</code>-metodi toimii siis, kuten pitääkin. Voin siis seuraavaksi ottaa sen käyttöön <code>GameController</code>-luokan <code>store</code>-metodissa:
@@ -288,17 +292,17 @@ Koska PHP on tyypitön, tapahtuu totuusarvojen kanssa joskus outoja tyyppimuunno
 </p>
 
 <div hljs language="php" no-escape>//...
-$routes->get('game/:id/edit', function($id){
+$routes->get('/game/:id/edit', function($id){
   // Pelin muokkauslomakkeen esittäminen
   GameController::edit($id);
 });
 
-$routes->post('game/:id/edit', function($id){
+$routes->post('/game/:id/edit', function($id){
   // Pelin muokkaaminen
   GameController::update($id);
 });
 
-$routes->post('game/:id/destroy', function($id){
+$routes->post('/game/:id/destroy', function($id){
   // Pelin poisto
   GameController::destroy($id);
 });</div>
@@ -388,8 +392,18 @@ Koska POST-pyyntö ohjataan <code>UserController</code> luokan <code>handle_logi
 
 <p>
   Kontrollerissa ei ole hirveästi mitään uutta. <code>login</code>-metodi renderöi kirjautumislomakkeen ja <code>handle_login</code> pyytää <code>User</code>-mallilta tietokannasta käyttäjän, joka vastaa käyttäjän antamaa käyttäjänimeä ja salasanaa, kutsumalla sen <code>authenticate</code>-metodia. Jos käyttäjää ei löydy, <code>authenticate</code>-metodi palauttaa <code>null</code>, jolloin
-  ohjaamme käyttäjän takaisin kirjautumislomakkeeseen ja ilmoitamme, että käyttäjätunnus tai salasana oli väärä. Jos käyttäjä löytyy tietokannasta, palauttaa <code>authenticate</code>-metodi löytyneen käyttäjän <code>User</code>-oliona.
+  ohjaamme käyttäjän takaisin kirjautumislomakkeeseen ja ilmoitamme, että käyttäjätunnus tai salasana oli väärä. Jos käyttäjä löytyy tietokannasta, palauttaa <code>authenticate</code>-metodi löytyneen käyttäjän <code>User</code>-oliona. Vinkki: voit tarkastaa, löytyykö tietokannasta käyttäjä annetulla käyttäjätunnus-salasana-parilla esimerkiksi seuraavasti:
 </p>
+
+<div hljs no-escape>$query = DB::connection()->prepare('SELECT * FROM Player WHERE name = :name AND password = :password LIMIT 1', array('name' => $name, 'password' => $password));
+$query->execute();
+$row = $query->fetch();
+
+if($row){
+  // Käyttäjä löytyi, palautetetaan löytynyt käyttäjä oliona
+}else{
+  // Käyttäjää ei löytynyt, palautetaan null
+}</div>
 
 <p>
   Mutta, mitä rivillä <code>$_SESSION['user'] = $user->id</code> tapahtuu? Siitä puhumme seuraavaksi.

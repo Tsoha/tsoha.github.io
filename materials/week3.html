@@ -11,7 +11,7 @@
 </ul>
 
 <hr>
-
+<a id="1-php-haltuun"></a>
 <h2>1. PHP haltuun</h2>
 <p>
   Ennen kuin etenemme sovelluksemme toteutuksessa pidemmälle, sukelletaan hetkeksi PHP:n saloihin.
@@ -44,12 +44,12 @@ $kaverit[] = 'Helena';
 echo 'Kallen viimeinen kaveri on:\n';
 echo $kaverit[6] . '\n';
 // Helena
-echo 'Kalella on yhteensä ' . count($kaverit) . ' kaveria';
+echo 'Kallella on yhteensä ' . count($kaverit) . ' kaveria';
 // Kallella on yhteensä 7 kaveria
 </div>
 
 <p>
-  Merkkijonon alkioihin voi siis Javan tapaan viitata indeksillä, jolloin esimmäinen alkio on indeksissä 0. <code>$kaverit[0]</code> on siis taulukon esimmäinen alkio. Taulukon läpikäyntiin voi käyttää <code>foreach</code>-looppia, johon annetaan iteroitava taulukko ja iteroitavan alkion nimi. Iteroitavaan alkioon voi viitata loopin sisällä, jolloin esimerkissä tulostuu kaikki taulukon alkiot.
+  Merkkijonon alkioihin voi siis Javan tapaan viitata indeksillä, jolloin esimmäinen alkio on indeksissä 0. <code>$kaverit[0]</code> on siis taulukon ensimmäinen alkio. Taulukon läpikäyntiin voi käyttää <code>foreach</code>-looppia, johon annetaan iteroitava taulukko ja iteroitavan alkion nimi. Iteroitavaan alkioon voi viitata loopin sisällä, jolloin esimerkissä tulostuu kaikki taulukon alkiot.
 </p>
 
 <p>
@@ -104,7 +104,7 @@ echo 'Kalle on ' . $iat['kalle'] . ' vuotta vanha\n';
   // olioon liittyvä julkinen metodi
   public function hauku(){
     $sanonta = $this->mita_koira_sanoo();
-    return $this->nimi . ': ' . $sanonta . '!';
+    return $this->nimi . ': ' . $sanonta;
   }
   // luokkaan liittyvä staattinen metodi
   public static function eliokunta(){
@@ -121,7 +121,7 @@ echo 'Kalle on ' . $iat['kalle'] . ' vuotta vanha\n';
 </p>
 
 <p>
-  Luokalla voi myös olla sen olioon liittyviä metodeja, tai itse luokkaan liittyviä metodeja, eli staattisia metodeja. <code>Koira</code>-luokalle on määritelty oliometodit <code>hauku</code> ja <code>mita_koira_sanoo</code> sekä staattinen metodi <code>eliokunta</code>. Tässä pieni esimerkki <code>Koira</code>-luokan käytöstä:
+  Luokalla voi olla sen olioon liittyviä metodeja, tai itse luokkaan liittyviä metodeja, eli staattisia metodeja (<code>static</code>). <code>Koira</code>-luokalle on määritelty oliometodit <code>hauku</code> ja <code>mita_koira_sanoo</code> sekä staattinen metodi <code>eliokunta</code>. Tässä pieni esimerkki <code>Koira</code>-luokan käytöstä:
 </p>
 
 <div hljs no-escape>$rekku = new Koira('Rekku', 'Kalle', 10, 2);
@@ -130,9 +130,14 @@ echo $rekku->nimi;
 echo $rekku->hauku();
 // Rekku: Hau, hau!
 echo Koira::eliokunta();
-// Nisäkkäät
-</div>
+// Nisäkkäät</div>
 
+<p>
+  <div class="alert alert-info">
+    <h4>Vinkki</h4>
+    <a href="http://phpfiddle.org/" target="_blank">PhpFiddle</a> on hyvä paikka kokeilla yllä esitettyjä esimerkkejä, tai omia koodinpätkiä. Jos innostuit PHP:n opiskelusta, löytyy <a href="http://www.w3schools.com/php/" target="_blank">W3Schools</a>:ista läjäpäin hyviä PHP-tutoriaaleja.
+  </div>
+</p>
 <hr>
 <a id="2-mallit"></a>
 <h2>2. Mallit</h2>
@@ -297,14 +302,19 @@ require 'app/models/game.php';
 class HelloWorldController extends BaseController{
   // ...
   public static function sandbox(){
+    $skyrim = Game::find(1);
     $games = Game::all();
-    // Tämä tulostaa muuttujan arvon mukavassa muodossa
-    print_r($games);
+    // Tämä tulostaa kaikki pelit
+    echo 'Kaikki pelit: \n';
+    var_dump($games);
+    // Tämä tulostaa pelin id:llä 1
+    echo 'Peli id:llä 1: \n';
+    var_dump($skyrim);
   }
 }</div>
 
 <p>
-  Muista sisällyttää mallisi kontrolleriin <a href="http://php.net/manual/en/function.require.php" target="_blank">require</a>-kommennolla!
+  Siirry selaimessa sovelluksesi polkuun <code>/hiekkalaatikko</code> ja varmista, että malliluokkasi uudet metodit toimivat, kuten pitääkin. Muista sisällyttää mallisi kontrolleriin <a href="http://php.net/manual/en/function.require.php" target="_blank">require</a>-kommennolla!
 </p>
 
 <h3>2.2 Composer ja luokkien automaattinen lataaminen</h3>
@@ -419,7 +429,7 @@ $query->execute();</div>
   </tbody>
 </table>
 <p>
-  Tämä näkymä on kuitenkin vielä staattinen, eikä oikeasti listaa mitään tietokantaan talletettuja pelejä. Aion laittaa näkymän oikeasti listaamaan tietokantaani talletetut pelit. Aloitan luomalla kansioon <code>app/controllers</code> tiedoston <code>games_controller.php</code>, jonne toteutan <code>GameController</code>-luokan, joka on sovellukseni ensimmäinen kontrolleri:
+  Tämä näkymä on kuitenkin vielä staattinen, eikä oikeasti listaa mitään tietokantaan talletettuja pelejä. Seuraavaksi aionkin laittaa näkymän oikeasti listaamaan tietokantaani talletetut pelit. Aloitan luomalla kansioon <code>app/controllers</code> tiedoston <code>games_controller.php</code>, jonne toteutan <code>GameController</code>-luokan, joka on sovellukseni ensimmäinen kontrolleri:
 </p>
 
 <div hljs language="php" no-escape>class GameController extends BaseController{
@@ -427,7 +437,7 @@ $query->execute();</div>
 }</div>
 
 <p>
-  Muista periä <code>BaseController</code>-luokka, niin pääset käyttämään sen metodeja. Lisään seuraavaksi luokkaan <code>index</code>-metodin:
+  Muista periä <code>BaseController</code>-luokka, niin pääset käyttämään sen metodeja. Lisään seuraavaksi luokkaan <code>index</code>-metodin, joka hoitaa pelien listaamisen:
 </p>
 
 <div hljs language="php" no-escape>class GameController extends BaseController{
@@ -440,7 +450,7 @@ $query->execute();</div>
 }</div>
 
 <p>
-  Katsotaanpa, mitä metodissa oikein tapahtuu. Haen siis <code>Game</code>-luokan <code>all</code>-metodin avulla kaikki pelit tietokannastani. Sen jälkeen renderöin kansiossa <code>views/game</code> sijaitsevan tiedoston <code>index.html</code>, mutta tällä kertaa välitän <code>make</code>-metodille näkymätiedoston lisäksi assosiaatiolistan, joka sisältää pelini <code>games</code>-avaimen arvona. Seuraavaksi minun täytyy muokata hieman näkymääni, jotta saan esitettyä siinä kontrollerin välittämän datan. Muokkaan <code>index.html</code> tiedoston seuraavanlaiseksi:
+  Katsotaanpa, mitä metodissa oikein tapahtuu. Haen siis <code>Game</code>-luokan <code>all</code>-metodin avulla kaikki pelit tietokannastani. Sen jälkeen renderöin kansiossa <code>views/game</code> sijaitsevan tiedoston <code>index.html</code>, mutta tällä kertaa välitän <code>make</code>-metodille näkymätiedoston lisäksi assosiaatiolistan, joka sisältää pelini <code>games</code>-avaimen arvona. Nyt näkymässäni on käytössä <code>games</code>-niminen taulukko tietokantani peleistä. Seuraavaksi minun täytyy muokata hieman näkymääni, jotta saan esitettyä siinä kontrollerin välittämän datan. Muokkaan <code>index.html</code> tiedoston seuraavanlaiseksi:
 </p>
 
 <div hljs language="xml" no-escape>{% extends "base.html" %}
@@ -500,7 +510,7 @@ $query->execute();</div>
 </p>
 
 <p>
-  Näkymässä ei tapahdu mitään kovien erikoista, käyn <code>{% for game in games %}</code>-blokin sisällä läpi kaikki <code>games</code>-muuttujaan talletetut pelit, jotka annoin näkymälle. <code>for</code>-blokki muistuttaa hyvin paljon <code>foreach</code>-looppia, se tarvitsee vain iteroitavan listan ja nimen iteroitavalle alkiolle. Blokin sisällä upotan jokaisen pelin tiedot taulukkoon syntaksilla <code>{{muuttujan_nimi}}</code> ja teen <code>{% if game.played %}</code>-blokin avulla pienen ehtolauseen kaunistaakseni näkymääni. Twigillä voi tehdä siis vaikka mitä, lue <a href="http://twig.sensiolabs.org/doc/templates.html" target="_blank">täältä</a> lisää sen hyödyllisistä ominaisuuksista.
+  Kuten huomaat, kontrollerissani välittämä <code>games</code>-muuttuja on käytössä näkymässäni. Itse näkymässä ei tapahdu mitään kovin erikoista, käyn <code>{% for game in games %}</code>-blokin sisällä läpi kaikki <code>games</code>-muuttujaan talletetut pelit, jotka annoin näkymälle. <code>for</code>-blokki muistuttaa hyvin paljon <code>foreach</code>-looppia, se tarvitsee vain iteroitavan taulukon ja nimen iteroitavalle alkiolle. Blokin sisällä upotan jokaisen pelin tiedot taulukkoon syntaksilla <code>{{muuttujan_nimi}}</code> ja teen <code>{% if game.played %}</code>-blokin avulla pienen ehtolauseen kaunistaakseni näkymääni. Twigillä voi tehdä siis vaikka mitä, lue <a href="http://twig.sensiolabs.org/doc/templates.html" target="_blank">täältä</a> lisää sen hyödyllisistä ominaisuuksista.
 </p>
 
 <p>

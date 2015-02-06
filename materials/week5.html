@@ -197,7 +197,7 @@ public function __construct($attributes){
     $user_logged_in = self::get_user_logged_in();
     $games = Game::all(array('player_id' => $user_logged_in->id));
 
-    View::make('games/index.html', array('games' => $games));
+    View::make('game/index.html', array('games' => $games));
   }
 
   public static function show($id){
@@ -208,7 +208,7 @@ public function __construct($attributes){
 
     // Katsotaan, onko kirjautunut käyttäjä pelin pelaaja
     if($game->is_played_by($user_logged_in)){
-      View::make('games/show.html', array('game' => $game));
+      View::make('game/show.html', array('game' => $game));
     }else{
       Redirect::to('/game', array('error' => 'Peli ei kuulu kirjastoosi!'));
     }
@@ -317,12 +317,12 @@ $routes->get('/game', function(){
   GameController::index();
 });
 
-$routes->get('/game/:id', function($id){
-  GameController::show($id);
+$routes->get('/game/new', function(){
+  GameController::create();
 });
 
-$routes->get('/game/create', function(){
-  GameController::create();
+$routes->get('/game/:id', function($id){
+  GameController::show($id);
 });
 
 $routes->post('/game', function(){
