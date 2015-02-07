@@ -53,6 +53,13 @@ public function validate_name(){
   Tämä metodi siis validoi <code>Game</code>-olioni palauttamalla attribuuttiin <code>name</code> liittyvät virheet. Käytännössä se toimisi näin:
 </p>
 
+<p>
+  <div class="alert alert-info">
+    <h4>Vinkki</h4>
+    Vältä copy-paste-koodia ja lisää <code>BaseModel</code>-luokkaan yleisiä validointimetodeja, kuten <code>validate_string_length($string, $length)</code>, joka validoi merkkijon pituuden. Metodin toteuttamisen jälkeen voit kutsua sitä kaikissa malliesi validointimetodeissa.
+  </div>
+</p>
+
 <div hljs language="php" no-escape>// Ohhoh, liian lyhyt nimi!
 $doom = new Game(array(
   'name' => 'd'
@@ -99,7 +106,7 @@ $errors = array_merge($errors, $validator_errors);</div>
 </p>
 
 <p>
-  Kokeillaan vielä toteuttamaamme <code>errors</code>-metodia <code>HelloWorldController</code>-luokan <code>sandbox</code>-metodissa, ennenkuin ryhdymme tositoimiin:
+  Kokeillaan vielä toteuttamaamme <code>errors</code>-metodia <code>HelloWorldController</code>-luokan <code>sandbox</code>-metodissa, ennen kuin ryhdymme tositoimiin:
 </p>
 
 <div hljs language="php" no-escape>// ...
@@ -168,9 +175,6 @@ public static function store(){
     </div>
   {% endif %}
 
-  <div class="alert alert-danger">
-  </div>
-
   <form method="post" action="{{base_path}}/game">
     <div class="form-group">
       <label class="control-label">Nimi</label>
@@ -193,7 +197,7 @@ public static function store(){
     </div>
 
     <div class="form-group">
-      <button type="submit">Lisää</button>
+      <button type="submit" class="btn btn-primary">Lisää</button>
     </div>
   </form>
 {% endblock %}</div>

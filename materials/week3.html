@@ -467,7 +467,7 @@ $query->execute();</div>
   &lt;h1>Käyttäjän Henri pelikirjasto&lt;/h1>
 
   &lt;p>
-    &lt;a href="{{base_path}}/game/create" class="btn btn-success">Lisää peli&lt;/a>
+    &lt;a href="{{base_path}}/game/new" class="btn btn-success">Lisää peli&lt;/a>
   &lt;/p>
 
   &lt;table class="table table-striped table-bordered">
@@ -520,6 +520,14 @@ $query->execute();</div>
 <p>
   Kuten huomaat, kontrollerissani välittämä <code>games</code>-muuttuja on käytössä näkymässäni. Itse näkymässä ei tapahdu mitään kovin erikoista, käyn <code>{% for game in games %}</code>-blokin sisällä läpi kaikki <code>games</code>-muuttujaan talletetut pelit, jotka annoin näkymälle. <code>for</code>-blokki muistuttaa hyvin paljon <code>foreach</code>-looppia, se tarvitsee vain iteroitavan taulukon ja nimen iteroitavalle alkiolle. Blokin sisällä upotan jokaisen pelin tiedot taulukkoon syntaksilla <code>{{muuttujan_nimi}}</code> ja teen <code>{% if game.played %}</code>-blokin avulla pienen ehtolauseen kaunistaakseni näkymääni. Twigillä voi tehdä siis vaikka mitä, lue <a href="http://twig.sensiolabs.org/doc/templates.html" target="_blank">täältä</a> lisää sen hyödyllisistä ominaisuuksista.
 </p>
+
+<p>
+  Lisään vielä <code>config/routes.php</code>-tiedostoon seuraavan reitin, jotta toteuttamaani <code>index</code>-metodia kutsuttaisiin sovellukseni polussa <code>/game</code>:
+</p>
+
+<div hljs language="php" no-escape>$routes->get('/game', function(){
+  GameController::index();
+});</div>
 
 <p>
   Luettuasi hieman Twigistä, luo yhdelle oman sovelluksesi tietokohteelle listaus- ja esittelysivu. Pohjana kannattaa käyttää viikolla 2 tekemiäsi käyttöliittymäsuunnitelmia.
@@ -742,7 +750,7 @@ $routes->get('/game/new', function(){
 }</div>
 
 <p>
-  Malliluokan metodissa <code>save</code> on vaaranpaikka: jos tietokantakysely ei tuoda tuloksia, niin muuttujan <code>$row</code> arvo on <code>null</code>. Se johtuu joko siitä, että unohdit <code>RETURNING id</code>-komennon kyselyn lopusta, tai yritit syöttää vääränlaisia arvoja tietokantaan (esimerkiksi merkkijonoa numeron sijaan, tai väärä viiteavaimen arvo). Jos näin on, näet, että muuttujan <code>$row</code> arvo on <code>null</code> lisäämästäsi debuggausviestistä.
+  Malliluokan metodissa <code>save</code> on vaaranpaikka: jos tietokantakysely ei tuoda tuloksia, niin muuttujan <code>$row</code> arvo on <code>false</code>. Se johtuu joko siitä, että unohdit <code>RETURNING id</code>-komennon kyselyn lopusta, tai yritit syöttää vääränlaisia arvoja tietokantaan (esimerkiksi merkkijonoa numeron sijaan, tai väärä viiteavaimen arvo). Jos näin on, näet, että muuttujan <code>$row</code> arvo on <code>false</code> lisäämästäsi debuggausviestistä.
 </p>
 
 <p>
