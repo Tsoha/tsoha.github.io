@@ -280,8 +280,7 @@ require 'config/routes.php';</div>
   Kun HTML on tullut hieman tutummaksi, luodaan <code>app/views</code>-kansioon tiedosto <code>helloworld.html</code> ja lisätään sinne h1-tagi, jonka sisällä lukee "Hello World!". Siirrytään sitten jo tarkastelemaamme <code>app/controllers/hello_world_controller.php</code>-tiedostoon ja muokataan metodi <code>sandbox</code> seuraavanlaiseksi:
 </p>
 <div hljs language="php" no-escape>public static function sandbox(){
-    View::make('helloworld.html');
-  }
+  View::make('helloworld.html');
 }</div>
 <p>
   Metodissamme kutsumme luokan <code>View</code> staattista metodia <code>make</code>, joka renderöi kansiossa <code>app/views</code> sijaitsevan <code>html</code>-tiedostomme <code>helloworld.html</code>. <code>make</code>-metodin toteutus on melko yksinkertainen, se käyttää <strong>Twig</strong>-nimistä kirjastoa, johon tutustumme pian tarkemmin. Voit tutustua metodin toteutukseen tarkemmin <code>lib/view.php</code>-tiedostossa.
@@ -771,7 +770,7 @@ $routes->get('/login', function() {
 <p>
   Kansiossa <code>sql</code> sijaitsevat tiedostot <code>create_tables.sql</code>, <code>drop_tables.sql</code> ja <code>add_test_data.sql</code>. Aloitetaan lisäämällä tietokantaulujemme luontilauseet <code>create_table.sql</code>-tiedostoon. Käytössäni on PostgreSQL-tietokanta, jolloin oman sovellukseni osalta ne ovat seuraavat:
 </p>
-<div hljs language="sql" no-escape>CREATE TABLE Player(
+<div hljs language="sql" no-escape copy-paste-warning>CREATE TABLE Player(
   id SERIAL PRIMARY KEY, -- SERIAL tyyppinen pääavain pitää huolen, että tauluun lisätyllä rivillä on aina uniikki pääavain. Kätevää!
   name varchar(50) NOT NULL, -- Muista erottaa sarakkeiden määrittelyt pilkulla!
   password varchar(50) NOT NULL

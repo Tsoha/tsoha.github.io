@@ -131,7 +131,7 @@ public static function sandbox(){
   Toteuttamani <code>errors</code>-metodi toimii siis, kuten pitääkin. Voin siis seuraavaksi ottaa sen käyttöön <code>GameController</code>-luokan <code>store</code>-metodissa:
 </p>
 
-<div hljs language="php" no-escape>// ...
+<div hljs language="php" no-escape copy-paste-warning>// ...
 public static function store(){
   $params = $_POST;
 
@@ -157,7 +157,7 @@ public static function store(){
 }</div>
 
 <p>
-  <code>errors</code>-metodin kutsuminen palauttaa siis taulukon kaikista mallin olioon liittyvistä virheistä. Jos virheitä löytyy, eli taulukko <code>$errors</code> ei ole tyhjä, ohjaan käyttäjän takaisin pelien lisäyslomakkeeseen virheilmoitusten kera. Huomaa, että välitän myös käyttäjän syöttämät arvot takaisin näkymään, jottei kenttiä tarvitsisi täyttää uudelleen. Muokkaan vielä pelin lisäyslomaketta muutosten mukaiseksi:
+  <code>errors</code>-metodin kutsuminen palauttaa siis taulukon kaikista mallin olioon liittyvistä virheistä. Jos virheitä löytyy, eli taulukko <code>$errors</code> ei ole tyhjä, renderöin käyttäjälle pelin lisäyslomakkeen virheilmoitusten kera. Huomaa, että välitän myös käyttäjän syöttämät arvot takaisin näkymään, jottei kenttiä tarvitsisi täyttää uudelleen. Jos peli on kunnossa, eli <code>$errors</code>-taulukko on tyhjä, ohjaan käyttäjän lisätyn pelin esittelysivulle. Muokkaan vielä pelin lisäyslomaketta muutosten mukaiseksi:
 </p>
 
 <div hljs language="xml">{% extends "base.html" %}
@@ -242,7 +242,7 @@ Koska PHP on tyypitön, tapahtuu totuusarvojen kanssa joskus outoja tyyppimuunno
   Seuraavaksi tarvitsen pelille muokkaus- ja poistoiminnon. Aloitan niiden toteuttamisen lisäämällä <code>GameController</code>-malliluokkaan tarvittavat metodit:
 </p>
 
-<div hljs language="php" no-escape>class GameController extends BaseController{
+<div hljs language="php" no-escape copy-paste-warning>class GameController extends BaseController{
   // ...
   // Pelin muokkaaminen (lomakkeen esittäminen)
   public static function edit($id){
@@ -373,7 +373,7 @@ $routes->post('/login', function(){
 Koska POST-pyyntö ohjataan <code>UserController</code> luokan <code>handle_login</code>-metodille minun täytyy lisätä <code>app/controllers</code> kansioon tiedosto <code>user_controller.php</code>:
 </p>
 
-<div hljs language="php" no-escape>class UserController extends BaseController{
+<div hljs language="php" no-escape copy-paste-warning>class UserController extends BaseController{
   public static function login(){
       View::make('user/login.html');
   }

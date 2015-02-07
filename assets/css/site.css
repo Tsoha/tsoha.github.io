@@ -10,6 +10,24 @@
   padding: 0px 25px;
 }
 
+#copy-paste-warning{
+  background-color: #CE4844;
+  padding: 10px 16px;
+  color: white;
+  position: fixed;
+  top: -40px;
+  left: 0px;
+  width: 100%;
+  z-index: 99;
+  font-weight: bold;
+  transition: 0.5s;
+}
+
+#copy-paste-warning.bring-down{
+  top: 0px;
+  transition: 0.5s;
+}
+
 #footer{
   max-width: 1200px;
   margin: 0px auto;

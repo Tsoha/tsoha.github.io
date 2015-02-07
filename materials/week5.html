@@ -30,7 +30,7 @@
 }</div>
 
 <p>
-  Se on siinä! Otan seuraavaksi toteuttamani metodin käyttöön <code>GameController</code>-luokassani:
+  Se on siinä! Katsomme metodissa vain, löytyykö <code>$_SESSION</code>-assosiaatiolistasta avain <code>user</code>, jonka asetamme käyttäjän kirjautumisen yhteydessä. Jos avainta ei löydy, tarkoittaa se sitä, ettei käyttäjä ole kirjautunut sisään, jolloin ohjaamme hänet kirjautumissivulle. Otan seuraavaksi toteuttamani metodin käyttöön <code>GameController</code>-luokassani:
 </p>
 
 <div hljs language="php" no-escape>class GameController extends BaseController{
@@ -91,7 +91,7 @@
 }</div>
 
 <p>
-  Lisään vielä reitin joka ohjaa POST-pyynnön polkuun <code>/logout</code> toteuttamalleni metodille:
+  <code>logout</code>-metodissa asetamme <code>$_SESSION</code>-assosiaatiolistan avaimen <code>user</code> arvoksi <code>null</code>, jolloin sessio käyttäjän kirjautumisesta poistetaan. Session poistamisen jälkeen ohjaan käyttäjän kirjautumissivulle. Lisään vielä reitin joka ohjaa POST-pyynnön polkuun <code>/logout</code> toteuttamalleni metodille:
 </p>
 
 <div hljs language="php" no-escape>//...
@@ -140,7 +140,7 @@ $routes->post('/logout', function(){
 <a id="2-oman-sovelluksen-laajentaminen"></a>
 <h2>2. Oman sovelluksen laajentaminen</h2>
 
-Voit käyttää seuraavaksi aikaa oman sovelluksesi laajentamiseen. Muistathan, että arvosanan viisi saamiseksi sovelluksessasi tulee olla vähintään kahdessa tietokohteessa CRUD-nelikko. <strong>Tällä viikolla ei kuitenkaan tarvitse toteuttaa tietokohteelle kokonaista CRUD-nelikkoa, listaus- ja esittelytoiminnot riittävät hyvin</strong>. Koska kertaus on opintojen äiti, muistellaan seuraavaksi, mitä CRUD-nelikon toteuttamiseen liittyikään.
+Voit käyttää seuraavaksi aikaa oman sovelluksesi laajentamiseen. Muistathan, että arvosanan viisi saamiseksi sovelluksessasi tulee olla vähintään kahdessa tietokohteessa CRUD-nelikko. <strong>Tällä viikolla ei kuitenkaan tarvitse toteuttaa uudelle tietokohteelle kokonaista CRUD-nelikkoa, listaus- ja esittelysivut riittävät hyvin</strong>. Koska kertaus on opintojen äiti, muistellaan seuraavaksi, mitä CRUD-nelikon toteuttamiseen liittyikään.
 
 <h3>2.1 CRUD-nelikon toteuttamisen muistilista</h3>
 
@@ -155,7 +155,14 @@ $query->execute();
 $rows = $query->fetchAll();</div>
 
 <p>
-  Lisää myös mallisii attribuuttien validaattorit. Se onnistui määrittämällä malliluokan konstruktorissa <code>$validators</code>-attribuutissa jokaisen attribuutin validointimetodi:
+  <div class="alert alert-info">
+    <h4>Vinkki</h4>
+    Muistathan, että hyvä tapa debugata malliluokan metodeja, on tulostaa niiden palautusarvot kutsumalla <code>Kint::dump($palautus)</code>. Yleensä on myös hyödyllistä tietää, mitä kautta malliluokan metodia on kutsuttu. Se selviää kutsumalla <code>Kint::trace()</code>, kohdassa, jota haluat jäljittää.
+  </div>
+</p>
+
+<p>
+  Lisää myös mallisii attribuuttien validaattorit. Se onnistui lisäämällä malliluokan konstruktorissa <code>$validators</code>-attribuuttiin taulukon kutsuttavien validointimetodien nimiä:
 </p>
 
 <div hljs language="php" no-escape>// ...
@@ -164,14 +171,13 @@ public function __construct($attributes){
 
   $this->validators = array('validate_name', 'validate_publisher', 'validate_published', 'validate_description');
 }
-// ...
-</div>
+// ...</div>
 
 <p>
-  Muistathan, että validointimetodi saa parametrikseen validoitavan attribuutin arvon ja sen tulee palauttaa taulukko attribuuttiin kohdistuneista virheistä:
+  Itse validointimetodi validoi jonkun mallin attribuutin palauttamalla taulukon attribuuttiin kohdistuneista virheistä (esimerkiksi liian lyhyt, tai epäkelvollinen kokonaisluku). Tässä on esimerkki metodista, joka validoi attribuutin <code>$name</code>:
 </p>
 
-<div hljs language="php" no-escape>public function validate_name($name){
+<div hljs language="php" no-escape>public function validate_name(){
   $errors = array();
 
   if($this->name == ''){
@@ -189,7 +195,7 @@ public function __construct($attributes){
   Toteuta seuraavaksi malliluokkaasi käyttämä kontrolleriluokka kansioon <code>app/controllers</code>. Muista periä luokassasi <code>BaseController</code>-luokka. Lisää kontrolleriluokkaasi metodit näkymien näyttämiselle ja käyttäjän pyyntöjen käsittelyyn:
 </p>
 
-<div hljs language="php" no-escape>class GameController extends BaseController{
+<div hljs language="php" no-escape copy-paste-warning>class GameController extends BaseController{
 
   public static function index(){
     self::check_logged_in();
@@ -573,8 +579,8 @@ $pages = ceil($games_count/$page_size);</div>
 <a id="6-palautuksen-vaatimukset"></a>
 <h2>6. Palautuksen vaatimukset</h2>
 <ol>
-  <li>Toteuta käyttäjän uloskirjautuminen ja estä kirjautumattoman käyttäjän pääsy sivuille, jotka vaativat kirjautumisen. <strong>(0,5p)</strong></li>
-  <li>Edistä sovellustasi ja pidä koodi siistinä noudattamalla selkeää kansiorakennetta ja järkevää nimeämistä tiedostojen, luokkien ja metodien nimissä. Vaatimuksena on, että ainakin kahdelle tietokohteelle on toteutettu sivuja, kaikkia CRUD-nelikon osia ei kuitenkaan tarvitse toteuttaa. Lisäksi kaikkien toimintojen tulee toimia ja virhetilanteissa käyttäjälle täytyy antaa järkeviä virheilmoituksia. <strong>(1,5p)</strong></li>
+  <li>Toteuta käyttäjän uloskirjautuminen ja estä kirjautumattoman käyttäjän pääsy sivuille, jotka vaativat kirjautumisen. <strong>(1p)</strong></li>
+  <li>Edistä sovellustasi ja pidä koodi siistinä noudattamalla selkeää kansiorakennetta ja järkevää nimeämistä tiedostojen, luokkien ja metodien nimissä. Vaatimuksena on, että ainakin kahdelle tietokohteelle on toteutettu sivuja. <strong>Kaikkia CRUD-nelikon osia ei kuitenkaan tarvitse toteuttaa, listaus- ja esittelysivut uudelle tietokohteelle riittävät hyvin</strong>. Lisäksi kaikkien toimintojen tulee toimia ja virhetilanteissa käyttäjälle täytyy antaa järkeviä virheilmoituksia. <strong>(1p)</strong></li>
   <li>Lisää dokumentaatioosi <a href="http://advancedkittenry.github.io/dokumentaatio-ohje.html#j%C3%A4rjestelm%C3%A4n-yleisrakenne" target="_blank">järjestelmän-yleisrakenne</a>-osio ja <a href="http://advancedkittenry.github.io/dokumentaatio-ohje.html#kayttoliittymakomponentit" target="_blank">käyttöliittymän ja järjestelmän komponentteja kuvaa kaavio</a>. <strong>(1p)</strong></li>
   <li>Kirjoita <a href="http://advancedkittenry.github.io/aikataulu/koodikatselmointi.html" target="_blank">koodikatselmointi</a> (vapaaehtoinen). <strong>(0-2p)</strong></li>
   <li>

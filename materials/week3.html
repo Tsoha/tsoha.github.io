@@ -208,7 +208,7 @@ Malli siis edustaa jotain sovelluksen tietokohdetta, kuten esimerkissämme, kurs
   Minun täytyy seuraavaksi toteuttaa metodi, joka hakee kaikki pelit tietokannasta ja palauttee ne <code>Game</code>-olioina. Sen ei pitäisi olla vaikeaa, minun täytyy tehdä vain <code>SELECT * FROM Game</code> kysely tietokantaani ja käydä läpi sen tuottamat rivit. Katsotaan, miten tämä käytännössä tapahtuu:
 </p>
 
-<div hljs language="php" no-escape>class Game extends BaseModel{
+<div hljs language="php" no-escape copy-paste-warning>class Game extends BaseModel{
   // ...
   public static function all(){
     // Alustetaan kysely tietokantayhteydellämme
@@ -254,7 +254,7 @@ Malli siis edustaa jotain sovelluksen tietokohdetta, kuten esimerkissämme, kurs
   Toteutan vielä metodin, joka hakee tietokannasta tietyllä id:llä varustetun pelin:
 </p>
 
-<div hljs language="php" no-escape>class Game extends BaseModel{
+<div hljs language="php" no-escape copy-paste-warning>class Game extends BaseModel{
   // ...
   public static function find($id){
     $query = DB::connection()->prepare('SELECT * FROM Game WHERE id = :id LIMIT 1');
@@ -295,7 +295,7 @@ Malli siis edustaa jotain sovelluksen tietokohdetta, kuten esimerkissämme, kurs
 <h3>2.2 Malliluokan testaaminen ja debuggaamisen alkeet</h3>
 
 <p>
-  Tsoha Bootstrappiin on valmiiksi asennettu näppärä debuggauskirjasto, <strong><a href="http://raveren.github.io/kint/" target="_blank">Kint</a></strong>. Sen avulla voit tulostaa muuttujien arvoja koodin seasta, sekä jäljittää koodin suoritusta. Katsotaan Kintin avulla, mitä arvoja malliluokkamme palauttaa lisäämälle <code>HelloWorldController</code>-luokan metodiin <code>sandbox</code> seuraavat debuggausviestit:
+  Tsoha Bootstrappiin on valmiiksi asennettu näppärä debuggauskirjasto, <strong><a href="http://raveren.github.io/kint/" target="_blank">Kint</a></strong>. Sen avulla voit tulostaa muuttujien arvoja koodin seasta, sekä jäljittää koodin suoritusta. Katsotaan Kintin avulla, mitä arvoja malliluokkaamme toteuttamamme metodit <code>all</code> ja <code>find</code> palauttavat lisäämälle <code>HelloWorldController</code>-luokan metodiin <code>sandbox</code> seuraavat debuggausviestit:
 </p>
 
 <div hljs language="php" no-escape>// Muista sisällyttää malliluokka require-komennolla!
@@ -655,8 +655,7 @@ $routes->post('/game', function(){
 $routes->get('/game/new', function(){
   GameController::create();
 });
-// Määritetään reitti game/:id vasta tässä, jottei se mene sekaisin reitin game/new kanssa
-</div>
+// Määritetään reitti game/:id vasta tässä, jottei se mene sekaisin reitin game/new kanssa</div>
 
 <p>
   <div class="alert alert-warning">
@@ -669,7 +668,7 @@ $routes->get('/game/new', function(){
   Eli muutamme vain metodiksi <code>post</code>, aika helppoa eikö? Käyttäjän lähettämän lomakkeen siis käsittelee <code>GameController</code>-luokan metodi <code>store</code>. Katsotaan, mitä siellä tapahtuu:
 </p>
 
-<div hljs language="php" no-escape>class GameController extends BaseController{
+<div hljs language="php" no-escape copy-paste-warning>class GameController extends BaseController{
   // ...
   public static function store(){
     // POST-pyynnön muuttujat sijaitsevat $_POST nimisessä assosiaatiolistassa
@@ -695,7 +694,7 @@ $routes->get('/game/new', function(){
 <p>
   Katsotaan, mitä toteuttamassani metodissa oikein tapahtuu. Aluksi otan POST-pyynnön mukana tulleet muuttujat talteen, jotka sisältävät käyttäjän täyttämien kenttien arvot. Ne sijaitsevat <code>$_POST</code>-muuttujassa assosiaatiolistana, jolloin esimerkiksi lomakkeen <code>description</code>-kentän sisältö on <code>$_POST['description']</code>. Assosiaatiolistan avaimet ovat siis lomakkeessa määrittämieni kenttien <code>name</code>-attribuuttien arvoja. Sen jälkeen luon <code>Game</code>-olion pyyntöön liittyvien muuttujien mukaisesti ja kutsun luomani olion metodia <code>save</code>, joka tallentaa sen tietokantaan. Metodissa ei tapahtu mitään muuta kovin kummallista, paitsi se, että se lisää olion <code>id</code>-attribuutiksi tietokantaan lisätyn rivin <code>id</code>-sarakkeen arvon. Se onnistuu seuraavasti:
 </p>
-<div hljs language="php" no-escape>class Game extends BaseModel{
+<div hljs language="php" no-escape copy-paste-warning>class Game extends BaseModel{
   // Huomaathan, että save-metodi ei ole staattinen!
   public function save(){
     // Lisätään RETURNING id tietokantakyselymme loppuun, niin saamme lisätyn rivin id-sarakkeen arvon
@@ -718,7 +717,7 @@ $routes->get('/game/new', function(){
 <h3>4.3 Ei mennyt niin kuin Strömsössä...</h3>
 <img src="assets/images/stromso.jpg" class="pull-right" style="margin-left: 15px; margin-bottom: 15px">
 <p>
-  Puhutaan seuraavaksi hieman siitä, mitä tehdä, jos hommat eivät mene ihan nappiin. Tietokantaan lisäämisen kanssa moni asia saattoi mennä pieleen. Aloitetaan debuggaaminen <code>GameController</code>-luokan metodista <code>store</code>, jossa meidän täytyy varmistaa, että käyttäjän syötteet ovat kunnossa:
+  Puhutaan seuraavaksi hieman siitä, mitä tehdä, jos hommat eivät mene ihan nappiin. Tietokantaan lisäämisen kanssa moni asia saattoi mennä pieleen. Aloitetaan debuggaaminen <code>GameController</code>-luokan metodista <code>store</code>, jossa meidän täytyy varmistaa, että käyttäjän antamat syötteet ovat kunnossa:
 </p>
 <div hljs language="php" no-escape>public static function store(){
   $params = $_POST;
@@ -750,7 +749,7 @@ $routes->get('/game/new', function(){
 }</div>
 
 <p>
-  Malliluokan metodissa <code>save</code> on vaaranpaikka: jos tietokantakysely ei tuoda tuloksia, niin muuttujan <code>$row</code> arvo on <code>false</code>. Se johtuu joko siitä, että unohdit <code>RETURNING id</code>-komennon kyselyn lopusta, tai yritit syöttää vääränlaisia arvoja tietokantaan (esimerkiksi merkkijonoa numeron sijaan, tai väärä viiteavaimen arvo). Jos näin on, näet, että muuttujan <code>$row</code> arvo on <code>false</code> lisäämästäsi debuggausviestistä.
+  Malliluokan metodissa <code>save</code> on vaaranpaikka: jos tietokantakysely ei tuoda tuloksia, niin muuttujan <code>$row</code> arvo on <code>false</code>. Se johtuu joko siitä, että unohdit <code>RETURNING id</code>-komennon kyselyn lopusta, tai yritit syöttää vääränlaisia arvoja tietokantaan (esimerkiksi merkkijonoa numeron sijaan, tai väärää viiteavaimen arvoa). Jos näin on, näet, että muuttujan <code>$row</code> arvo on <code>false</code> lisäämästäsi debuggausviestistä.
 </p>
 
 <p>
