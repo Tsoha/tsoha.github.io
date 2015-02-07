@@ -35,7 +35,8 @@ syöttäisi lisäyslomakkeeseen vääränlaisia arvoja, kuten esimerkiksi teksti
   Tämä ratkaisu toimii, mutta entä jos minun täytyy validoida myös kaikki muut attribuutit? Syntyisi aikoimoinen sotku, joten teen sen sijaan validoinnin järkevästi ja luon <code>Game</code>-malliini validointimetodin <code>validate_name</code>, joka validoi <code>name</code>-attribuutin arvon:
 </p>
 
-<div hljs language="php" no-escape>public function validate_name(){
+<div hljs language="php" no-escape>// Huomaathan, että validate_name funktio EI ole staattinen!
+public function validate_name(){
   $errors = array();
 
   if($this->name == '' || $this->name == null){
@@ -112,14 +113,12 @@ public static function sandbox(){
 
   $errors = $doom->errors();
 
-  var_dump($errors);
+  Kint::dump($errors);
 }</div>
 
 <p>
-  Kun siirryn selaimessani sovellukseni polkuun <code>/hiekkalaatikko</code>, ilmestyy sivulle seuraava tuloste:
+  Kun siirryn selaimessani sovellukseni polkuun <code>/hiekkalaatikko</code>, näen debuggausviestin, joka sisältää taulukon virheilmoituksia.
 </p>
-
-<div hljs language="php" no-escape>array(2) { [0]=> string(54) "Nimen pituuden tulee olla vähintään kolme merkkiä!" [1]=> string(44) "Julkaisupäivän tulee olla päivämäärä!" }</div>
 
 <p>
   Toteuttamani <code>errors</code>-metodi toimii siis, kuten pitääkin. Voin siis seuraavaksi ottaa sen käyttöön <code>GameController</code>-luokan <code>store</code>-metodissa:
