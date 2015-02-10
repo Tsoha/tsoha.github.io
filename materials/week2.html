@@ -759,13 +759,14 @@ $routes->get('/login', function() {
 <p>
   Täydennetään ensin dokumentaatiotamme <strong><a href="http://advancedkittenry.github.io/dokumentaatio-ohje.html#j%C3%A4rjestelm%C3%A4n-tietosis%C3%A4lt%C3%B6">järjestelmän tietosisältö</a></strong> osiolla ja <strong><a href="http://advancedkittenry.github.io/dokumentaatio-ohje.html#relaatiotietokantakaavio">relaatiotietokantakaaviolla</a></strong>, jotta tiedämme, mitkä taulut tietokantaamme tarvitsemme. Muistathan, että arvosanaan 5 vaaditaan vähintään yksi <a href="http://en.wikipedia.org/wiki/Many-to-many_%28data_model%29">monesta-moneen-suhde</a> tietokantaulujen välillä.
 </p>
-<h3>4.3 Tietokantaulujen pystyttäminen</h3>
+<h3>4.3 Tietokantataulujen pystyttäminen</h3>
 <p>
   Tietokantojen parissa työskennellessä kannattaa tarvittaessa katsoa ohjeita esimerkiksi näiltä sivuilta:
 </p>
 <ul>
   <li><a href="http://www.w3schools.com/sql/default.asp" target="_blank">W3Schoolsin SQL-opas</a></li>
   <li><a href="http://www.tutorialspoint.com/postgresql/index.htm" target="_blank">Tutorialspointin PostgreSQL-opas</a></li>
+  <li><a href="http://advancedkittenry.github.io/suunnittelu_ja_tyoymparisto/tietokanta.html#monesta-moneen--suhde" target="_blank">Ohje monesta-moneen-suhteisiin tietokantaulujen välillä</a></li>
 </ul>
 <p>
   Kansiossa <code>sql</code> sijaitsevat tiedostot <code>create_tables.sql</code>, <code>drop_tables.sql</code> ja <code>add_test_data.sql</code>. Aloitetaan lisäämällä tietokantaulujemme luontilauseet <code>create_table.sql</code>-tiedostoon. Käytössäni on PostgreSQL-tietokanta, jolloin oman sovellukseni osalta ne ovat seuraavat:
@@ -776,6 +777,7 @@ $routes->get('/login', function() {
   password varchar(50) NOT NULL
 );
 
+
 CREATE TABLE Game(
   id SERIAL PRIMARY KEY,
   player_id INTEGER REFERENCES Player(id), -- Viiteavain Player-tauluun
@@ -785,8 +787,7 @@ CREATE TABLE Game(
   published DATE,
   publisher varchar(50),
   added DATE
-);
-</div>
+);</div>
 <p>
   <div class="alert alert-warning">
     <h4>Muistathan?</h4>

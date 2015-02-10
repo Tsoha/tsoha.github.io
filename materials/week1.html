@@ -274,7 +274,7 @@ chmod 600 .ssh/authorized_keys
 <div hljs>https://github.com/KAYTTAJATUNNUS/Tsoha-Bootstrap.git</div>
 
 <p>
-  Siirry seuraavaksi terminaalissa hakemistoon, johon haluat <strong>kloonata</strong> repositoriosi. Repositorion kloonaaminen tarkoittaa yksinkertaisesti sitä, että luodaan repositorion niminen kansio, joka sisältää kaikki repositorion sisältämät lähdekoodit. Repositorion kloonaus tapahtuu terminaalissa seuraavasti (korvaa <code>KAYTTAJATUNNUS</code>-kohta omalla GitHubin käyttäjätunnuksellasi):
+  Siirry seuraavaksi terminaalissa hakemistoon, johon haluat <strong>kloonata</strong> repositoriosi. Repositorion kloonaaminen tarkoittaa yksinkertaisesti sitä, että luodaan repositorion niminen kansio, johon siirretään kaikki repositorion sisältämät lähdekoodit. Repositorion kloonaus tapahtuu terminaalissa seuraavasti (korvaa <code>KAYTTAJATUNNUS</code>-kohta omalla GitHubin käyttäjätunnuksellasi):
 </p>
 
 <div hljs># siirrytään haluamaamme hakemistoon (esimerkiksi työpöydälle)
@@ -283,7 +283,7 @@ cd $HOME/Desktop
 git clone https://github.com/KAYTTAJATUNNUS/Tsoha-Bootstrap.git</div>
 
 <p>
-  Se on siinä! Tarkastele seuraavaksi työpöytääsi, sinne olisi pitänyt ilmestyä <code>Tsoha-Bootstrap</code> niminen kansio. Avaa <code>Tsoha-Bootstrap</code> kansio ja avaa sieltä <code>config</code>-kansiossa sijaitseva tiedosto <code>environment.sh</code> haluamallasi tekstieditorilla. Se näyttää seuraavalta:
+  Se on siinä! Tarkastele seuraavaksi kansiota, johon kloonasit repositoriosi (esimerkissä se on työpöytä), sinne olisi pitänyt ilmestyä <code>Tsoha-Bootstrap</code> niminen kansio. Avaa <code>Tsoha-Bootstrap</code> kansio ja avaa sieltä <code>config</code>-kansiossa sijaitseva tiedosto <code>environment.sh</code> haluamallasi tekstieditorilla. Se näyttää seuraavalta:
 </p>
 
 <div hljs no-escape># korvaa tämä omalla käyttäjätunnuksellasi
@@ -293,7 +293,7 @@ PROJECT_FOLDER="tsoha"
 # sovelluksesi tulee sijaitsemaan osoitteessa USERNAME.users.cs.helsinki.fi/PROJECT_FOLDER</div>
 
 <p>
-  Korvaa <code>USERNAME</code>-muuttujan arvo omalla käyttäjätunnuksellasi ja <code>PROJECT_FOLDER</code>-muuttujan arvo kansion nimellä, johon haluat sovelluksesi users-palvelimella sijoittaa. Sovelluksesi tulee asennuksen jälkeen sijaitsemaan
+  Korvaa <code>USERNAME</code>-muuttujan arvo omalla CS-käyttäjätunnuksellasi ja <code>PROJECT_FOLDER</code>-muuttujan arvo kansion nimellä, johon haluat sovelluksesi users-palvelimella sijoittaa. Sovelluksesi tulee asennuksen jälkeen sijaitsemaan
   osoitteessa <a>USERNAME.users.cs.helsinki.fi/PROJECT_FOLDER</a> (jossa <code>USERNAME</code> ja <code>PROJECT_FOLDER</code> ovat asettamiesi muuttujien arvot). Tallenna tiedosto, siirry terminaalissa <code>Tsoha-Bootstrap</code>-kansion juureen ja suorita seuraava komento:
 </p>
 
