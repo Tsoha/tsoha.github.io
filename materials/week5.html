@@ -357,6 +357,14 @@ $routes->post('/game/:id/destroy', function($id){
     <li>Lisää näkymien sisällä määrittämiesi polkujen, kuten linkkien ja lomakkeiden polkujen eteen <code>{{base_path}}</code>, jotta polut eivät osoita <code>htdocs</code>-kansion vaan oman projektikansiosi juureen.</li>
   </ul>
 </p>
+
+<h4>Debuggaaminen</h4>
+<ul>
+  <li>Kokeile aina tietokantakyselyitä <code>psql</code>-komentotulkissa ennen kuin käytät niitä malleissa. Pääset käyttämään komentotulkkia ottamalla ensin SSH-yhteuden users-palvelimeen ja suorittamalla sen jälkeen komennon <code>psql</code>. Kun olet valmis, komentotulkin pystyy sulkemaan syöttällä siihen <code>\q</code> ja painamalla <kbd>enter</kbd>-painiketta.</li>
+  <li>
+    Kun tietokantakysely on kunnossa, mutta ongelma ei silti ratkea, siirry kontrollerin debuggaamiseen. Jos käytät tietokantakyselyissä käyttäjän syötteitä, kannattaa tarkistaa, että niiden sisältö on kunnossa. Se onnistuu tulostamalla debuggausviestin käyttäjän syötteistä kutsumalla <code>Kint</code>-luokan <code>dump</code>-metodia.
+  </li>
+</ul>
 <hr>
 <a id="3-dokumentaation-viimeistely"></a>
 <h2>3. Dokumentaation viimeistely</h2>
