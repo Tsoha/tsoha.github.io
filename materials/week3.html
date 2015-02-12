@@ -238,7 +238,12 @@ Malli siis edustaa jotain sovelluksen tietokohdetta, kuten esimerkissämme, kurs
     return $games;
   }
 }</div>
-
+<p>
+  <div class="alert alert-warning">
+    <h4>Muistathan?</h4>
+    Olet varmasti huomannut, että kommentoin koodiani esimerkeissä melko paljon. Teen sen vain sen vuoksi, että ymmärtäisit esimerkkejä paremmin. Omaa koodiasi sinun ei tarvitse kommentoida juuri lainkaan, ellei jokin kohta ole erityisen epäselvä.
+  </div>
+</p>
 <p>
   Käydäänpä läpi, mitä metodissa tapahtuu. Määrittelen aluksi staattisen metodin <code>all</code> ja kutsun <code>DB</code>-luokan staattista metodia <code>connection</code>, joka palauttaa <strong><a href="http://php.net/manual/en/book.pdo.php" target="_blank">PDO</a></strong>-tietokantakirjaston tarjoaman PDO-yhteysolion. Alustan tietokantakyselyn kutsumalla PDO-yhteysolion metodia <code>prepare</code>, joka ottaa parametrikseen suoritettavan tietokantakyselyn. Seuraavalla rivillä suoritan kyselyni kutsumalla <code>execute</code>-metodia. Kyselyn suorittamisen jälkeen kyselyn tuottamiin riveihin pääsee käsiksi kutsumalla <code>fetchAll</code>-metodia, joka palauttaa rivit taulukkona assosiaatiolistoja, jonka avaimina toimivat sarakkeiden nimet ja arvoina niiden sisältö. Käyn rivit läpi <code>foreach</code>-loopissa ja luon jokaisen rivin arvoista <code>Game</code>-olion, jonka lisään <code>games</code>-taulukkoon.
 </p>

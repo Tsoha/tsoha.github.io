@@ -291,7 +291,7 @@ Koska PHP on tyypitön, tapahtuu totuusarvojen kanssa joskus outoja tyyppimuunno
 }</div>
 
 <p>
-  Kuten aina, lisätään myös tarvittavat reitit <code>routes.php</code>-tiedostoon:
+  Malliluokan <code>Game</code> metodi <code>update</code> ei eroa hirveästi viime viikolla toteuttamasti <code>save</code>-metodista, tietokantakyselyssä käytetään vain <code>UPDATE</code>-lauseketta <code>INSERT INTO</code>-lausekkeen sijaan. <code>delete</code>-metodissa taas käytän tietokantakyselyssä <code>DELETE</code>-lauseketta. Kuten aina, lisätään myös tarvittavat reitit <code>routes.php</code>-tiedostoon:
 </p>
 
 <div hljs language="php" no-escape>//...
@@ -311,10 +311,15 @@ $routes->post('/game/:id/destroy', function($id){
 });</div>
 
 <p>
-  Toteuta seuraavaksi omaan sovellukseesi tietokohteen muokkaus- ja poistotoiminto. Aloita toimintojen toteuttaminen malliluokastasi, johon toteutat metodit olion muokkaamiselle ja poistamiselle. Jos tietokantakyselyiden muodostaminen tuottaa vaikeuksia, kannattaa tutustua <strong><a href="http://www.tutorialspoint.com/postgresql/postgresql_update_query.htm" target="_blank">UPDATE</a></strong>-kyselyihin muokkauksen ja <strong><a href="http://www.tutorialspoint.com/postgresql/postgresql_delete_query.htm" target="_blank">DELETE</a></strong>-kyselyihin poistamisen kanssa.
+  Muista, että lomakkeiden lähettämien aiheuttaa POST-pyynnön <code>form</code>-tagin <code>action</code>-attribuutissa määriteltyyn polkuun, joten käytä niiden reiteissä <code>post</code>-metodia <code>get</code>-metodin sijaan.
 </p>
+
 <p>
-  Muista validoida muokkauslomakkeessa käyttäjän syöttämät kentät, kuten itsekkin tein omassa sovelluksessani. Käytettävyyden kannalta on helpointa, jos poistotoiminto toimii nappia painamalla. Käytin omassa sovelluksessani tätä pientä lomaketta:
+  Toteuta seuraavaksi omaan sovellukseesi tietokohteen muokkaus- ja poistotoiminto. Aloita toimintojen toteuttaminen malliluokastasi, johon toteutat metodit olion muokkaamiselle ja poistamiselle. Jos tietokantakyselyiden muodostaminen tuottaa vaikeuksia, kannattaa tutustua <strong><a href="http://www.tutorialspoint.com/postgresql/postgresql_update_query.htm" target="_blank">UPDATE</a></strong>-kyselyihin muokkauksen ja <strong><a href="http://www.tutorialspoint.com/postgresql/postgresql_delete_query.htm" target="_blank">DELETE</a></strong>-kyselyihin poistamisen kanssa. Ongelmatilanteissa, lue vinkkejä debuggaukseen seuraavasta osiosta.
+</p>
+
+<p>
+  Muista validoida muokkauslomakkeessa käyttäjän syöttämät kentät ja näyttää virhetilanteissa selkeät virheilmoitukset, kuten itsekkin tein omassa sovelluksessani. Käytettävyyden kannalta on helpointa, jos poistotoiminto toimii nappia painamalla. Käytin omassa sovelluksessani tätä pientä lomaketta:
 </p>
 
 <div hljs language="xml"><form method="post" action="{{base_path}}/game/{{game.id}}/destroy">
@@ -327,6 +332,61 @@ $routes->post('/game/:id/destroy', function($id){
     Saatoit huomata, että pelin muokkaus- ja lisäyslomake ovat käytännössä täysin samanlaiset. Twig tarjoaa uudelleenkäytettävien elementtien luomiseen <a href="http://twig.sensiolabs.org/doc/tags/macro.html" target="_blank">makrot</a>.
   </div>
 </p>
+
+<h3>2.1 Houston, we have a problem</h3>
+
+<img src="assets/images/houston.jpg" style="width: 300px; margin-right: 15px" class="pull-left">
+<p>
+  Kerrataan vielä hieman, miten selvitä ongelmatilanteista. Jos muokkaustoimintoni ei toimi, aloitan virheiden etsimisen kontrollerista, sillä ensimmäinen epäilyni on, että käyttäjän lomakkeen kautta antamissa syötteissä on jotain vikaa:
+</p>
+
+<div hljs language="php" no-escape>public static function update($id){
+  $params = $_POST;
+
+  $attributes = array(
+    'id' => $id,
+    'name' => $params['name'],
+    'played' => $params['played']
+    'publisher' => $params['publisher'],
+    'published' => $params['published'],
+    'description' => $params['description']
+  );
+
+  // Tulostetaan $params-muuttujan arvo
+  Kint::dump($params);
+
+  $game = new Game($attributes);
+  $errors = $game->errors();
+
+  /*if(count($errors) > 0){
+    View::make('game/edit.html', array('errors' => $errors, 'attributes' => $attributes));
+  }else{
+    $game->update();
+
+    Redirect::to('/game/' . $game->id, array('message' => 'Peliä on muokattu onnistuneesti!'));
+  }*/
+}</div>
+
+<p>
+  Tulostan siis sivulle <code>$params</code>-muuttujan sisällön tutulla <code>Kint</code>-luokan <code>dump</code>-metodin avulla. <strong>Koodin loppuosa tulee kommentoida pois, ettei se häiritse debuggausprosessia</strong>. Jos käyttäjän antamat syötteet ovat kunnossa, on vika luultavasti malliluokan metodissa. Siirryn siis debuggaamaan <code>Game</code>-luokan metodia <code>update</code>:
+</p>
+
+<div hljs language="php" no-escape>public function update(){
+  $query = DB::connection()->prepare('UPDATE ...');
+  $query->execute(array(...));
+
+  $row = $query->fetch();
+
+  Kint::dump($row);
+}</div>
+
+<p>
+  <code>update</code>-funktiossa saattaa tulla ongelma rivin muokkaamisessa tietokannassa. Tällöin huomaamme, että tulostamassamme debuggausviestissä <code>$row</code>-muuttujan arvo on <code>false</code>. Tällöin kannattaa kokeille tietokantakyselyä <code>psql</code>-komentotulkissa, jolloin saat parempia virheilmoituksia. Muisthan, että pääset käyttämään komentotulkkia ottamalla SSH-yhteyden users-pavelimeen ja suorittamalla sen jälkeen
+  komennon <code>psql</code>.
+</p>
+
+<div style="clear: both"></div>
+
 <hr>
 <a id="3-kirjautuminen"></a>
 <h2>3. Kirjautuminen</h2>
@@ -370,7 +430,7 @@ $routes->post('/login', function(){
 });</div>
 
 <p>
-Koska POST-pyyntö ohjataan <code>UserController</code> luokan <code>handle_login</code>-metodille minun täytyy lisätä <code>app/controllers</code> kansioon tiedosto <code>user_controller.php</code>:
+  Koska POST-pyyntö ohjataan <code>UserController</code> luokan <code>handle_login</code>-metodille minun täytyy lisätä <code>app/controllers</code> kansioon tiedosto <code>user_controller.php</code>:
 </p>
 
 <div hljs language="php" no-escape copy-paste-warning>class UserController extends BaseController{
@@ -412,6 +472,14 @@ if($row){
   Mutta, mitä rivillä <code>$_SESSION['user'] = $user->id</code> tapahtuu? Siitä puhumme seuraavaksi.
 </p>
 
+<p>
+  <div class="alert alert-info">
+    <h4>Vinkki</h4>
+    Tällä hetkellä salasanat ovat tietokannassa selkokielisinä, mikä ei ole kovin hyvä asia sovelluksen tietoturvan kannalta. Usein salasanat tallennetaankin tietokantaan jollain algoritmilla hajakoodatussa muodossa, jolloin salasanoista tulee sekava numeroista ja merkeistä koostuva merkkijono. PHP:ssa merkkijonoja voi hajakoodata <a href="http://php.net/manual/en/function.crypt.php" target="_blank">crypt</a>-funktion avulla.
+    <strong>Salasanojen suojaaminen on täysin vapaaehtoista, eikä sen toteuttamisella ole vaikutusta harjoitustyösi arvosanaan.</strong>
+  </div>
+</p>
+
 <h3>3.1 Sessiot</h3>
 
 <p>
@@ -419,12 +487,12 @@ if($row){
 </p>
 
 <p>
-  Sessiot pitävät sisällään käyttäjäkohtaista tietoa palvelimella, jota voimme käyttää sovelluksessamme. PHP:ssa käyttäjän sessio sijaitsee <code>$_SESSION</code>-nimisessä assosiaatiolistassa, jossa jokaisella tiedolla on avain, jonka avulla siihen pääsee käsiksi.
-  Lisäsin siis session kirjautuneesta käyttäjästä lisäämällä <code>user</code>-avaimen arvoksi käyttäjän id:n. Pääsen kirjautuneen käyttäjän id:seen käsiksi kutsumalla <code>$_SESSION['user']</code>.
+  Sessiot pitävät sisällään käyttäjäkohtaista tietoa palvelimella, jota voimme käyttää sovelluksessamme. PHP:ssa käyttäjän sessio sijaitsee <code>$_SESSION</code>-nimisessä assosiaatiolistassa, jossa jokaisella tiedolla on avain, jonka avulla siihen pääsee käsiksi. <code>$_SESSION</code> on <code>$_POST</code>-muuttujan tapaan <a href="http://php.net/manual/en/language.variables.superglobals.php" target="_blank">superglobaali</a>, eli se on sisäänrakennettu muuttuja, joka on käytettävissä kaikissa ohjelmasi osissa ilman erillistä määrittelyä.
+  Lisäsin siis <code>handle_login</code>-metodissa session kirjautuneesta käyttäjästä lisäämällä <code>$_SESSION</code>-assosiaatiolistaan <code>user</code>-avaimen arvoksi kirjautuneen käyttäjän id:n. Pääsen kirjautuneen käyttäjän id:seen tarvittaessa käsiksi tavalliseen tapaan syntaksilla <code>$_SESSION['user']</code>.
 </p>
 
 <p>
-  Siirrytään seuraavaksi kansiossa <code>lib</code> sijaitsevaan tiedostoon <code>base_controller.php</code>, jossa sijaitsee kaikkien kontrollerien yläluokka <code>BaseController</code>. Luokasta löytyy pohja metodille <code>get_user_logged_in</code>. Toteutetaan metodi niin, että se palauttaa sovellukseemme kirjautuneen käyttäjän oliona. Olen toteuttanut sovellukseni käyttäjiä kuvaavan <code>User</code>-malliluokan, jolloin oma totetukseni metodista on seuraava:
+  Siirrytään seuraavaksi kansiossa <code>lib</code> sijaitsevaan tiedostoon <code>base_controller.php</code>, jossa sijaitsee kaikkien kontrollerien yläluokka <code>BaseController</code>. Luokasta löytyy pohja metodille <code>get_user_logged_in</code>. Toteutetaan metodi niin, että se palauttaa sovellukseemme kirjautuneen käyttäjän oliona, jotta voimme käyttää tietoa kirjautuneesta käyttäjästä näkymissä ja kontrollereissa. Olen toteuttanut sovellukseni käyttäjiä kuvaavan <code>User</code>-malliluokan ja sille <code>find</code>-metodin, joka hakee tietokannasta käyttäjä parametrina annetulla id:llä, jolloin oma totetukseni metodista on seuraava:
 </p>
 
 <div hljs language="php" no-escape>class BaseController{
@@ -471,7 +539,7 @@ if($row){
   <li>Lisää käyttäjälle mahdollisuus muokkaukseen ja poistoon lisäämällä kontrolleriin tarvittavat medotit ja toteuttamalla tarvittavat näkymät. Muokkausnäkymä on luultavasti lisäysnäkymää muistuttava lomake ja poisto voi tapahtua painiketta painamalla esimerkiksi tietokohteen esittely- tai listaussivulla. <strong>(0,5p)</strong></li>
   <li>Lisää malliisi tarvittavat validaattorit ja estä kontrollereissa virheellisten syötteiden lisääminen tietokantaan. Muista näyttää lomakkeissa virhetilanteissa virheilmoitukset ja täyttää kentät käyttäjän antamilla syötteillä. <strong>(0,5p)</strong></li>
   <li>Toteuta malliluokka sovelluksen käyttäjälle ja toteuta käyttäjän kirjautuminen. Toteuta <code>get_user_logged_in</code>-metodi ja käytä tarvittaessa kirjautuneen käyttäjän tietoa hyväksi näkymissä ja malleissa. <strong>(0,5p)</strong></li>
-  <li>Kirjoita alustava <a href="http://advancedkittenry.github.io/dokumentaatio-ohje.html#k%C3%A4ynnistys--k%C3%A4ytt%C3%B6ohje" target="_blank">käynnistys- / käyttöohje</a> dokumentaatioosi. Lisää myös reposi <code>README.md</code> tiedostoon käyttäjätunnus ja salasana, jolla ohjaaja voi kirjautua sisään sovellukseesi.<strong>(0.5p)</strong></li>
+  <li>Kirjoita alustava <a href="http://advancedkittenry.github.io/dokumentaatio-ohje.html#k%C3%A4ynnistys--k%C3%A4ytt%C3%B6ohje" target="_blank">käynnistys- / käyttöohje</a> dokumentaatioosi. Lisää myös reposi <code>README.md</code> tiedostoon käyttäjätunnus ja salasana, jolla ohjaaja voi kirjautua sisään sovellukseesi. <strong>(0.5p)</strong></li>
   <li>
     <strong>Pushaa kaikki tekämäsi muutokset repoosi!</strong>
   </li>

@@ -140,7 +140,7 @@ $routes->post('/logout', function(){
 <a id="2-oman-sovelluksen-laajentaminen"></a>
 <h2>2. Oman sovelluksen laajentaminen</h2>
 
-Voit käyttää seuraavaksi aikaa oman sovelluksesi laajentamiseen. Muistathan, että arvosanan viisi saamiseksi sovelluksessasi tulee olla vähintään kahdessa tietokohteessa CRUD-nelikko. <strong>Tällä viikolla ei kuitenkaan tarvitse toteuttaa uudelle tietokohteelle kokonaista CRUD-nelikkoa, listaus- ja esittelysivut riittävät hyvin</strong>. Koska kertaus on opintojen äiti, muistellaan seuraavaksi, mitä CRUD-nelikon toteuttamiseen liittyikään.
+Voit käyttää seuraavaksi aikaa oman sovelluksesi laajentamiseen. Muistathan, että arvosanan viisi saamiseksi sovelluksessasi tulee olla vähintään kahdessa tietokohteessa CRUD-nelikko. <strong>Tällä viikolla ei kuitenkaan tarvitse toteuttaa uudelle tietokohteelle kokonaista CRUD-nelikkoa, listaus- ja esittelysivut riittävät hyvin</strong>. Lisäksi, jos sovelluksesasi on monesta-moneen-suhde tietokantataulujen välillä, kannattaa tällä viikolla miettiä, miten sitä voi käytännössä käyttää sovelluksessa. Koska kertaus on opintojen äiti, muistellaan seuraavaksi, mitä CRUD-nelikon toteuttamiseen liittyikään.
 
 <h3>2.1 CRUD-nelikon toteuttamisen muistilista</h3>
 
@@ -463,7 +463,7 @@ $(document).ready(function(){
   <h1>Käyttäjän Henri pelikirjasto</h1>
 
   <p>
-    <a href="{{base_path}}/game/create" class="btn btn-success">Lisää peli</a>
+    <a href="{{base_path}}/game/new" class="btn btn-success">Lisää peli</a>
   </p>
 
   <form method="get" action="" class="form-inline">
