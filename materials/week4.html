@@ -322,7 +322,7 @@ $routes->post('/game/:id/destroy', function($id){
   Muista validoida muokkauslomakkeessa käyttäjän syöttämät kentät ja näyttää virhetilanteissa selkeät virheilmoitukset, kuten itsekkin tein omassa sovelluksessani. Käytettävyyden kannalta on helpointa, jos poistotoiminto toimii nappia painamalla. Käytin omassa sovelluksessani tätä pientä lomaketta:
 </p>
 
-<div hljs language="xml"><form method="post" action="{{base_path}}/game/{{game.id}}/destroy">
+<div hljs language="xml"><form method="post" action="{{base_path}}/game/{{game.id}}/destroy" style="display: inline-block;">
   <button type="submit" class="btn btn-danger">Poista</button>
 </form></div>
 
@@ -489,6 +489,9 @@ if($row){
 <p>
   Sessiot pitävät sisällään käyttäjäkohtaista tietoa palvelimella, jota voimme käyttää sovelluksessamme. PHP:ssa käyttäjän sessio sijaitsee <code>$_SESSION</code>-nimisessä assosiaatiolistassa, jossa jokaisella tiedolla on avain, jonka avulla siihen pääsee käsiksi. <code>$_SESSION</code> on <code>$_POST</code>-muuttujan tapaan <a href="http://php.net/manual/en/language.variables.superglobals.php" target="_blank">superglobaali</a>, eli se on sisäänrakennettu muuttuja, joka on käytettävissä kaikissa ohjelmasi osissa ilman erillistä määrittelyä.
   Lisäsin siis <code>handle_login</code>-metodissa session kirjautuneesta käyttäjästä lisäämällä <code>$_SESSION</code>-assosiaatiolistaan <code>user</code>-avaimen arvoksi kirjautuneen käyttäjän id:n. Pääsen kirjautuneen käyttäjän id:seen tarvittaessa käsiksi tavalliseen tapaan syntaksilla <code>$_SESSION['user']</code>.
+</p>
+<p>
+  Sessio aloitetaan kutsumalla funktiota <a href="http://php.net/manual/en/function.session-start.php" target="_blank">session_start</a>-funktiota, joka aloittaa uuden tai palauttaa olemassaolevan session. Funktiota on kutsuttu valmiiksi sovelluksesi <code>index.php</code>-tiedostossa, joten sinun ei itse tarvitse murehtia session aloittamisesta. Käyttäjän sessio ei katoa, vaikka hän sulkee selaimensa, vaan sen elinaika on useita minuutteja. Session elinajalle voi asettaa maksimiarvon asettamalla <a href="http://php.net/manual/en/session.configuration.php#ini.session.gc-maxlifetime" target="_blank">session.gc-mxlifetime</a>-arvon. Se on tosin vasta aika, jonka jälkeen PHP:n roskienkerääjä näkee sessiodatan "roskana", eikä sessiota välttämättä heti poisteta.
 </p>
 
 <p>

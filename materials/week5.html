@@ -5,7 +5,7 @@
 <ul class="nav nav-pills nav-stacked">
   <li><a href="" ng-click="goto_anchor('1-kirjautumisen-tarkistus-ja-uloskirjautuminen')">1. Kirjautumisen tarkistus ja uloskirjautuminen</a></li>
   <li><a href="" ng-click="goto_anchor('2-oman-sovelluksen-laajentaminen')">2. Oman sovelluksen laajentaminen</a></li>
-  <li><a href="" ng-click="goto_anchor('3-dokumentaation-viimeistely">3. Dokumentaation viimeistely</a></li>
+  <li><a href="" ng-click="goto_anchor('3-dokumentaation-viimeistely')">3. Dokumentaation viimeistely</a></li>
   <li><a href="" ng-click="goto_anchor('4-pienta-hienosaatoa')">4. Pientä hienosäätöä</a></li>
   <li><a href="" ng-click="goto_anchor('5-lisenssin-valinta')">5. Lisenssin valinta</a></li>
   <li><a href="" ng-click="goto_anchor('6-palautuksen-vaatimukset')">6. Palautuksen vaatimukset</a></li>
@@ -142,7 +142,150 @@ $routes->post('/logout', function(){
 
 Voit käyttää seuraavaksi aikaa oman sovelluksesi laajentamiseen. Muistathan, että arvosanan viisi saamiseksi sovelluksessasi tulee olla vähintään kahdessa tietokohteessa CRUD-nelikko. <strong>Tällä viikolla ei kuitenkaan tarvitse toteuttaa uudelle tietokohteelle kokonaista CRUD-nelikkoa, listaus- ja esittelysivut riittävät hyvin</strong>. Lisäksi, jos sovelluksesasi on monesta-moneen-suhde tietokantataulujen välillä, kannattaa tällä viikolla miettiä, miten sitä voi käytännössä käyttää sovelluksessa. Koska kertaus on opintojen äiti, muistellaan seuraavaksi, mitä CRUD-nelikon toteuttamiseen liittyikään.
 
-<h3>2.1 CRUD-nelikon toteuttamisen muistilista</h3>
+<h3>2.1 Monipuolisemmat lomakkeet</h3>
+
+<p>
+  Saatat tässä vaiheessa tarvita hieman monipuolisempia lomakkeita, kun tiekohteiden välille pitää toteuttaa yhdestä-moneen- ja jopa monesta-moneen-suhteita. Jos haluaisin liittää peliin sen lisäyslomakkeessa jonkin kategorian, voisi <a href="http://www.w3schools.com/tags/tag_select.asp" target="_blank">select</a>-valikon käytöstä olla hyötyä. Se on pudotusvalikko, jonka olet luultavasti nähnyt useilla sivuilla. Tässä esimerkki sen käytöstä:
+</p>
+
+<div class="row">
+  <div class="col-md-6">
+<div hljs language="xml"><div class="form-group">
+  <label>Kategoria</label>
+  <select class="form-control" name="category">
+    {% for category in categories %}
+      <option value="{{category.id}}">{{category.name}}</option>
+    {% endfor %}
+  </select>
+</div></div>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group">
+      <label>Kategoria</label>
+      <select class="form-control" name="category">
+        <option value="1">Toiminta</option>
+        <option value="2">Tasohyppely</option>
+        <option value="3">Urheilu</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<p>
+  <strong>Muista, että valittavat kohteet täytyy välittää näkymään, kuten muutkin näkymissä esitettävät muuttujat</strong>. <code>select</code>-tagi sisältää siis useita <code>option</code>-tageja, jotka ovat käyttäjälle esitettäviä vaihtoehtoja. <code>option</code>-tageissa <code>value</code>-attribuutissa määritellään arvo, joka lähetetään lomakkeen mukana, tagin sisällä taas määritellään teksti, joka näytetään käyttäjälle. Kuten tekstikenttien kanssa, pääset käyttäjän valitsemaan arvoon <code>select</code>-tagissa määritetyn <code>name</code>-attribuutin arvon perusteella seuraavasti:
+</p>
+
+<div hljs language="php" no-escape>$params = $_POST;
+// Otetaan talteen käyttäjän valitseman kategorian id
+$category = $params['category'];
+
+
+$attributes = array(
+  'name' => $params['name'],
+  'description' => $params['description'],
+  'publisher' => $params['publisher'],
+  'category' => $category,
+  'published' => $params['published']
+);
+// ...</div>
+
+<p>
+  Jos pelien ja kategorioiden välillä on monesta-moneen-suhde on hyödyllistä asettaa <code>select</code>-tagiin attribuutti <code>multiple</code>, joka antaa käyttäjälle mahdollisuuden valita monta vaihtoehtoa:
+</p>
+
+<div class="row">
+  <div class="col-md-6">
+<div hljs language="xml"><div class="form-group">
+  <label>Kategoria</label>
+  <select class="form-control" name="categories[]" multiple>
+    {% for category in categories %}
+      <option value="{{category.id}}">{{category.name}}</option>
+    {% endfor %}
+  </select>
+</div></div>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group">
+      <label>Kategoria</label>
+      <select class="form-control" name="categories[]" multiple>
+        <option value="1">Toiminta</option>
+        <option value="2">Tasohyppely</option>
+        <option value="3">Urheilu</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<p>
+  Nyt käyttäjä voi valita monta kategoriaa painamalla <kbd>ctrl</kbd>-painiketta pohjassa ja valitsemalla haluamansa kategoriat (ei ehkä paras käyttöliittymä, mutta käyttökelpoinen). Huomasit ehkä, että <code>select</code>-tagi muuttui <code>multiple</code>-attribuutin lisäämisen lisäksi hieman. Nimittäin <code>name</code>-attribuutin arvoksi vaihtui <code>categories[]</code>. Huomaa, että <code>[]</code>-merkit ovat tärkeitä, koska silloin PHP tietää käsitellä käyttäjän syötettä taulukkona. Tässä esimerkki syötteen vastaanottamisesta:
+</p>
+
+<div hljs language="php" no-escape>$params = $_POST;
+// Otetaan talteen käyttäjän valitsemat kategoriat. Huomaa, että avaimessa ei ole "[]"-merkkejä!
+$categories = $params['category']
+
+$attributes = array(
+  'name' => $params['name'],
+  'description' => $params['description'],
+  'publisher' => $params['publisher'],
+  'published' => $params['published'],
+  'categories' => array()
+);
+
+foreach($categories as $category){
+  // Lisätään kaikkien kategorioiden id:t taulukkoon
+  $attributes['categories'][] = $category
+}
+// ...</div>
+
+<p>
+  Nyt <code>$attributes['categories']</code> sisältää kaikkien käyttäjän valitsemien kategorioiden id:t, joita voin käyttää pelin lisäämisessä <code>Game</code>-luokan <code>save</code>-metodissa.
+</p>
+
+<p>
+  Lopuksi tutustutaan vielä yksinkertaiseen, mutta erittäin kätevään "piilotettuun kenttään" (hidden input). Sen avulla voimme lisätä lomakkeeseen kenttiä, joiden arvon voimme määritellä, mutta käytäjä ei näe niitä. Kuulostaa hölmöltä, mutta ne ovat hyödyllisiä, jos haluamme välittää lomakkeen kautta dataa, jota käyttäjän ei kuulu asettaa. Otetaan käytännön esimerkki toiminnosta, jossa käyttäjä voi kommentoida toisen käyttäjän peliä. Törmään ongelmaan, etten tiedä kommentointilomakkeeseessa, mihin peliin kommentti kohdistuu. Voin toteuttaa lomakkeen helposti lisäämällä kohdepelin id:n piilotettuun kenttään:
+</p>
+
+<div class="row">
+  <div class="col-md-6">
+<div hljs language="xml"><div class="form-group">
+  <label>Kommentti</label>
+  <textarea class="form-control" name="comment"></textarea>
+  <input type="hidden" name="game_id" value="{{game.id}}">
+  <button type="submit" class="btn btn-primary">Lähetä</button>
+</div></div>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group">
+      <label>Kommentti</label>
+      <textarea class="form-control" name="comment"></textarea>
+      <input type="hidden" name="game_id" value="{{game.id}}">
+    </div>
+    <button type="submit" class="btn btn-primary">Lähetä</button>
+  </div>
+</div>
+
+<p>
+  Määrittelin siis lomakkeeseen <code>input</code>-tagin, jonka <code>type</code>-attribuutin arvo on <code>hidden</code>. Kuten näet, kenttä ei näy lomakkeessa, mutta saan silti sen arvon, kun vastaanotan lomakkeen:
+</p>
+
+<div hljs language="php" no-escape>$params = $_POST;
+// Otetaan talteen kohdepelin id
+$game_id = $params['game_id'];
+// ...</div>
+
+<p>
+  Muita hyödyllisiä lomakkeen elementtejä ovat mm. <a href="http://www.w3schools.com/html/tryit.asp?filename=tryhtml_form_radio" target="_blank">radio</a>- ja <a href="http://www.w3schools.com/html/tryit.asp?filename=tryhtml_checkbox" target="_blank">checkbox</a>-elementit.
+</p>
+
+<p>
+  <div class="alert alert-warning">
+    <h4>Muistathan?</h4>
+    Kaikki lomakkeen elementit täytyy lisätä <code>form</code>-tagin sisään, muuten niiden arvoja ei lähetetä lomakkeen lähettämisen yhteydessä.
+  </div>
+</p>
+
+<h3>2.2 CRUD-nelikon toteuttamisen muistilista</h3>
 
 <h4>Malliluokan toteuttaminen</h4>
 <p>
@@ -365,6 +508,7 @@ $routes->post('/game/:id/destroy', function($id){
     Kun tietokantakysely on kunnossa, mutta ongelma ei silti ratkea, siirry kontrollerin debuggaamiseen. Jos käytät tietokantakyselyissä käyttäjän syötteitä, kannattaa tarkistaa, että niiden sisältö on kunnossa. Se onnistuu tulostamalla debuggausviestin käyttäjän syötteistä kutsumalla <code>Kint</code>-luokan <code>dump</code>-metodia.
   </li>
 </ul>
+
 <hr>
 <a id="3-dokumentaation-viimeistely"></a>
 <h2>3. Dokumentaation viimeistely</h2>
