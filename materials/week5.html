@@ -145,7 +145,7 @@ Voit käyttää seuraavaksi aikaa oman sovelluksesi laajentamiseen. Muistathan, 
 <h3>2.1 Monipuolisemmat lomakkeet</h3>
 
 <p>
-  Saatat tässä vaiheessa tarvita hieman monipuolisempia lomakkeita, kun tiekohteiden välille pitää toteuttaa yhdestä-moneen- ja jopa monesta-moneen-suhteita. Jos haluaisin liittää peliin sen lisäyslomakkeessa jonkin kategorian, voisi <a href="http://www.w3schools.com/tags/tag_select.asp" target="_blank">select</a>-valikon käytöstä olla hyötyä. Se on pudotusvalikko, jonka olet luultavasti nähnyt useilla sivuilla. Tässä esimerkki sen käytöstä:
+  Saatat tässä vaiheessa tarvita hieman monipuolisempia lomakkeita, kun tietokohteiden välille pitää toteuttaa yhdestä-moneen- ja jopa monesta-moneen-suhteita. Jos haluaisin liittää peliin sen lisäyslomakkeessa jonkin kategorian, voisi <a href="http://www.w3schools.com/tags/tag_select.asp" target="_blank">select</a>-valikon käytöstä olla hyötyä. Se on pudotusvalikko, jonka olet luultavasti nähnyt useilla sivuilla. Tässä esimerkki sen käytöstä:
 </p>
 
 <div class="row">
@@ -222,7 +222,7 @@ $attributes = array(
 
 <div hljs language="php" no-escape>$params = $_POST;
 // Otetaan talteen käyttäjän valitsemat kategoriat. Huomaa, että avaimessa ei ole "[]"-merkkejä!
-$categories = $params['category']
+$categories = $params['categories']
 
 $attributes = array(
   'name' => $params['name'],
