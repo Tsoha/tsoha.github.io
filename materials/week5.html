@@ -72,7 +72,34 @@
 }</div>
 
 <p>
-  Toteuta myös omaan sovellukseesi tarkistukset kirjautuneen käyttäjän osalta. Omassa sovelluksessasi saattaa olla monimutkaisempia rajoituksia käyttäjäoikeuksille, mutta kaikki metodit käyttäjäoikeuksien tarkastamiseen kannattaa toteuttaa <code>BaseController</code>-luokkaan.
+  Voit hoitaa kirjautuneen käyttäjän tarkistamisen halutessasi myös <code>routes.php</code>-tiedostossa seuraavasti:
+</p>
+
+<div hljs language="php" no-escape>function check_logged_in(){
+  BaseController::check_logged_in();
+}
+
+
+$routes->get('/game', 'check_logged_in', function(){
+  GameController::index();
+});
+
+$routes->get('/game/new', 'check_logged_in', function(){
+  GameController::create();
+});
+
+$routes->get('/game/:id', 'check_logged_in', function($id){
+  GameController::show($id);
+});
+
+//...</div>
+
+<p>
+  Määrittelimme siis <code>routes.php</code>-tiedostoon funktion <code>check_logged_in</code>, joka kutsuu toteuttamaamme <code>BaseController</code>-luokan staattista metodia <code>check_logged_in</code>. Lisäksi lisäsimme jokaiseen reittiin, johon siirtyminen vaatii kirjautumisen, toisen parametrin ennen kutsuttavaa funktiota, joka kertoo, minkä nimistä funktiota tulee kutsua, ennen kuin kolmantena parametrina annettua funktiota kutsutaan. Kutsuttavien funktioiden nimiä voi olla monta, voit siis tehdä monta eri tarkastusta ennen kuin lopullista funktiota kutsutaan. Näin yksinkertaisessa tarkastuksessa tämä tapa on melko selkeä, mutta jos tarkastus on monimutkaisempi, esimerkiksi käyttöoikeuksiin liittyvä tarkastus, kannattaa se hoitaa kontrollerin puolella.
+</p>
+
+<p>
+  Toteuta myös omaan sovellukseesi tarkistukset kirjautuneen käyttäjän osalta. Voit käyttää toteutukseen kumpaa tahansa kahdesta esitetystä tavasta, tai keksiä täysin oman tapasi. Omassa sovelluksessasi saattaa olla monimutkaisempia rajoituksia käyttäjäoikeuksille, mutta kaikki metodit käyttäjäoikeuksien tarkastamiseen kannattaa toteuttaa <code>BaseController</code>-luokkaan.
 </p>
 
 <h3>1.2 Uloskirjautuminen</h3>
