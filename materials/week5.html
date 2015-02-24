@@ -312,7 +312,59 @@ $game_id = $params['game_id'];
   </div>
 </p>
 
-<h3>2.2 CRUD-nelikon toteuttamisen muistilista</h3>
+<h3>2.2 Tiedon haku useammasta taulusta: liitoskyselyt</h3>
+<p>
+  Olet varmasti viimeistään tässä vaiheessa törmännyt ongelmaan, jossa tietokantaan talletettua tietoa pitäisi hakea yhdellä kyselyllä kahdesta taulusta. Jos esimerkiksi haluan suorittaa tietokannassani kyselyn joka hakee kaikki pelit ja liittää lisäksi jokaiseen sen kategorian, jos sellaista löytyy, minun täytyy hakea kaikki rivit taulusta <code>Game</code>, mutta lisäksi rivit, joihin löytyy viiteavaimet, taulusta <code>Genre</code>. Ongelman ratkaisu on <strong>liitoskyselyt</strong>.
+</p>
+<p>
+  SQL:ssä on neljä tärkeää liitoskyselyä, joissa taulujen rivejä yhdistetään eri tavoilla <code>ON</code>-avainsanan jälkeen annettujen ehtojen perusteella:
+  <ul>
+    <li>
+      <p>
+        <code>INNER JOIN</code> palauttaa kaikki rivit, joissa annettu ehto täyttyy molemmissa tauluissa. Esimerkiksi haetaan kaikki pelit ja niiden genret, <strong>joilla on genre</strong>:
+      </p>
+<div hljs language="sql" no-escape>SELECT Game.name, Game.published, Game.publisher, Game.description, Game.played, Game.added, Genre.name AS genre_name
+FROM Game
+INNER JOIN Genre
+ON Game.id = Genre.game_id;</div>
+    </li>
+    <li>
+      <p>
+        <code>LEFT JOIN</code> palauttaa kaikki rivit "vasemmasta" taulusta (<code>SELECT</code>-lauseessa määritellystä taulusta) ja ehdot täyttävät rivit "oikeasta" taulusta (<code>LEFT JOIN</code>-lauseessa määritellystä taulusta). Esimerkiksi haetaan kaikki pelit ja niiden genret, <strong>vaikka niillä ei ole genreä</strong> (huomaa ero edelliseen):
+      </p>
+<div hljs language="sql" no-escape>SELECT Game.name, Game.published, Game.publisher, Game.description, Game.played, Game.added, Genre.name AS genre_name
+FROM Game
+LEFT JOIN Genre
+ON Game.id = Genre.game_id;</div>
+    </li>
+    <li>
+      <p>
+        <code>RIGHT JOIN</code> palauttaa kaikki rivit "oikeasta" taulusta (<code>RIGHT JOIN</code>-lauseessa määritellystä taulusta) ja ehdot täyttävät rivit "vasemmasta" taulusta (<code>SELECT</code>-lauseessa määritellystä taulusta). Esimerkiksi haetaan kaikki genret ja niiden pelit, <strong>vaikka niihin ei liittyisi peliä</strong>:
+      </p>
+<div hljs language="sql" no-escape>SELECT Game.name, Game.published, Game.publisher, Game.description, Game.played, Game.added, Genre.name AS genre_name
+FROM Genre
+RIGHT JOIN Game
+ON Genre.game_id = Game.id;</div>
+    </li>
+    <li>
+      <p>
+        <code>FULL JOIN</code> palauttaa kaikki rivit, joissa ehto täyttyy jommassakummassa taulussa. Esimerkiksi haetaan <strong>kaikki pelit, kaikki genret, kaikki pelit, joilla on genre ja kaikki genret, joilla on peli</strong> (kuulostipa sekavalta):
+      </p>
+<div hljs language="sql" no-escape>SELECT Game.name, Game.published, Game.publisher, Game.description, Game.played, Game.added, Genre.name AS genre_name
+FROM Game
+FULL JOIN Genre
+ON Game.id = Genre.game_id;</div>
+    </li>
+  </ul>
+</p>
+<p>
+  Huomaa, että kaikissa kyselyissä esiintyy <code>name</code>-sarake sekä taulussa <code>Game</code>, että taulussa <code>Genre</code>. Sen vuoksi <code>Genre</code>-taulun <code>name</code>-sarakkeelle täytyy määrittää <a href="http://www.w3schools.com/sql/sql_alias.asp" target="_blank">aliasnimi</a> <code>genre_name</code> käyttämällä <code>AS</code>-lausetta.
+</p>
+<p>
+  Lisää liitoskyselyistä voit lukea vaikkapa <a href="http://www.tutorialspoint.com/sql/sql-using-joins.htm" target="_blank">TutorialsPointista</a>. Tässä vielä havainnollistava kuva matemaatikoille:
+</p>
+<img src="assets/images/sql_relations.png">
+<h3>2.3 CRUD-nelikon toteuttamisen muistilista</h3>
 
 <h4>Malliluokan toteuttaminen</h4>
 <p>
