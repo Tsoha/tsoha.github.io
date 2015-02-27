@@ -16,8 +16,25 @@
 <p>
   Ennen kuin etenemme sovelluksemme toteutuksessa pidemmälle, sukelletaan hetkeksi PHP:n saloihin.
 </p>
-<h3>1.1 Taulukot ja assosiaatiolistat</h3>
-
+<h3>1.1 Muuttujat</h3>
+<p>
+  Kuten jo ensimmäisellä viikolla tuli esille, PHP:ssa muuttujilla ei ole tyyppiä, vaan kaikkia muuttujat määritellään ja niihin viitataan <code>$</code>-merkillä. Voimme siis tallentaa muuttujiin kokonaislukuja, merkkijonoja, taulukoita ja muita otuksia ottamatta kantaa muuttujaan tyyppiin. Voimme myös vapaasti tallettaa muuttujaan ensin toisen tyyppisen muuttujan ja sen jälkeen korvata sen toisen tyyppisellä muuttujalla. Tässä pieni esimerkki muuttujista:
+</p>
+<div hljs no-escape>
+// muuttuja on merkkijono
+$kalle = 'Kalle';
+// ei ole enää, muhahah!
+$kalle = 22;
+// muuttuja voi olla taulukko...
+$taulukko = array('Kalle', 'Elina');
+// ..tai olio...
+$jamppa = new Henkilo('Jamppa');
+// ...tai funktio
+$laske = function($operaatio, $eka, $toka){
+  return $operaatio($eka, $toka);
+}
+</div>
+<h3>1.2 Taulukot ja assosiaatiolistat</h3>
 <p>
   PHP:n luultavasti tärkein tietorakenne on <strong>taulukko</strong> (<code>array</code>), joka on kokoelma otuksia, kuten merkkijonoja, kokonaislukuja, tai toisia taulukoita. Koska PHP on tyypitön, voi taulukko koostua erityyppisistä arvoista, vaikkin se voi olla hieman sekavaa. Taulukon alustaminen on helppoa, tässä on esimerkki taulukosta merkkijonoja:
 </p>
@@ -85,7 +102,7 @@ echo 'Kalle on ' . $iat['kalle'] . ' vuotta vanha\n';
   Kuten esimerkistä näkee, assosiaatiolistan avainta vastaavan arvon saa syntaksilla <code>$lista['avain']</code>, jolloin avaimen <code>kalle</code> arvo esimerkissä <code>$iat['kalle']</code>. Avaimen arvoa voi myös muuttaa, kuten esimerkissä avaimen <code>kalle</code> arvoksi asetettiin <code>23</code>, kohdassa <code>$iat['kalle'] = 23</code>.
 </p>
 
-<h3>1.2 Luokat</h3>
+<h3>1.3 Luokat</h3>
 
 <p>
   Katsotaan seuraavaksi lyhyesti, miten Javasta tutut <strong>luokat</strong> toteutetaan PHP:ssa. Tässä on esimerkki luokasta <code>Koira</code>:
@@ -349,7 +366,7 @@ class HelloWorldController extends BaseController{
   },
   "require": {
     "slim/slim": "2.*",
-    "twig/twig": "~1.0",
+    "twig/twig": "~1.5",
     "raveren/kint": "v0.9"
   }
 }</div>

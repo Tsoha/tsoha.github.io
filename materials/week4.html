@@ -343,7 +343,7 @@ $routes->post('/game/:id/destroy', function($id){
 {% endmacro %}</div>
 
 <p>
-  Annetaan siis vain <code>{% macro %}</code>-blokissa makrollemme nimi <code>destroy_button</code> ja lisätään blokin itse lomake. Huomaa <code>()</code>-sulut makron nimen peressä. Ne ovat tärkeitä, koska tulemme pian lisäämään makrollemme parametreja. Voin nyt käyttää toteuttamaani makroa pelin esittelysivulla tuomalla näkymään kaikki makrot tiedostosta <code>app/views/macros/forms.html</code> käyttäen <code>{% import %}</code>-blokkia:
+  Annetaan siis vain <code>{% macro %}</code>-blokissa makrollemme nimi <code>destroy_button</code> ja lisätään blokin sisälle itse lomake. Samaan tiedostoon voi määritellä vaikka kuinka monta makroa ja onkin kätevää koota saman tyyppiset makrot (esimerkiksi lomakkeisiin liittyvät makrot) samaan tiedostoon. Huomaa <code>()</code>-sulut makron nimen perässä. Ne ovat tärkeitä, koska tulemme pian lisäämään makrollemme parametreja. Voin nyt käyttää toteuttamaani makroa pelin esittelysivulla tuomalla näkymään kaikki makrot tiedostosta <code>app/views/macros/forms.html</code> käyttäen <code>{% import %}</code>-blokkia:
 </p>
 
 <div hljs language="xml">{% import "macros/forms.html" as forms %}
@@ -379,14 +379,14 @@ $routes->post('/game/:id/destroy', function($id){
   Toteuttamassa makrossa on vielä pieni ongelma. Kuten huomaat, makrossa käytetään muuttujia <code>game</code> ja <code>base_path</code>. Makrolla on sama muuttujien näkyvyysalue kuin näkymällä, johon se on upotettu, joten se pääsee käsiksi kaikkiin näkymän muuttujiin. Kaikissa näkymissä ei kuitenkaan ole käytössä muuttujaa <code>game</code>, emmekä muutenkaan halua, että poistopainikkeen avulla voi poistaa vain pelin, vaan haluamme yleistää sen kaikille tietokohteille. Onneksi makroon voikin määrittää parametreja, joiden arvoja voi käyttää makron sisällä. Määritetään makroomme parametri <code>action</code>, joka on poistolomakkeen kohdepolku: 
 </p>
 
-<div hljs language="xml">{% macro destroy_button(action) %}
+<div hljs language="xml">{% macro destroy_button(action, text) %}
   <form method="post" action="{{action}}" style="display: inline-block;">
-    <button type="submit" class="btn btn-danger">Poista</button>
+    <button type="submit" class="btn btn-danger">{{text|default('Poista')}}</button>
   </form> 
 {% endmacro %}</div>
 
 <p>
-  Nyt poistolomakkeen kohdepolku ei ole enää vakio, vaan se määräytyy <code>action</code>-parametrin arvosta. Voimme nyt käyttää sitä jokaisen tietokohteen poistamiseksi aloittamalla pelistä:
+  Nyt poistolomakkeen kohdepolku ei ole enää vakio, vaan se määräytyy <code>action</code>-parametrin arvosta. Lisäksi painikkeen tekstin voi asettaa parametrin <code>text</code> kautta. Jos parametria ei ole määritelty, on painikkeessa teksti "Poista". Voimme nyt käyttää poistolomaketta jokaisen tietokohteen poistamiseksi aloittamalla pelistä:
 </p>
 
 <div hljs language="xml">{% import "macros/forms.html" as forms %}
@@ -400,7 +400,7 @@ $routes->post('/game/:id/destroy', function($id){
 <!-- ... --></div>
 
 <p>
-  Välitämme nyt näkymässä <code>destroy_button</code>-makrolle parametrina poistolomakkeen kohdepolun. Huomaa, että parametri on merkkijono, johon voimme upottaa muuttujia syntaksilla <code>#{muuttujan_nimi}</code>. Se on siinä, sovelluksemme ensimmäinen makro on valmis! Älä kuitenkaan jätä makrojen toteuttamista pelkästään yhteen makroon, vaan toteuta uusia makroja aina, kun huomaat, että näkymissä alkaa toistua samoja osia.
+  Välitämme nyt näkymässä <code>destroy_button</code>-makrolle parametrina poistolomakkeen kohdepolun. Huomaa, että parametri on merkkijono, johon voimme upottaa muuttujia syntaksilla <code>#{muuttujan_nimi}</code>. Jätin toisen parametrin asettamatta, joka on painikkeen teksti, joten painikkeessa on oletuksena määritelty "Poista"-teksti. Se on siinä, sovelluksemme ensimmäinen makro on valmis! Älä kuitenkaan jätä makrojen toteuttamista pelkästään yhteen makroon, vaan toteuta uusia makroja aina, kun huomaat, että näkymissä alkaa toistua samoja osia.
 </p>
 
 <h3>2.2 Houston, we have a problem</h3>
