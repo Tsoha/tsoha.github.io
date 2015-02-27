@@ -333,7 +333,7 @@ $routes->post('/game/:id/destroy', function($id){
 </p>
 
 <p>
-  Twig tarjoaa ongelmaan helpon ratkaisun, <a href="http://twig.sensiolabs.org/doc/tags/macro.html" target="_blank">makrot</a>. Makro voi olla oikeastaan mikä tahansa näkymän osa, joka on helppo upottaa toiseen näkymään. Luodaan poistopainikkeesta makro, johon lisäämme edelle toteutetun lomakkeen. aloitetaan lisäämällä kansioon <code>app/views</code> kansio <code>macros</code>, johon voimme toteuttaa kaikki sovelluksemme makrot. Lisätään sinne tiedosto <code>forms.html</code>, johon toteutamme kaikki sovelluksemme lomakkeisiin liittyvät makrot. Makron sisältö sijoitetaan <code>{% macro %}</code>-blokin sisään seuraavasti:
+  Twig tarjoaa ongelmaan helpon ratkaisun, <a href="http://twig.sensiolabs.org/doc/tags/macro.html" target="_blank">makrot</a>. Makro voi olla oikeastaan mikä tahansa näkymän osa, joka on helppo upottaa toiseen näkymään. Luodaan poistopainikkeesta makro, johon lisäämme edellä toteutetun lomakkeen. Aloitetaan lisäämällä kansioon <code>app/views</code> kansio <code>macros</code>, johon voimme lisätä kaikki tiedostot, jotka sisältävät sovelluksemme makroja. Lisätään kansioon tiedosto <code>forms.html</code>, johon toteutamme kaikki sovelluksemme lomakkeisiin liittyvät makrot. Makron sisältö sijoitetaan <code>{% macro %}</code>-blokin sisään seuraavasti:
 </p>
 
 <div hljs language="xml">{% macro destroy_button() %}
@@ -373,10 +373,10 @@ $routes->post('/game/:id/destroy', function($id){
 </p></div>
 
 <p>
-  Toimme siis näkymään kaikki makrot tiedostosta <code>forms.html</code> ja käytämme niistä nimeä <code>forms</code>. Makro itsessään upotetaan näkymään melko pitkälti, kuten mikä tahansa muuttuja. <code>destroy_button</code>-makron upotus näkymään onnistuu lisäämällä näkymään <code>{{forms.destroy_button()}}</code> (muista sulut!) kohtaan, johon poistopainikkeen haluaa ilmestyvän.
+  Toimme siis näkymään kaikki makrot tiedostosta <code>forms.html</code> ja käytämme niistä nimeä <code>forms</code>. Makro itsessään upotetaan näkymään melko pitkälti, kuten mikä tahansa muuttuja. <code>destroy_button</code>-makron upotus näkymään onnistuu lisäämällä näkymään <code>{{forms.destroy_button()}}</code> (muista sulut!) kohtaan, johon makron sisällön, tässä tapauksessa poistopainikkeen, haluaa sijoittaa.
 </p>
 <p>
-  Toteuttamassa makrossa on vielä pieni ongelma. Kuten huomaat, makrossa käytetään muuttujia <code>game</code> ja <code>base_path</code>. Makrolla on sama muuttujien näkyvyysalue kuin näkymällä, johon se on upotettu, joten se pääsee käsiksi kaikkiin näkymän muuttujiin. Kaikissa näkymissä ei kuitenkaan ole käytössä muuttujaa <code>game</code>, emmekä muutenkaan halua, että poistopainikkeen avulla voi poistaa vain pelin, vaan haluamme yleistää sen kaikille tietokohteille. Onneksi makroon voikin määrittää parametreja, joiden arvoja voi käyttää makron sisällä. Määritetään makroomme parametri <code>action</code>, joka on poistolomakkeen kohdepolku: 
+  Toteuttamassamme makrossa on vielä pieni ongelma. Kuten huomaat, makrossa käytetään muuttujia <code>game</code> ja <code>base_path</code>. Makrolla on sama muuttujien näkyvyysalue kuin näkymällä, johon se on upotettu, joten se pääsee käsiksi kaikkiin näkymän muuttujiin. Kaikissa näkymissä ei kuitenkaan ole käytössä muuttujaa <code>game</code>, emmekä muutenkaan halua, että poistopainikkeen avulla voi poistaa vain pelin, vaan haluamme yleistää sen kaikille tietokohteille. Onneksi makroon voikin määrittää parametreja, joiden arvoja voi käyttää makron sisällä. Määritetään makroomme parametri <code>action</code>, joka on poistolomakkeen kohdepolku ja parametri <code>text</code>, joka on painikkeen teksti: 
 </p>
 
 <div hljs language="xml">{% macro destroy_button(action, text) %}
@@ -386,7 +386,7 @@ $routes->post('/game/:id/destroy', function($id){
 {% endmacro %}</div>
 
 <p>
-  Nyt poistolomakkeen kohdepolku ei ole enää vakio, vaan se määräytyy <code>action</code>-parametrin arvosta. Lisäksi painikkeen tekstin voi asettaa parametrin <code>text</code> kautta. Jos parametria ei ole määritelty, on painikkeessa teksti "Poista". Voimme nyt käyttää poistolomaketta jokaisen tietokohteen poistamiseksi aloittamalla pelistä:
+  Nyt poistolomakkeen kohdepolku ei ole enää vakio, vaan se määräytyy <code>action</code>-parametrin arvosta. Lisäksi painikkeen tekstin voi asettaa parametrin <code>text</code> kautta. Jos parametrin arvoa ei ole määritelty, on painikkeessa teksti "Poista". Voimme nyt käyttää poistolomaketta jokaisen tietokohteen poistamiseksi aloittamalla pelistä:
 </p>
 
 <div hljs language="xml">{% import "macros/forms.html" as forms %}
