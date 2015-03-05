@@ -791,6 +791,10 @@ CREATE TABLE Game(
 <p>
   <div class="alert alert-warning">
     <h4>Muistathan?</h4>
+    PostgreSQL:ssä on monia nk. <a href="http://www.postgresql.org/docs/7.3/static/sql-keywords-appendix.html" target="_blank">"avain sanoja"</a> (key words), kuten "table", "true" ja "user". Niitä ei saa käyttää esimerkiksi taulujen tai sarakkeiden nimissä, koska niillä on jokin erityinen merkitys. Siksi annoinkin sovellukseni käyttäjien taululle nimeksi "Player", enkä "User".
+  </div>
+  <div class="alert alert-warning">
+    <h4>Muistathan?</h4>
     Muistaa luoda taulu ennen kuin viittaat siihen toisessa taulussa viiteavaimella, kuten omassa sovelluksessani loin <code>Player</code>-taulun ennen <code>Game</code>-taulua.
   </div>
 </p>
