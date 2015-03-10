@@ -343,13 +343,13 @@ class HelloWorldController extends BaseController{
 </p>
 
 <p>
-  Luo seuraavaksi malli jollekkin omista tietokohteistasi ja lisää sille listaus- (<code>all</code>) ja hakutoiminnot (<code>find</code>). Molemmat näistä metodeista kannattaa toteuttaa <strong><a href="http://php.net/manual/en/language.oop5.static.php" target="_blank">staattisina</a></strong>-metodeina.
+  Luo seuraavaksi malli jollekin omista tietokohteistasi ja lisää sille listaus- (<code>all</code>) ja hakutoiminnot (<code>find</code>). Molemmat näistä metodeista kannattaa toteuttaa <strong><a href="http://php.net/manual/en/language.oop5.static.php" target="_blank">staattisina</a></strong>-metodeina.
 </p>
 
 <h3>2.3 Composer ja luokkien automaattinen lataaminen</h3>
 
 <p>
-  Olemme rakentamessa melko isoa sovellusta, jolloin <code>php</code>-tiedostoja kertyy melko paljon. Eikö olisi hauskaa, jos ei tarvitsisi erikseen lisätä <code>require</code>-riviä aina, kun haluat esimerkiksi käyttää malliluokkaa toisessa tiedostossa? Apuun tulee <strong><a href="https://getcomposer.org/" target="_blank">Composer</a></strong>, PHP:n riippuvuuksienhallitsija. Composer:in avulla voit määrittää, mitä riippuvuuksia sovelluksessasi on ja se asentaa ne puolestasi. Me olemme tosin enemmän kiinnostuneita Composer:in toisesta ominaisuusta, luokkien automaattisesta lataamisesta.
+  Olemme rakentamassa melko isoa sovellusta, jolloin <code>php</code>-tiedostoja kertyy melko paljon. Eikö olisi hauskaa, jos ei tarvitsisi erikseen lisätä <code>require</code>-riviä aina, kun haluat esimerkiksi käyttää malliluokkaa toisessa tiedostossa? Apuun tulee <strong><a href="https://getcomposer.org/" target="_blank">Composer</a></strong>, PHP:n riippuvuuksienhallitsija. Composer:in avulla voit määrittää, mitä riippuvuuksia sovelluksessasi on ja se asentaa ne puolestasi. Me olemme tosin enemmän kiinnostuneita Composer:in toisesta ominaisuusta, luokkien automaattisesta lataamisesta.
 </p>
 
 <p>
@@ -374,7 +374,7 @@ class HelloWorldController extends BaseController{
 <img src="assets/images/composer.png" class="pull-right" style="width: 200px; height: auto; margin-left: 15px; margin-bottom: 15px;">
 
 <p>
-  Kerromme tässä tiedostossa, mitä riippuvuuksia sovelluksessame on, meillä ne ovat Slim, Twig ja Kint sekä mistä tiedostoista haluamme etsiä automaattisesti ladattavia luokkia. Olen määrittänyt <code>classmap</code>-taulukkoon, että haluan ladata automaattisesti luokat tiedostosta <code>config/database.php</code> sekä kaikista tiedostoista kansioista <code>lib</code> ja <code>app/controllers</code>. Kun alustit sovelluksesi ensimmäistä kertaa komennolla <code>bootstrap.sh</code>, Composer asennettiin projektiisi ja sen juuressa suoritetiin <code>php composer.phar install</code>. Kyseinen komento asensi sovelluksemme riippuvuudet ja lisäsi <code>vendor</code>-kansioon tiedoston <code>autoload.php</code>, joka käynnistää luokkien automaattisen lataamisen.
+  Kerromme tässä tiedostossa, mitä riippuvuuksia sovelluksessamme on, meillä ne ovat Slim, Twig ja Kint sekä mistä tiedostoista haluamme etsiä automaattisesti ladattavia luokkia. Olen määrittänyt <code>classmap</code>-taulukkoon, että haluan ladata automaattisesti luokat tiedostosta <code>config/database.php</code> sekä kaikista tiedostoista kansioista <code>lib</code> ja <code>app/controllers</code>. Kun alustit sovelluksesi ensimmäistä kertaa komennolla <code>bootstrap.sh</code>, Composer asennettiin projektiisi ja sen juuressa suoritetiin <code>php composer.phar install</code>. Kyseinen komento asensi sovelluksemme riippuvuudet ja lisäsi <code>vendor</code>-kansioon tiedoston <code>autoload.php</code>, joka käynnistää luokkien automaattisen lataamisen.
 </p>
 
 <p>
