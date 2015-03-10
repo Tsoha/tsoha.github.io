@@ -134,7 +134,7 @@ echo 'Kalle on ' . $iat['kalle'] . ' vuotta vanha\n';
 }</div>
 
 <p>
-  Esimerkissä <code>Koira</code>-luokkaan liittyy neljä attribuuttia - <code>$nimi</code>, <code>$omistaja</code>, <code>$paino</code> ja <code>$ika</code>. Attribuuttien näkyvyysalueeksi on asetettu <code>pulic</code>, joten niihin pääsee käsiksi kaikkialta, myös luokan ulkopuolelta. Luokan konstruktori määritetään metodissa <code>__construct</code>, joka ottaa parametreikseen kaikki koiraan liittyvät tiedot. Olion attribuutteihin pystyy viittamaan syntaksilla <code>$this->attribuutin_nimi</code>, jolloin esimerkissä nimi attribuutin arvo on <code>$this->nimi</code>.
+  Esimerkissä <code>Koira</code>-luokkaan liittyy neljä attribuuttia - <code>$nimi</code>, <code>$omistaja</code>, <code>$paino</code> ja <code>$ika</code>. Attribuuttien näkyvyysalueeksi on asetettu <code>public</code>, joten niihin pääsee käsiksi kaikkialta, myös luokan ulkopuolelta. Luokan konstruktori määritetään metodissa <code>__construct</code>, joka ottaa parametreikseen kaikki koiraan liittyvät tiedot. Olion attribuutteihin pystyy viittaamaan syntaksilla <code>$this->attribuutin_nimi</code>, jolloin esimerkissä nimi attribuutin arvo on <code>$this->nimi</code>.
 </p>
 
 <p>
@@ -222,7 +222,7 @@ Malli siis edustaa jotain sovelluksen tietokohdetta, kuten esimerkissämme, kurs
 </p>
 
 <p>
-  Minun täytyy seuraavaksi toteuttaa metodi, joka hakee kaikki pelit tietokannasta ja palauttee ne <code>Game</code>-olioina. Sen ei pitäisi olla vaikeaa, minun täytyy tehdä vain <code>SELECT * FROM Game</code> kysely tietokantaani ja käydä läpi sen tuottamat rivit. Katsotaan, miten tämä käytännössä tapahtuu:
+  Minun täytyy seuraavaksi toteuttaa metodi, joka hakee kaikki pelit tietokannasta ja palauttaa ne <code>Game</code>-olioina. Sen ei pitäisi olla vaikeaa, minun täytyy tehdä vain <code>SELECT * FROM Game</code> kysely tietokantaani ja käydä läpi sen tuottamat rivit. Katsotaan, miten tämä käytännössä tapahtuu:
 </p>
 
 <div hljs language="php" no-escape copy-paste-warning>class Game extends BaseModel{
