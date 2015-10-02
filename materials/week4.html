@@ -339,7 +339,7 @@ $routes->post('/game/:id/destroy', function($id){
 <div hljs language="xml">{% macro destroy_button() %}
   <form method="post" action="{{base_path}}/game/{{game.id}}/destroy" style="display: inline-block;">
     <button type="submit" class="btn btn-danger">Poista</button>
-  </form> 
+  </form>
 {% endmacro %}</div>
 
 <p>
@@ -358,7 +358,7 @@ $routes->post('/game/:id/destroy', function($id){
 <ul>
   <li><strong>Julkaisupäivä:</strong> {{game.published}}</li>
   <li><strong>Julkaisija:</strong> {{game.publisher}}</li>
-  <li><strong>Status:</strong> 
+  <li><strong>Status:</strong>
     {% if game.played %}
       <label class="label label-success">pelattu</label>
     {% else %}
@@ -376,13 +376,13 @@ $routes->post('/game/:id/destroy', function($id){
   Toimme siis näkymään kaikki makrot tiedostosta <code>forms.html</code> ja käytämme niistä nimeä <code>forms</code>. Makro itsessään upotetaan näkymään melko pitkälti, kuten mikä tahansa muuttuja. <code>destroy_button</code>-makron upotus näkymään onnistuu lisäämällä näkymään <code>{{forms.destroy_button()}}</code> (muista sulut!) kohtaan, johon makron sisällön, tässä tapauksessa poistopainikkeen, haluaa sijoittaa.
 </p>
 <p>
-  Toteuttamassamme makrossa on vielä pieni ongelma. Kuten huomaat, makrossa käytetään muuttujia <code>game</code> ja <code>base_path</code>. Makrolla on sama muuttujien näkyvyysalue kuin näkymällä, johon se on upotettu, joten se pääsee käsiksi kaikkiin näkymän muuttujiin. Kaikissa näkymissä ei kuitenkaan ole käytössä muuttujaa <code>game</code>, emmekä muutenkaan halua, että poistopainikkeen avulla voi poistaa vain pelin, vaan haluamme yleistää sen kaikille tietokohteille. Onneksi makroon voikin määrittää parametreja, joiden arvoja voi käyttää makron sisällä. Määritetään makroomme parametri <code>action</code>, joka on poistolomakkeen kohdepolku ja parametri <code>text</code>, joka on painikkeen teksti: 
+  Toteuttamassamme makrossa on vielä pieni ongelma. Kuten huomaat, makrossa käytetään muuttujia <code>game</code> ja <code>base_path</code>. Makrolla on sama muuttujien näkyvyysalue kuin näkymällä, johon se on upotettu, joten se pääsee käsiksi kaikkiin näkymän muuttujiin. Kaikissa näkymissä ei kuitenkaan ole käytössä muuttujaa <code>game</code>, emmekä muutenkaan halua, että poistopainikkeen avulla voi poistaa vain pelin, vaan haluamme yleistää sen kaikille tietokohteille. Onneksi makroon voikin määrittää parametreja, joiden arvoja voi käyttää makron sisällä. Määritetään makroomme parametri <code>action</code>, joka on poistolomakkeen kohdepolku ja parametri <code>text</code>, joka on painikkeen teksti:
 </p>
 
 <div hljs language="xml">{% macro destroy_button(action, text) %}
   <form method="post" action="{{action}}" style="display: inline-block;">
     <button type="submit" class="btn btn-danger">{{text|default('Poista')}}</button>
-  </form> 
+  </form>
 {% endmacro %}</div>
 
 <p>
@@ -528,8 +528,8 @@ $routes->post('/login', function(){
   ohjaamme käyttäjän takaisin kirjautumislomakkeeseen ja ilmoitamme, että käyttäjätunnus tai salasana oli väärä. Jos käyttäjä löytyy tietokannasta, palauttaa <code>authenticate</code>-metodi löytyneen käyttäjän <code>User</code>-oliona. Vinkki: voit tarkastaa, löytyykö tietokannasta käyttäjä annetulla käyttäjätunnus-salasana-parilla esimerkiksi seuraavasti:
 </p>
 
-<div hljs no-escape>$query = DB::connection()->prepare('SELECT * FROM Player WHERE name = :name AND password = :password LIMIT 1', array('name' => $name, 'password' => $password));
-$query->execute();
+<div hljs no-escape>$query = DB::connection()->prepare('SELECT * FROM Player WHERE name = :name AND password = :password LIMIT 1');
+$query->execute(array('name' => $name, 'password' => $password));
 $row = $query->fetch();
 
 if($row){
