@@ -304,7 +304,7 @@ Malli siis edustaa jotain sovelluksen tietokohdetta, kuten esimerkissämme, kurs
 }</div>
 
 <p>
-  Huomasit varmasti, että annoin tällä kertaa <code>execute</code>-metodille parametrina assosiaatiolistan, jonka avulla kerrotaan, mitä muuttujia kyselyyn upotetaan. Muuttuja upotetaan kyselyyn käyttämällä kyselyn sisällä <code>:muuttujan_nimi</code>-syntaksia ja antamalla parametriksi assosiaatiolistan, joka sisältää <code>muuttujan_nimi</code>-avaimen ja sen arvon. Lisäksi käytin <code>fetchAll</code>-metodin sijaan metodia <code>fetch</code>, joka paluttaa taulukon sijaan vain yhden assiosiaatiolistan ensimmäisestä kyselyn tuottamasta rivistä. Tässä tilanteessa se on järkevää, koska kysely tuottaa aina vain yhden rivin.
+  Huomasit varmasti, että annoin tällä kertaa <code>execute</code>-metodille parametrina assosiaatiolistan, jonka avulla kerrotaan, mitä muuttujia kyselyyn upotetaan. Muuttuja upotetaan kyselyyn käyttämällä kyselyn sisällä <code>:muuttujan_nimi</code>-syntaksia ja antamalla parametriksi assosiaatiolistan, joka sisältää <code>muuttujan_nimi</code>-avaimen ja sen arvon. Lisäksi käytin <code>fetchAll</code>-metodin sijaan metodia <code>fetch</code>, joka paluttaa taulukon sijaan vain yhden assiosiaatiolistan ensimmäisestä kyselyn tuottamasta rivistä. Tässä tilanteessa se on järkevää, koska kysely tuottaa aina vain yhden rivin. Edit: jos käyttää tietokantaoliossa boolean-arvoja saattaa execute(assosiaatiolista) bugata käyttämässämme PHP-versiossa. Tällöin on parempi käyttää bindValueta <a href="http://pastebin.com/n7B7NBtd">linkki</a>.
 </p>
 
 <p>

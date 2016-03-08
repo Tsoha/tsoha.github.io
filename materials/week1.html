@@ -217,34 +217,52 @@ cd $HOME
 
 <h3>3.5 SSH-avain</h3>
 <p>
-  Luodaan seuraavaksi <strong>SSH-avain</strong>, jotta meidän ei aina tarvitsi kirjoittaa salasanaa SSH-yhteyden avaamisen yhteydessä. Poistutaan hetkeksi users-palvelimelta esimerkiksi avaamalla uusi terminaali, jonka jälkeen suoritetaan siinä komento <code>ssh-keygen</code>. Meiltä kysytään tiedoston nimeä ja salasanaa. Voit jättää sekä tiedoston nimen, että salasanan halutessasi tyhjäksi, korvaa vain tarvittaessa jo ennestään luotu <code>id_rsa.pub</code>-tiedosto. Jos päädyt asettamaan avaimellesi salasanan, täytyy sinun suorittaa terminaalissa jokaisen sisäänkirjautumisen jälkeen komento <code>ssh-add</code> ja syöttää avaimellesi valitsemasi salasana. Siis salasanan jättämien asettamatta on melko paljon vaivattomampaa. Avainparimme on nyt luotu.
-</p>
-<div hljs no-escape>Your identification has been saved in /Users/kalle/.ssh/id_rsa.
-Your public key has been saved in /Users/kalle/.ssh/id_rsa.pub.
-The key fingerprint is:
-62:7d:a6:41:56:4d:5c:40:f4:c5:71:e7:2f:2d:1c:03 kalle@mac-macbook-air.elisa
-The keys randomart image is:
-+--[ RSA 2048]----+
-|          .*Eo.o=|
-|         .  oo o+|
-|        o     + .|
-|       +     . +.|
-|      o S o   + o|
-|     . . =     o |
-|        .        |
-|                 |
-|                 |
-+-----------------+</div>
-<p>
-  Katsotaan tulosteesta, mihin <code>id_rsa.pub</code>-tiedosto (tai itse nimeämäsi <code>pub</code>-tiedosto) luotiin, minulta se löytyy kansiosta <code>/Users/kalle/.ssh</code> ja laitoksen koneilla <code>/home/kayttajatunnus/.ssh</code>. Siirrytään oikeaan kansioon suorittamalla terminaalissa <code>cd OMA_POLKUNI</code>. Avataan tiedosto <code>id_rsa.pub</code> suorittamalla <code>cat id_rsa.pub</code> ja kopioidaan terminaalista tiedoston sisältö. Laitetaan sisältö hetkeksi talteen vaikkapa tekstitiedostoon vanhalla kunnon copypaste-menetelmällä.
+  Luodaan seuraavaksi <strong>SSH-avain</strong>, jotta meidän ei aina tarvitsisi kirjoittaa salasanaa SSH-yhteyden avaamisen yhteydessä. Poistutaan hetkeksi users-palvelimelta esimerkiksi avaamalla uusi terminaali, jonka jälkeen suoritetaan siinä komento <code>ssh-keygen</code>. Meiltä kysytään tiedoston nimeä ja salasanaa. Nimeä ei kannata jättää tyhjäksi kuten ehkä olet joskus aikaisemmin saattanut tehdä. Eli valitset avainta sopivan nimen kuten tässä tapauksessa kenties <code>users.cs.helsinki</code> ja salasanan voit jättää tyhjäksi. Muista myös lisätä polku nimen eteen jos et ole <code>.ssh</code> kansiossa (tai mihin ikinä haluat avaimesi). Laitoksen koneilla polku on <code>/home/kayttajatunnus/.ssh/avaimesi</code>. Jos laitat salasanan, joudut aina kirjoittamaan tätä ssh-avainta käyttäessäsi terminaalissa <code>ssh-add</code> ja syöttämään avaimesi salasanan.
 </p>
 
+<div hljs no-escape>
+  Your identification has been saved in /home/teemu/.ssh/users.cs.helsinki.
+  Your public key has been saved in /home/teemu/.ssh/users.cs.helsinki.pub.
+  The key fingerprint is:
+  71:02:82:b0:6e:ba:f9:d5:8e:60:ef:80:27:7e:9c:1f teemu@UBUNTU-PONTTO
+  The key's randomart image is:
+  +--[ RSA 2048]----+
+  |.. .. .          |
+  | ..  . .         |
+  |.       o .      |
+  |.        +       |
+  | o      S        |
+  |o.   .           |
+  |+ * oE.          |
+  |.* O o.          |
+  |ooo.=..          |
+  +-----------------+
+</div>
+
+<p>
+  Avain on nyt luotu ja siirrytään <code>.ssh</code> kansioon <code>cd</code>-komennolla esim. <code>cd ~/.ssh</code> ja luodaan vielä <code>config</code> -tiedosto (ilman päätettä). Tämä config ei ole pakollinen, mutta se tulee helpottamaan elämää tulevaisuudessa kun haluat käyttää erikoiskomentoja kirjautumisen yhteydessä tai lyhyempää aliasta. Kirjoitetaan seuraavat rivit configiin:
+</p>
+
+<div hljs no-escape>
+Host users.cs (tämä on ssh-yhteyden nimi, laiskempi voisi lyhentää tämän vaikkapa cs:ään jolloin yhteys kirjoitettaisiin: ssh cs)
+    HostName users.cs.helsinki.fi (yhteyden osoite)
+    User ad-tunnukseksi (käyttäjänimesi eli tämäosa@users.cs.helsinki.fi)
+    IdentityFile polkusi avaimeen (esim. ~/.ssh/users.cs.helsinki)
+</div>
+
+<p>
+  Muitakin asetuksia on olemassa mutta nämä nyt riittävät. Tämä on aika lailla parempi tapa kuin yhden avaimen kanssa puuhastelu (jos jätät avaimen nimen tyhjäksi) ja voit laajentaa avainnippuasi luomalla vaikka GitHub-avaimen (tai <code>melkki.cs.helsinki.fi</code> avaimen) samalla <code>ssh-keygen</code> komennolla. GitHubin tapauksessa rivien lisääminen configiin on vapaaehtoista (vaikkakin selkeyttävää) koska emme yhdistä suoraan <code>ssh</code>-komennolla vaan ainoastaan <code>git push</code>:in yhteydessä. Copy-pastettuasi <code>avaimesi.pub</code> sisällön GitHubin ssh-avaimiin voit testata yhteyttä <code>ssh git@github.com -T</code> komennolla. Tämän jälkeen muista käyttää ssh-versiota https-version sijaan kun lataat omia repojasi jolloin et joudu enää koskaan kirjautumaan GitHubiin pushauksen yhteydessä.
+</p>
+
+<p>
+  No niin palataan takaisin <code>users.cs.helsinki</code>-avaimeemme. Kopioidaan tiedoston <code>users.cs.helsinki.pub</code> sisältö menemällä takaisin <code>.ssh</code> kansioon ja kirjoittamalla komento <code>cat users.cs.helsinki.pub</code> jolloin avain tulostuu terminaaliin josta saamme sen kätevästi kopioitua.
+</p>
 <p>
   Otetaan seuraavaksi SSH-yhteys users-palvelimeen:
 </p>
 <div hljs no-escape>ssh kayttajatunnus@users.cs.helsinki.fi</div>
 <p>
-  Kun yhteys on muodostettu, luodaan kotihakemistoosi kansio <code>.ssh</code>, jos ei jo ole siellä. Tämä onnistuu suorittamalla <code>mkdir .ssh</code>. Siirrytään luomaamme kansioon suorittamalla <code>cd .ssh</code> ja luodaan tiedosto <code>authorized_keys</code> suorittamalla <code>touch authorized_keys</code>. Avataan luomma tiedosto vim-editorissa suorittamalla <code>vim authorized_keys</code> ja painetaan <kbd>a</kbd>-näppäintä, jolloin pääsemme muokkaamaan tiedostoa. copypastetetaan tallettamamme <code>id_rsa.pub</code>-tiedoston sisältö editoriin (Huom! Jos tiedossa oli jo ennestään avain, pasteta sisältö uudelle riville), painetaan <kbd>esc</kbd>-näppäintä, kirjoitetaan <code>:wq</code> ja painetaan <kbd>enter</kbd>-näppäintä, jolloin tallennamme tiedoston ja lopetamme. Lisätään vielä tarvittavat oikeudet:
+  Kirjauduttasi sisälle luodaan kotihakemistoosi kansio <code>.ssh</code>, jos ei jo ole siellä. Tämä onnistuu suorittamalla <code>mkdir .ssh</code>. Siirrytään luomaamme kansioon suorittamalla <code>cd .ssh</code> ja luodaan tiedosto <code>authorized_keys</code> suorittamalla <code>touch authorized_keys</code>. Avataan luomamme tiedosto nano-editorissa kirjoittamalla <code>nano authorized_keys</code>. Copypastetetaan tallettamamme <code>users.cs.helsinki.pub</code>-tiedoston sisältö kirjoittamalla <kbd>ctrl+shift+v</kbd> ja ehkä kommentoimme sen yläpuolelle minkä koneen avain on kyseessä: <code>#koneen x avain</code>. Poistumme komennolla <kbd>ctrl+x</kbd> hyväksyen tekemämme muutokset. Lisätään vielä tarvittavat oikeudet:
 </p>
   <div hljs no-escape># Siirrytään takaisin kotihakemistoon
 cd $HOME
@@ -254,7 +272,7 @@ chmod 700 .ssh
 chmod 600 .ssh/authorized_keys
 </div>
   <p>
-    Se on siinä! Kokeile vielä, ettei SSH-yhteyden muodostaminen tarvitse salasanaa.
+    Se on siinä! Tarkista vielä yhteytesi <code>ssh cs-aliaksesi</code>-komennolla ettei SSH-yhteyden muodostaminen tarvitse enää salasanaa.
   </p>
 <h3>3.6 Tsoha Bootstrap</h3>
 
@@ -392,7 +410,7 @@ Aloitetaan dokumentaatiomme kirjoittaminen lisäämälle <code>doc</code>-kansio
 
 <h3>4.3 README</h3>
 
-Lisää vielä projektisi juuressa sijaitsevaan <code>README.md</code>-tiedostoon aiheesi kuvaus tai linkki valmiiseen aiheeseen, linkki sovellukseesi ja linkki dokumentaatioosi (linkki kansiossa <code>doc</code> sijaitsevaan <code>pdf</code>-tiedostoon). Älä pelästy tiedoston oudon muotoista sisältöä, siinä on käytössä <a href="https://help.github.com/articles/markdown-basics/" target="_blank">markdown</a>-syntaksi. 
+Lisää vielä projektisi juuressa sijaitsevaan <code>README.md</code>-tiedostoon aiheesi kuvaus tai linkki valmiiseen aiheeseen, linkki sovellukseesi ja linkki dokumentaatioosi (linkki kansiossa <code>doc</code> sijaitsevaan <code>pdf</code>-tiedostoon). Älä pelästy tiedoston oudon muotoista sisältöä, siinä on käytössä <a href="https://help.github.com/articles/markdown-basics/" target="_blank">markdown</a>-syntaksi.
 
 <h3>4.4 Labtool</h3>
 <strong><a href="http://tsoha-labtool.herokuapp.com">Labtool</a></strong> on kurssilla käytettävä sovellus, jonka avulla opiskelija voi katsella viikottaisista palautuksista saamiaan pisteitä ja ohjaajan kirjottamia palautetteita. Rekisteröidy labtooliin <a href="http://tsoha-labtool.herokuapp.com/register">tästä</a>. Käytä "Github repository"-kentässä forkkaamasi repon polkua ja "The test URL of your application"-kentässä sovelluksesi etusivun polkua, joka on muotoa <a>KAYTTAJATUNNUS.users.cs.helsinki.fi/PROJEKTIN_KANSIO</a>.
@@ -406,7 +424,8 @@ Lisää vielä projektisi juuressa sijaitsevaan <code>README.md</code>-tiedostoo
   <li>
     Pystytä versionhallinta. <strong>(0,5p)</strong>
     <ul>
-      <li>Luo repositorio <a href="http://github.com">GitHubiin</a>, ja lisää <code>README.md</code>-tiedostoon aiheesi kuvaus tai linkki valmiiseen aiheeseen, linkki sovellukseesi ja linkki dokumentaatioosi (linkki kansiossa <code>doc</code> sijaitsevaan <code>pdf</code>-tiedostoon).
+      <li>Luo repositorio <a href="http://github.com">GitHubiin</a>, ja lisää <code>README.md</code>-tiedostoon aiheesi kuvaus tai linkki valmiiseen aiheeseen, linkki sovellukseesi ja linkki dokumentaatioosi (linkki kansiossa <code>doc</code> sijaitsevaan <code>pdf</code>-tiedostoon).</li>
+      <li>Salli Issuet repositoriastasi</li>
     </ul>
   </li>
   <li>
