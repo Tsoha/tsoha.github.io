@@ -36,6 +36,11 @@ TsohaApp.config(['$routeProvider',
         controller: 'PageController',
         resolve: { active: function(){ return 'end' } }
       }).
+      when('/aikataulu', {
+        templateUrl: 'materials/timetable.html',
+        controller: 'PageController',
+        resolve: { active: function(){ return 'timetable' } }
+      }).
       otherwise({
         redirectTo: '/johdanto'
       })
