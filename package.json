@@ -1,0 +1,22 @@
+{
+  "name": "tsoha.github.io",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tsoha/tsoha.github.io.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Tsoha/tsoha.github.io/issues"
+  },
+  "homepage": "https://github.com/Tsoha/tsoha.github.io#readme",
+  "dependencies": {
+    "express": "^4.13.4"
+  }
+}
