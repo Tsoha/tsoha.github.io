@@ -86,10 +86,12 @@
 <a id="3-tyoympariston-pystyttaminen"></a>
 <h2>3. Työympäristön pystyttäminen</h2>
 <p>
+<!--
   <div class="alert alert-warning">
     <h4>Muistathan?</h4>
     Tässä vaiheessa tarvitset CS-tunnukset. Jos olet sivuaineopiskelija, lue <a href="http://www.cs.helsinki.fi/tietotekniikka/k-ytt-luvat" target="_blank">täältä</a> kohta "Sivuaineopiskelijat", jossa neuvotaan, miten saat ne.
   </div>
+-->
 </p>
 Löpinät sikseen ja ryhdytä hommiin! Tulemme pystyttämään sovelluksemme laitoksen <strong>users-palvelimelle</strong>, jossa pystymme pyörittämään <strong>PHP</strong>:lla tai <strong>Javalla</strong> toteutettua sovellusta käyttäen joko <strong>PostgreSQL</strong>- tai <strong>MySQL</strong>-tietokantapalvelinta.
 Tässä materiaalissa toteutamme sovelluksemme PHP:lla käyttäen PostgreSQL-tietokantapalvelinta. Myös muut toteutusvaihtoehdot ovat toki mahdollisia, kunhan sovit asiasta erikseen ohjaajan kanssa.
@@ -154,12 +156,12 @@ echo $misse->nimi();
 
 <h3>3.2 PHP-tuen käyttöönotto</h3>
 <p>
-  Otetaan seuraavaksi PHP-tuki käyttöön users-palvelimella. Aloitetaan ottamalla <strong>SSH-yhteys</strong> users-palvelimeen, joka onnistuu avaamalla terminaali ja suorittamalla siinä seuraava komento (käytä CS-käyttäjätunnustasi kohdassa <code>kayttajatunnus</code>):
+  Otetaan seuraavaksi PHP-tuki käyttöön users-palvelimella. Aloitetaan ottamalla <strong>SSH-yhteys</strong> users-palvelimeen, joka onnistuu avaamalla terminaali ja suorittamalla siinä seuraava komento (käytä AD-käyttäjätunnustasi kohdassa <code>kayttajatunnus</code>):
 </p>
-<div hljs no-escape>ssh kayttajatunnus@users.cs.helsinki.fi</div>
+<div hljs no-escape>ssh kayttajatunnus@users2017.cs.helsinki.fi</div>
 
 <p>
-  <strong>Tämän komennon suorittaminen kysyy sinulta CS-käyttäjäsi salasanaa.</strong>
+  <strong>Tämän komennon suorittaminen kysyy sinulta AD-tunnuksesi salasanaa.</strong>
 </p>
 
 <p>
@@ -185,7 +187,7 @@ Voimme nyt tehdä kyselyitä tietokantaamme käyttämällä komentotulkkia, joka
 </p>
 
 <div hljs no-escape>kalleilv@users:~$ psql
-psql (8.4.22)
+psql (9.5.6)
 Type "help" for help.
 
 kalleilv=> SELECT 1+1 AS numero;
@@ -244,11 +246,15 @@ cd $HOME
 </p>
 
 <div hljs no-escape>
-Host users.cs (tämä on ssh-yhteyden nimi, laiskempi voisi lyhentää tämän vaikkapa cs:ään jolloin yhteys kirjoitettaisiin: ssh cs)
-    HostName users.cs.helsinki.fi (yhteyden osoite)
+Host users2017.cs.helsinki.fi (tämä on ssh-yhteyden nimi, laiskempi voisi lyhentää tämän vaikkapa cs:ään jolloin yhteys kirjoitettaisiin: ssh cs)
+    HostName users2017.cs.helsinki.fi (yhteyden osoite)
     User ad-tunnukseksi (käyttäjänimesi eli tämäosa@users.cs.helsinki.fi)
     IdentityFile polkusi avaimeen (esim. ~/.ssh/users.cs.helsinki)
 </div>
+
+<p>
+  Jos haluat itse kirjautuessasi käyttää lyhyempää nimeä, voit tehdä myös toisen konfiguraation samaan tiedostoon. Voit laittaa Host-kohtaan esimerkiksi users.cs ja kopioida muut rivit users2017.cs.helsinki.fi-konfiguraatiostasi. Tällöin voisit kirjautua usersille komennolla <code>ssh users.cs</code>.
+</p>
 
 <p>
   Muitakin asetuksia on olemassa mutta nämä nyt riittävät. Tämä on aika lailla parempi tapa kuin yhden avaimen kanssa puuhastelu (jos jätät avaimen nimen tyhjäksi) ja voit laajentaa avainnippuasi luomalla vaikka GitHub-avaimen (tai <code>melkki.cs.helsinki.fi</code> avaimen) samalla <code>ssh-keygen</code> komennolla. GitHubin tapauksessa rivien lisääminen configiin on vapaaehtoista (vaikkakin selkeyttävää) koska emme yhdistä suoraan <code>ssh</code>-komennolla vaan ainoastaan <code>git push</code>:in yhteydessä. Copy-pastettuasi <code>avaimesi.pub</code> sisällön GitHubin ssh-avaimiin voit testata yhteyttä <code>ssh git@github.com -T</code> komennolla. Tämän jälkeen muista käyttää ssh-versiota https-version sijaan kun lataat omia repojasi jolloin et joudu enää koskaan kirjautumaan GitHubiin pushauksen yhteydessä.
@@ -260,7 +266,7 @@ Host users.cs (tämä on ssh-yhteyden nimi, laiskempi voisi lyhentää tämän v
 <p>
   Otetaan seuraavaksi SSH-yhteys users-palvelimeen:
 </p>
-<div hljs no-escape>ssh kayttajatunnus@users.cs.helsinki.fi</div>
+<div hljs no-escape>ssh kayttajatunnus@users2017.cs.helsinki.fi</div>
 <p>
   Kirjauduttasi sisälle luodaan kotihakemistoosi kansio <code>.ssh</code>, jos ei jo ole siellä. Tämä onnistuu suorittamalla <code>mkdir .ssh</code>. Siirrytään luomaamme kansioon suorittamalla <code>cd .ssh</code> ja luodaan tiedosto <code>authorized_keys</code> suorittamalla <code>touch authorized_keys</code>. Avataan luomamme tiedosto nano-editorissa kirjoittamalla <code>nano authorized_keys</code>. Copypastetetaan tallettamamme <code>users.cs.helsinki.pub</code>-tiedoston sisältö kirjoittamalla <kbd>ctrl+shift+v</kbd> ja ehkä kommentoimme sen yläpuolelle minkä koneen avain on kyseessä: <code>#koneen x avain</code>. Poistumme komennolla <kbd>ctrl+x</kbd> hyväksyen tekemämme muutokset. Lisätään vielä tarvittavat oikeudet:
 </p>
