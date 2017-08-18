@@ -791,7 +791,7 @@ CREATE TABLE Game(
 <p>
   <div class="alert alert-warning">
     <h4>Muistathan?</h4>
-    PostgreSQL:ssä on monia nk. <a href="http://www.postgresql.org/docs/7.3/static/sql-keywords-appendix.html" target="_blank">"avain sanoja"</a> (key words), kuten "table", "true" ja "user". Niitä ei saa käyttää esimerkiksi taulujen tai sarakkeiden nimissä, koska niillä on jokin erityinen merkitys. Siksi annoinkin sovellukseni käyttäjien taululle nimeksi "Player", enkä "User".
+    PostgreSQL:ssä on monia nk. <a href="http://www.postgresql.org/docs/7.3/static/sql-keywords-appendix.html" target="_blank">"avainsanoja"</a> (key words), kuten "table", "true" ja "user". Niitä ei saa käyttää esimerkiksi taulujen tai sarakkeiden nimissä, koska niillä on jokin erityinen merkitys. Siksi annoinkin sovellukseni käyttäjien taululle nimeksi "Player", enkä "User".
   </div>
   <div class="alert alert-warning">
     <h4>Muistathan?</h4>
@@ -852,17 +852,17 @@ public | player | table | kalleilv
       Suunnittele käyttöliittymäsi ja toteuta niistä staattiset HTML-sivut. Muista lisätä linkit toteuttamiisi sivuihin reposi <code>README.md</code>-tiedostoon. <strong>(1,5p)</strong>
       <ul>
         <li>Suunnittele etusivu</li>
-        <li>Suunnittele listaussivut</li>
-        <li>Suunnittele muokkaus- ja esittelysivut</li>
+        <li>Suunnittele listaussivu<b>t</b></li>
+        <li>Suunnittele muokkaus- ja esittelysivu<b>t</b></li>
       </ul>
     </li>
     <li>
       Ota tietokanta käyttöön ja dokumentoi se. <strong>(1,5p)</strong>
       <ul>
         <li>Lisää dokumentaatioon <a href="http://advancedkittenry.github.io/dokumentaatio-ohje.html#j%C3%A4rjestelm%C3%A4n-tietosis%C3%A4lt%C3%B6">järjestelmän tietosisältö</a> osio ja <a href="http://advancedkittenry.github.io/dokumentaatio-ohje.html#relaatiotietokantakaavio">relaatiotietokantakaavio</a></li>
-        <li>Lisää tietokantataulujen pystytyslauseet <code>create_tables.sql</code>-tiedostoon</li>
+        <li>Lisää tietokantataulujen pystytyslauseet <code>create_tables.sql</code>-tiedostoon. Pystytä näillä taulut tietokantaan.</li>
         <li>Lisää tietokantataulujen poistolauseet <code>drop_tables.sql</code>-tiedostoon</li>
-        <li>Lisää testidatan lisäyslauseet <code>add_test_data.sql</code>-tiedostoon</li>
+        <li>Lisää testidatan lisäyslauseet <code>add_test_data.sql</code>-tiedostoon. Aja testidata tietokantaan.</li>
       </ul>
     </li>
     <li>
