@@ -36,7 +36,7 @@ $laske = function($operaatio, $eka, $toka){
 </div>
 <h3>1.2 Taulukot ja assosiaatiolistat</h3>
 <p>
-  PHP:n luultavasti tärkein tietorakenne on <strong>taulukko</strong> (<code>array</code>), joka on kokoelma otuksia, kuten merkkijonoja, kokonaislukuja, tai toisia taulukoita. Koska PHP on tyypitön, voi taulukko koostua erityyppisistä arvoista, vaikkin se voi olla hieman sekavaa. Taulukon alustaminen on helppoa, tässä on esimerkki taulukosta merkkijonoja:
+  PHP:n luultavasti tärkein tietorakenne on <strong>taulukko</strong> (<code>array</code>), joka on kokoelma otuksia, kuten merkkijonoja, kokonaislukuja, tai toisia taulukoita. Koska PHP on tyypitön, voi taulukko koostua erityyppisistä arvoista, vaikkakin se voi olla hieman sekavaa. Taulukon alustaminen on helppoa, tässä on esimerkki taulukosta merkkijonoja:
 </p>
 
 <div hljs no-escape>$kaverit = array('Henri', 'Elina', 'Riku', 'Viivi', 'Jorma', 'Teo');</div>
@@ -317,7 +317,7 @@ Malli siis edustaa jotain sovelluksen tietokohdetta, kuten esimerkissämme, kurs
 <h3>2.2 Malliluokan testaaminen ja debuggaamisen alkeet</h3>
 
 <p>
-  Tsoha Bootstrappiin on valmiiksi asennettu näppärä debuggauskirjasto, <strong><a href="https://kint-php.github.io/kint/" target="_blank">Kint</a></strong>. Sen avulla voit tulostaa muuttujien arvoja koodin seasta, sekä jäljittää koodin suoritusta. Katsotaan Kintin avulla, mitä arvoja malliluokkaamme toteuttamamme metodit <code>all</code> ja <code>find</code> palauttavat lisäämälle <code>HelloWorldController</code>-luokan metodiin <code>sandbox</code> seuraavat debuggausviestit:
+  Tsoha Bootstrappiin on valmiiksi asennettu näppärä debuggauskirjasto, <strong><a href="http://raveren.github.io/kint/" target="_blank">Kint</a></strong>. Sen avulla voit tulostaa muuttujien arvoja koodin seasta, sekä jäljittää koodin suoritusta. Katsotaan Kintin avulla, mitä arvoja malliluokkaamme toteuttamamme metodit <code>all</code> ja <code>find</code> palauttavat lisäämälle <code>HelloWorldController</code>-luokan metodiin <code>sandbox</code> seuraavat debuggausviestit:
 </p>
 
 <div hljs language="php" no-escape>// Muista sisällyttää malliluokka require-komennolla!
@@ -682,7 +682,7 @@ $routes->get('/game/new', function(){
 <p>
   <div class="alert alert-warning">
     <h4>Muistathan?</h4>
-    Slim valitsee määrittämistäsi reiteistä ensimmäisen, joka vastaa pyynnön polkua. Tällöin esimerkiksi pyyntö sovelluksen polkuun <code>game/new</code> saattaa mennä sekasin reitin <code>game/:id</code>-kanssa. Ongelman ratkaisu on määrittää reitti <code>game/new</code> ennen reittiä <code>game/:id</code>.
+    Slim valitsee määrittämistäsi reiteistä ensimmäisen, joka vastaa pyynnön polkua. Tällöin esimerkiksi pyyntö sovelluksen polkuun <code>game/new</code> saattaa mennä sekaisin reitin <code>game/:id</code>-kanssa. Ongelman ratkaisu on määrittää reitti <code>game/new</code> ennen reittiä <code>game/:id</code>.
   </div>
 </p>
 
@@ -731,7 +731,7 @@ $routes->get('/game/new', function(){
 }</div>
 
 <p>
-  <strong>Huomaathan, että tämä metodi ei ole staattinen, kuten aikaisemmet toteuttamamme metodit</strong>. Saamme metodissamme tietokantaan viimeksi lisätyn rivin lisäämällä SQL-kyselyn loppuun komennon <code>RETURNIN id</code>, joka paluttaa lisätyn rivin id-sarakkeen arvon. Lisään sen arvon olioni <code>id</code>-attribuutiksi, jotta voin käyttää sitä kontrollerissani. Muistathan, että tietokantakyselyyn pystyy upottamaan muuttujilla käyttämällä tietokantakyselyssä <code>:upotettavan_muuttujan_nimi</code>-syntaksia (muista <code>:</code>-muuttujan nimen eteen!) ja antamalla <code>execute</code>-metodissa upotettavien muuttujien arvot assosiaatiolistana, jonka avaimina toimivat muuttujien nimet ja arvoina niitä vastaavat arvot. Jos tietokantakyselyiden syntaksi on päässyt unohtumaan, kannattaa virkistää muistia <strong><a href="http://www.tutorialspoint.com/postgresql/postgresql_insert_query.htm" target="_blank">INSERT INTO</a></strong>-lauseiden osalta.
+  <strong>Huomaathan, että tämä metodi ei ole staattinen, kuten aikaisemmet toteuttamamme metodit</strong>. Saamme metodissamme tietokantaan viimeksi lisätyn rivin lisäämällä SQL-kyselyn loppuun komennon <code>RETURNING id</code>, joka paluttaa lisätyn rivin id-sarakkeen arvon. Lisään sen arvon olioni <code>id</code>-attribuutiksi, jotta voin käyttää sitä kontrollerissani. Muistathan, että tietokantakyselyyn pystyy upottamaan muuttujilla käyttämällä tietokantakyselyssä <code>:upotettavan_muuttujan_nimi</code>-syntaksia (muista <code>:</code>-muuttujan nimen eteen!) ja antamalla <code>execute</code>-metodissa upotettavien muuttujien arvot assosiaatiolistana, jonka avaimina toimivat muuttujien nimet ja arvoina niitä vastaavat arvot. Jos tietokantakyselyiden syntaksi on päässyt unohtumaan, kannattaa virkistää muistia <strong><a href="http://www.tutorialspoint.com/postgresql/postgresql_insert_query.htm" target="_blank">INSERT INTO</a></strong>-lauseiden osalta.
 </p>
 <p>
   <code>store</code>-metodissa ei siis tapahtu mitään kovin ihmeellistä. Mutta entäs metodin viimeinen rivi <code>Redirect::to(...)</code>? Se on jotain aivan uutta, mitä ihmettä siinä tapahtuu? Puhumme siitä pian.
@@ -771,7 +771,7 @@ $routes->get('/game/new', function(){
 }</div>
 
 <p>
-  Malliluokan metodissa <code>save</code> on vaaranpaikka: jos tietokantakysely ei tuoda tuloksia, niin muuttujan <code>$row</code> arvo on <code>false</code>. Se johtuu joko siitä, että unohdit <code>RETURNING id</code>-komennon kyselyn lopusta, tai yritit syöttää vääränlaisia arvoja tietokantaan (esimerkiksi merkkijonoa numeron sijaan, tai väärää viiteavaimen arvoa). Jos näin on, näet, että muuttujan <code>$row</code> arvo on <code>false</code> lisäämästäsi debuggausviestistä.
+  Malliluokan metodissa <code>save</code> on vaaranpaikka: jos tietokantakysely ei tuota tuloksia, niin muuttujan <code>$row</code> arvo on <code>false</code>. Se johtuu joko siitä, että unohdit <code>RETURNING id</code>-komennon kyselyn lopusta, tai yritit syöttää vääränlaisia arvoja tietokantaan (esimerkiksi merkkijonoa numeron sijaan, tai väärää viiteavaimen arvoa). Jos näin on, näet, että muuttujan <code>$row</code> arvo on <code>false</code> lisäämästäsi debuggausviestistä.
 </p>
 
 <p>
