@@ -203,13 +203,15 @@ public static function store(){
 {% endblock %}</div>
 
 <p>
-  Toteuta seuraavaksi viime viikolla toteuttamaasi malliin sen attribuuttien validointi ja käsittele kontrollerissa mahdolliset virheet. Muista myös lisätä virheilmoitukset lisäyslomakkeeseen ja täyttää virheelliset kentät käyttäjän antamilla syötteillä, niin niitä ei tarvitse täyttää uudelleen. Validointimetodeja toteuttaessa kannattaa tutustua näihin funktioihin:
+  Toteuta seuraavaksi viime viikolla toteuttamaasi malliin sen attribuuttien validointi ja käsittele kontrollerissa mahdolliset virheet. Muista myös lisätä virheilmoitukset lisäyslomakkeeseen ja täyttää virheelliset kentät käyttäjän antamilla syötteillä, niin niitä ei tarvitse täyttää uudelleen. Validointimetodeja toteuttaessa kannattaa tutustua näihin sivuihin:
 </p>
 
 <ul>
   <li><a href="http://php.net/manual/en/function.strlen.php" target="_blank">strlen</a> - palauttaa merkkijonon pituuden.</li>
   <li><a href="http://php.net/manual/en/function.is-numeric.php" target="_blank">is_numeric</a> - tarkistaa, onko arvo numeerinen. Huomaa kuitenkin että tämä hyväksyy muutakin kuin pelkkiä kokonaislukuja.</li>
   <li><a href="http://php.net/manual/en/function.preg-match.php" target="_blank">preg_match</a> - tarkistaa, vastaako merkkijono säännöllistä lauseketta.</li>
+  <li><a href="http://php.net/manual/en/datetime.construct.php" target="_blank">DateTime::__construct</a> - katso myös kommenttien alku.</li>
+  <li><a href="http://php.net/manual/en/refs.basic.vartype.php" target="_blank">Variable and Type Related Extensions</a> - tästä listasta voi myös löytyä hyödyllisiä kohtia, esimerkiksi ctype.</li>
 </ul>
 
 Koska PHP on tyypitön, tapahtuu totuusarvojen kanssa joskus outoja tyyppimuunnoksia. Esimerkiksi <code>0 == false</code> ja <code>array() == false</code>, mutta <code>0 != array()</code>. Kannattaa siis tutustua PHP:n <a href="http://php.net/manual/en/language.types.boolean.php" target="_blank">boolean</a>-määritelmään.
